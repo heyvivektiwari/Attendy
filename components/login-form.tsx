@@ -8,6 +8,7 @@ import { useAttendanceStore } from "@/lib/attendance-store"
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu" // Unrelated, just to preserve if any imports were there before
 import { GraduationCap, Sparkles, Loader2, AlertCircle, CheckCircle2, ArrowLeft, Eye, EyeOff } from "lucide-react"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { ModeToggle } from "@/components/mode-toggle"
 
 type View = "login" | "register" | "forgot-password"
 
@@ -159,7 +160,10 @@ export function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative">
+      <div className="absolute top-4 right-4">
+        <ModeToggle />
+      </div>
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
