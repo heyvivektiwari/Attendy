@@ -21,41 +21,37 @@ export async function POST(request: NextRequest) {
 
     const db = getDb()
 
-    // Find the student with this token
-    const student = db
-      .prepare(
-        "SELECT id, reset_token_expires FROM students WHERE reset_token = ?"
-      )
-      .get(token) as { id: number; reset_token_expires: number } | undefined
+    // 1. Find user by valid token
+    const result = await db.query(
+      "SELECT id, reset_token_expires FROM students WHERE reset_token = $1",
+      [token]
+    )
+    const student = result.rows[0]
 
     if (!student) {
       return NextResponse.json(
-        { success: false, message: "Invalid or expired reset link" },
+        { success: false, message: "Invalid or expired reset token" },
         { status: 400 }
       )
     }
 
-    // Check if token has expired
-    if (Date.now() > student.reset_token_expires) {
-      // Clear the expired token
-      db.prepare(
-        "UPDATE students SET reset_token = NULL, reset_token_expires = NULL WHERE id = ?"
-      ).run(student.id)
-
+    // 2. Check if token is expired
+    if (Date.now() > Number(student.reset_token_expires)) {
       return NextResponse.json(
-        { success: false, message: "This reset link has expired. Please request a new one." },
+        { success: false, message: "Reset token has expired. Please request a new one." },
         { status: 400 }
       )
     }
 
-    // Update password and clear token
-    db.prepare(
-      "UPDATE students SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?"
-    ).run(newPassword.trim(), student.id)
+    // 3. Update password and clear the token so it can't be reused
+    await db.query(
+      "UPDATE students SET password = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2",
+      [newPassword.trim(), student.id]
+    )
 
     return NextResponse.json({
       success: true,
-      message: "Password has been reset successfully. You can now log in with your new password.",
+      message: "Password reset successful! You can now log in with your new password.",
     })
   } catch (error) {
     console.error("Reset password error:", error)

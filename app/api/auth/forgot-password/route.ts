@@ -9,49 +9,42 @@ export async function POST(request: NextRequest) {
 
     if (!email) {
       return NextResponse.json(
-        { success: false, message: "Email is required" },
+        { success: false, message: "Email address is required" },
         { status: 400 }
       )
     }
 
     const db = getDb()
 
-    // Look up student by email
-    const student = db
-      .prepare("SELECT id, name, email FROM students WHERE LOWER(email) = LOWER(?)")
-      .get(email.trim()) as { id: number; name: string; email: string } | undefined
+    // 1. Check if user exists
+    const result = await db.query(
+      "SELECT id, name FROM students WHERE LOWER(email) = LOWER($1)",
+      [email.trim()]
+    )
+    const student = result.rows[0]
 
-    if (!student) {
-      // Don't reveal whether the email exists — always show success
-      return NextResponse.json({
-        success: true,
-        message: "If an account with that email exists, a password reset link has been sent.",
-      })
-    }
+    // For security reasons, don't expose whether the email exists or not
+    if (student) {
+      // 2. Generate a secure random token
+      const resetToken = crypto.randomBytes(32).toString("hex")
+      
+      // Token expires in 1 hour (in milliseconds)
+      const tokenExpires = Date.now() + 3600000
 
-    // Generate a secure token
-    const resetToken = crypto.randomBytes(32).toString("hex")
-    const expiresAt = Date.now() + 60 * 60 * 1000 // 1 hour from now
-
-    // Save token to database
-    db.prepare(
-      "UPDATE students SET reset_token = ?, reset_token_expires = ? WHERE id = ?"
-    ).run(resetToken, expiresAt, student.id)
-
-    // Send the reset email
-    try {
-      await sendPasswordResetEmail(student.email, student.name, resetToken)
-    } catch (emailError) {
-      console.error("Failed to send email:", emailError)
-      return NextResponse.json(
-        { success: false, message: "Failed to send reset email. Please check SMTP configuration." },
-        { status: 500 }
+      // 3. Save token to database
+      await db.query(
+        "UPDATE students SET reset_token = $1, reset_token_expires = $2 WHERE id = $3",
+        [resetToken, tokenExpires, student.id]
       )
+
+      // 4. Send the email
+      await sendPasswordResetEmail(email.trim(), resetToken)
     }
 
+    // Always return success to prevent email enumeration attacks
     return NextResponse.json({
       success: true,
-      message: "If an account with that email exists, a password reset link has been sent.",
+      message: "If an account exists with that email, we have sent a password reset link.",
     })
   } catch (error) {
     console.error("Forgot password error:", error)

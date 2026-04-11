@@ -17,16 +17,12 @@ export async function DELETE(request: NextRequest) {
 
     // Delete by email or roll number
     if (email) {
-      result = db
-        .prepare("DELETE FROM students WHERE LOWER(email) = LOWER(?)")
-        .run(email.trim())
+      result = await db.query("DELETE FROM students WHERE LOWER(email) = LOWER($1)", [email.trim()])
     } else {
-      result = db
-        .prepare("DELETE FROM students WHERE UPPER(roll_no) = UPPER(?)")
-        .run(rollNo.trim())
+      result = await db.query("DELETE FROM students WHERE UPPER(roll_no) = UPPER($1)", [rollNo.trim()])
     }
 
-    if (result.changes === 0) {
+    if (result.rowCount === 0) {
       return NextResponse.json(
         { success: false, message: "Student not found" },
         { status: 404 }

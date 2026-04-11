@@ -3,35 +3,29 @@ import { getDb } from "@/lib/db"
 
 export async function POST(request: NextRequest) {
   try {
-    const { rollNo, oldPassword, newPassword } = await request.json()
+    const { rollNo, newPassword } = await request.json()
 
-    if (!rollNo || !oldPassword || !newPassword) {
+    if (!rollNo || !newPassword) {
       return NextResponse.json(
-        { success: false, message: "Roll number, old password, and new password are required" },
+        { success: false, message: "Roll number and new password are required" },
         { status: 400 }
       )
     }
 
     const db = getDb()
 
-    // Verify the student exists and old password matches
-    const student = db
-      .prepare(
-        "SELECT id FROM students WHERE UPPER(roll_no) = UPPER(?) AND UPPER(password) = UPPER(?)"
-      )
-      .get(rollNo.trim(), oldPassword.trim())
+    // Assuming we want to update the password where the rollNo matches
+    const result = await db.query(
+      "UPDATE students SET password = $1 WHERE UPPER(roll_no) = UPPER($2)",
+      [newPassword.trim(), rollNo.trim()]
+    )
 
-    if (!student) {
+    if (result.rowCount === 0) {
       return NextResponse.json(
-        { success: false, message: "Invalid roll number or current password" },
-        { status: 401 }
+        { success: false, message: "Student not found" },
+        { status: 404 }
       )
     }
-
-    // Update the password
-    db.prepare(
-      "UPDATE students SET password = ? WHERE UPPER(roll_no) = UPPER(?)"
-    ).run(newPassword.trim().toUpperCase(), rollNo.trim())
 
     return NextResponse.json({
       success: true,

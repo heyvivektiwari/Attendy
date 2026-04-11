@@ -3,42 +3,44 @@ import { getDb } from "@/lib/db"
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, rollNo, password, division } = await request.json()
+    const { name, rollNo, division, email, password } = await request.json()
 
-    if (!name || !rollNo) {
+    if (!name || !rollNo || !division || !email || !password) {
       return NextResponse.json(
-        { success: false, message: "Name and roll number are required" },
+        { success: false, message: "Name, roll number, division, email, and password are required" },
         { status: 400 }
       )
     }
 
     const db = getDb()
 
-    // Check if student already exists
-    const existing = db
-      .prepare("SELECT id FROM students WHERE UPPER(roll_no) = UPPER(?)")
-      .get(rollNo.trim())
-
-    if (existing) {
+    // Check if rollno exists
+    const check1 = await db.query("SELECT id FROM students WHERE UPPER(roll_no) = UPPER($1)", [rollNo.trim()])
+    if (check1.rowCount && check1.rowCount > 0) {
       return NextResponse.json(
-        { success: false, message: `Student with roll number ${rollNo} already exists` },
+        { success: false, message: "A student with this roll number already exists" },
+        { status: 409 }
+      )
+    }
+    
+    // Check if email exists
+    const check2 = await db.query("SELECT id FROM students WHERE LOWER(email) = LOWER($1)", [email.trim()])
+    if (check2.rowCount && check2.rowCount > 0) {
+      return NextResponse.json(
+        { success: false, message: "A student with this email address already exists" },
         { status: 409 }
       )
     }
 
-    // Insert the new student (password defaults to roll number if not provided)
-    db.prepare(
-      "INSERT INTO students (name, roll_no, password, division) VALUES (?, ?, ?, ?)"
-    ).run(
-      name.trim(),
-      rollNo.trim().toUpperCase(),
-      (password || rollNo).trim().toUpperCase(),
-      (division || "A").trim().toUpperCase()
+    // Insert
+    await db.query(
+      "INSERT INTO students (name, roll_no, password, division, email) VALUES ($1, $2, $3, $4, $5)",
+      [name.trim(), rollNo.trim().toUpperCase(), password.trim(), division.trim().toUpperCase(), email.trim().toLowerCase()]
     )
 
     return NextResponse.json({
       success: true,
-      message: `Student ${name} (${rollNo}) added successfully`,
+      message: "Student added successfully",
     })
   } catch (error) {
     console.error("Add student error:", error)

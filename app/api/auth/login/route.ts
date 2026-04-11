@@ -15,13 +15,12 @@ export async function POST(request: NextRequest) {
     const db = getDb()
 
     // Look up the student by email (case-insensitive)
-    const student = db
-      .prepare(
-        "SELECT id, name, roll_no, division FROM students WHERE LOWER(email) = LOWER(?) AND password = ?"
-      )
-      .get(email.trim(), password.trim()) as
-      | { id: number; name: string; roll_no: string; division: string }
-      | undefined
+    const result = await db.query(
+      "SELECT id, name, roll_no, division FROM students WHERE LOWER(email) = LOWER($1) AND password = $2",
+      [email.trim(), password.trim()]
+    )
+    
+    const student = result.rows[0]
 
     if (!student) {
       return NextResponse.json(
