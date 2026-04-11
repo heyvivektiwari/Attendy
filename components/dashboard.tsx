@@ -91,7 +91,7 @@ export function Dashboard() {
             </div>
             <div>
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                {getGreeting()}, <span className="text-primary">{user?.name.split(' ')[0]}</span>!
+                {getGreeting()}, <span className="text-primary">{user?.name ? user.name.split(' ')[0].charAt(0).toUpperCase() + user.name.split(' ')[0].slice(1).toLowerCase() : 'Student'}</span>!
               </h2>
               <p className="text-muted-foreground text-lg mt-2 max-w-md">
                 Welcome back to <span className="font-bold text-foreground">Attendy</span>. Your attendance overview is ready.
