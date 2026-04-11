@@ -2,7 +2,7 @@
 
 import { useAttendanceStore } from "@/lib/attendance-store"
 import { Button } from "@/components/ui/button"
-import { LogOut, Menu, Calendar, LayoutGrid, BarChart2, MessageSquare, ChevronDown } from "lucide-react"
+import { LogOut, Menu, Calendar, LayoutGrid, BarChart2, MessageSquare, ChevronDown, Check, X } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -268,17 +268,21 @@ export function DashboardHeader() {
                 variant="outline" 
                 size="sm" 
                 onClick={() => discardChanges()}
-                className="h-9 px-3 text-xs font-bold border-destructive text-destructive hover:bg-destructive/10"
+                className="h-9 w-9 p-0 sm:w-auto sm:px-3 text-xs font-bold border-destructive text-destructive hover:bg-destructive/10"
+                title="Discard Changes"
               >
-                Discard
+                <X className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Discard</span>
               </Button>
               <Button 
                 variant="default" 
                 size="sm" 
                 onClick={() => saveChanges()}
-                className="h-9 px-5 text-xs font-extrabold bg-primary dark:bg-primary/20 dark:text-white dark:border-primary/50 border-2 shadow-[0_0_15px_rgba(46,199,255,0.4)]"
+                className="h-9 w-9 p-0 sm:w-auto sm:px-5 text-xs font-extrabold bg-primary dark:bg-primary/20 dark:text-white dark:border-primary/50 border-2 shadow-[0_0_15px_rgba(46,199,255,0.4)]"
+                title="Save Changes"
               >
-                Save Changes
+                <Check className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Save</span>
               </Button>
             </div>
           )}
