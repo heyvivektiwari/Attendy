@@ -210,10 +210,6 @@ function WeekSection({
 }) {
   const [isExpanded, setIsExpanded] = useState(true)
   
-  const currentDayIndex = new Date().getDay() - 1
-  const validDayIndex = currentDayIndex >= 0 && currentDayIndex <= 4 ? currentDayIndex : 0
-  const [expandedDay, setExpandedDay] = useState<typeof days[number] | null>(days[validDayIndex])
-  
   const getLecturesForDay = (day: typeof days[number]) => {
     return weekLectures
       .filter((l) => l.day === day)
@@ -250,29 +246,18 @@ function WeekSection({
       {isExpanded && (
         <>
           {/* Desktop Grid */}
-          <div className="hidden lg:flex flex-row gap-4 shrink-0 transition-all duration-300">
+          <div className="hidden lg:grid lg:grid-cols-5 gap-4 shrink-0">
             {days.map((day) => {
               const dayLectures = getLecturesForDay(day)
               const { before, after } = splitByBreak(dayLectures)
               const hasAfternoon = after.length > 0
-              const isDayExpanded = expandedDay === day
               
               return (
-                <div 
-                  key={day} 
-                  onClick={() => setExpandedDay(day)}
-                  className={cn(
-                    "flex flex-col border-2 rounded-xl overflow-hidden bg-card transition-all duration-300 cursor-pointer hover:border-primary/50 hover:shadow-lg", 
-                    tableOuterBorders[day],
-                    isDayExpanded ? "flex-[3] min-h-[250px]" : "flex-[1] min-h-[50px] opacity-75 hover:opacity-100"
-                  )}
-                >
-                  <div className={cn("text-center py-2.5 transition-all dark:border-opacity-30", isDayExpanded ? "border-b-2 border-border/60" : "border-b-0", headerColors[day])}>
+                <div key={day} className={cn("flex flex-col border-2 rounded-xl overflow-hidden bg-card min-h-[250px] transition-all hover:border-primary/50 hover:shadow-lg", tableOuterBorders[day])}>
+                  <div className={cn("text-center py-2.5 border-b-2 border-border/60 dark:border-opacity-30", headerColors[day])}>
                     <p className="font-bold text-sm tracking-wide">{dayLabels[day]}</p>
                   </div>
-                  
-                  {isDayExpanded && (
-                    <div className={cn("p-3 space-y-2 flex-1 animate-in fade-in slide-in-from-top-2", tableBodyBackgrounds[day])}>
+                  <div className={cn("p-3 space-y-2 flex-1", tableBodyBackgrounds[day])}>
                     {dayLectures.length > 0 ? (
                       <>
                         {before.map((lecture) => (
@@ -304,7 +289,6 @@ function WeekSection({
                       </div>
                     )}
                   </div>
-                  )}
                 </div>
               )
             })}
@@ -317,28 +301,18 @@ function WeekSection({
               if (dayLectures.length === 0) return null
               
               const { before, after } = splitByBreak(dayLectures)
-              const isDayExpanded = expandedDay === day
               
               return (
-                <div 
-                  key={day} 
-                  onClick={() => setExpandedDay(isDayExpanded ? null : day)}
-                  className={cn("rounded-xl border-2 overflow-hidden bg-card shadow-sm cursor-pointer transition-all", tableOuterBorders[day])}
-                >
-                  <div className={cn("py-3 px-4 flex items-center justify-between transition-all dark:border-opacity-30", isDayExpanded ? "border-b-2 border-border/60" : "border-b-0", mobileHeaderColors[day])}>
-                    <div className="flex items-center justify-between w-full">
+                <div key={day} className={cn("rounded-xl border-2 overflow-hidden bg-card shadow-sm", tableOuterBorders[day])}>
+                  <div className={cn("py-3 px-4 border-b-2 border-border/60 dark:border-opacity-30", mobileHeaderColors[day])}>
+                    <div className="flex items-center justify-between">
                       <p className="font-bold text-[15px] tracking-wide">{dayLabels[day]}</p>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="bg-background/50 border-current/20 text-xs">
-                          {dayLectures.length} Lectures
-                        </Badge>
-                        {isDayExpanded ? <ChevronUp className="h-4 w-4 opacity-50" /> : <ChevronDown className="h-4 w-4 opacity-50" />}
-                      </div>
+                      <Badge variant="outline" className="bg-background/50 border-current/20 text-xs">
+                        {dayLectures.length} Lectures
+                      </Badge>
                     </div>
                   </div>
-                  
-                  {isDayExpanded && (
-                    <div className={cn("p-3.5 space-y-3 animate-in fade-in slide-in-from-top-2", tableBodyBackgrounds[day])}>
+                  <div className={cn("p-3.5 space-y-3", tableBodyBackgrounds[day])}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {before.map((lecture) => (
                         <LectureCard
@@ -361,7 +335,6 @@ function WeekSection({
                       ))}
                     </div>
                   </div>
-                  )}
                 </div>
               )
             })}
