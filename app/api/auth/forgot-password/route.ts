@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     // Always return success to prevent email enumeration attacks
     return NextResponse.json({
       success: true,
-      message: "If an account exists with that email, we have sent a password reset link.",
+      message: "We have sent a password reset link to the registered email.",
     })
   } catch (error) {
     console.error("Forgot password error:", error)
