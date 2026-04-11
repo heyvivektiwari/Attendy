@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getDb } from "@/lib/db"
 
+export const runtime = "nodejs"
+
 export async function POST(request: NextRequest) {
   try {
     const { name, rollNo, division, email, password } = await request.json()

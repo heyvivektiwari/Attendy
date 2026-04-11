@@ -7,7 +7,6 @@ import { ModeToggle } from "@/components/mode-toggle"
 
 export function DashboardHeader() {
   const { user, logout } = useAttendanceStore()
-  const { theme, setTheme } = useTheme()
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">

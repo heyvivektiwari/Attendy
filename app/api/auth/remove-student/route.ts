@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getDb } from "@/lib/db"
 
+export const runtime = "nodejs"
+
 export async function DELETE(request: NextRequest) {
   try {
     const { email, rollNo } = await request.json()
