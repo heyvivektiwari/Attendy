@@ -54,8 +54,9 @@ export function SubjectCard({ subjectId, record }: SubjectCardProps) {
 
   return (
     <Card className={cn(
-      "group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5",
-      isLab && "border-primary/20 bg-primary/[0.02]"
+      "group relative flex flex-col h-full overflow-hidden transition-all duration-300 border-[3px] hover:-translate-y-1 hover:border-primary",
+      "shadow-[0_10px_40px_rgba(26,19,47,0.12)] hover:shadow-[0_15px_50px_rgba(26,19,47,0.2)]",
+      "bg-white dark:bg-card border-[#1A132F]/20 dark:border-primary/30"
     )}>
       <div className={cn("absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100", status.bg)} />
       <CardHeader className="relative pb-2">
@@ -83,8 +84,8 @@ export function SubjectCard({ subjectId, record }: SubjectCardProps) {
           {subject.name}
         </CardTitle>
       </CardHeader>
-      <CardContent className="relative">
-        <div className="flex items-end justify-between mb-3">
+      <CardContent className="relative flex-1 flex flex-col">
+        <div className="flex items-end justify-between mb-3 mt-auto">
           <div>
             <span className={cn("text-3xl font-bold tabular-nums", status.text)}>
               {percentage}%
@@ -97,9 +98,9 @@ export function SubjectCard({ subjectId, record }: SubjectCardProps) {
             <p className="text-xs text-muted-foreground">{subject.faculty}</p>
           </div>
         </div>
-        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+        <div className="h-2.5 bg-secondary/80 rounded-full overflow-hidden border border-border/50 shadow-inner">
           <div
-            className={cn("h-full rounded-full transition-all duration-500 ease-out", status.progress)}
+            className={cn("h-full rounded-full transition-all duration-500 ease-out shadow-sm", status.progress)}
             style={{ width: `${percentage}%` }}
           />
         </div>

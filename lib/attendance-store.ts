@@ -183,12 +183,18 @@ interface AttendanceStats {
   overall: { attended: number; total: number; percentage: number }
 }
 
-// Semester months (Jan 2026 to Apr 2026)
+// Semester months (Term 1: Jan-May, Term 2: July-Nov)
 export const SEMESTER_MONTHS = [
   { month: 0, year: 2026, label: "January 2026" },
   { month: 1, year: 2026, label: "February 2026" },
   { month: 2, year: 2026, label: "March 2026" },
   { month: 3, year: 2026, label: "April 2026" },
+  { month: 4, year: 2026, label: "May 2026" },
+  { month: 6, year: 2026, label: "July 2026" },
+  { month: 7, year: 2026, label: "August 2026" },
+  { month: 8, year: 2026, label: "September 2026" },
+  { month: 9, year: 2026, label: "October 2026" },
+  { month: 10, year: 2026, label: "November 2026" },
 ]
 
 export function getMonthLabel(month: number, year: number): string {
@@ -215,7 +221,21 @@ interface AttendanceState {
   setCurrentMonth: (month: number, year: number) => void
   toggleDarkMode: () => void
   initializeMonth: (month: number, year: number) => void
-  getAttendanceStats: (monthFilter?: number, yearFilter?: number) => AttendanceStats
+  getAttendanceStats: (filter?: { month?: number, year?: number, startMonth?: number, startYear?: number, endMonth?: number, endYear?: number }) => AttendanceStats
+  statsMode: "monthly" | "overall"
+  setStatsMode: (mode: "monthly" | "overall") => void
+  mainView: "dashboard" | "attendance-marker" | "contact"
+  setMainView: (view: "dashboard" | "attendance-marker" | "contact") => void
+  rangeStartMonth: number
+  rangeStartYear: number
+  rangeEndMonth: number
+  rangeEndYear: number
+  setRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) => void
+  pendingChanges: Record<string, boolean> // id -> isAbsent
+  setPendingChange: (lectureId: string, isAbsent: boolean) => void
+  saveChanges: () => void
+  hasPendingChanges: () => boolean
+  discardChanges: () => void
 }
 
 // Get all weekdays (Mon-Fri) in a given month
@@ -320,6 +340,44 @@ export const useAttendanceStore = create<AttendanceState>()(
       user: null,
       isAuthenticated: false,
       isDarkMode: true,
+      statsMode: "monthly",
+      mainView: "dashboard",
+      rangeStartMonth: SEMESTER_MONTHS[0].month,
+      rangeStartYear: SEMESTER_MONTHS[0].year,
+      rangeEndMonth: getCurrentMonth().month,
+      rangeEndYear: getCurrentMonth().year,
+
+      setStatsMode: (mode) => set({ statsMode: mode }),
+      setMainView: (view) => set({ mainView: view }),
+      setRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) => {
+        set({ rangeStartMonth: startMonth, rangeStartYear: startYear, rangeEndMonth: endMonth, rangeEndYear: endYear })
+      },
+      pendingChanges: {},
+      setPendingChange: (id, isAbsent) => {
+        set((state) => ({
+          pendingChanges: { ...state.pendingChanges, [id]: isAbsent }
+        }))
+      },
+      hasPendingChanges: () => {
+        const { pendingChanges, lectures } = get()
+        return Object.entries(pendingChanges).some(([id, isAbsent]) => {
+          const lecture = lectures.find(l => l.id === id)
+          return lecture && lecture.isAbsent !== isAbsent
+        })
+      },
+      saveChanges: () => {
+        const { pendingChanges, lectures } = get()
+        const newLectures = lectures.map(l => {
+          if (pendingChanges[l.id] !== undefined) {
+            return { ...l, isAbsent: pendingChanges[l.id] }
+          }
+          return l
+        })
+        set({ lectures: newLectures, pendingChanges: {} })
+      },
+      discardChanges: () => {
+        set({ pendingChanges: {} })
+      },
 
       login: (name, rollNo, division) => {
         set({ user: { name, rollNo, division }, isAuthenticated: true })
@@ -359,7 +417,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         }))
       },
 
-      getAttendanceStats: (monthFilter?: number, yearFilter?: number) => {
+      getAttendanceStats: (filter?: { month?: number, year?: number, startMonth?: number, startYear?: number, endMonth?: number, endYear?: number }) => {
         const { lectures } = get()
         const bySubject = new Map<string, AttendanceRecord>()
 
@@ -374,8 +432,15 @@ export const useAttendanceStore = create<AttendanceState>()(
 
         // Calculate stats based on filters 
         lectures.forEach((lecture) => {
-          if (monthFilter !== undefined && yearFilter !== undefined) {
-             if (lecture.month !== monthFilter || lecture.year !== yearFilter) return
+          if (filter) {
+            if (filter.month !== undefined && filter.year !== undefined) {
+              if (lecture.month !== filter.month || lecture.year !== filter.year) return
+            } else if (filter.startMonth !== undefined && filter.startYear !== undefined && filter.endMonth !== undefined && filter.endYear !== undefined) {
+              const lectureDate = new Date(lecture.year, lecture.month)
+              const startDate = new Date(filter.startYear, filter.startMonth)
+              const endDate = new Date(filter.endYear, filter.endMonth)
+              if (lectureDate < startDate || lectureDate > endDate) return
+            }
           }
           
           const record = bySubject.get(lecture.subjectId)
