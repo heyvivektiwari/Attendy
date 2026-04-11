@@ -14,10 +14,17 @@ import { cn } from "@/lib/utils"
 type FilterType = "all" | "warning" | "critical"
 
 export function Dashboard() {
-  const { lectures, currentMonth, currentYear, setCurrentMonth, toggleAbsent, getAttendanceStats, initializeMonth } = useAttendanceStore()
+  const { user, lectures, currentMonth, currentYear, setCurrentMonth, toggleAbsent, getAttendanceStats, initializeMonth } = useAttendanceStore()
   const [filter, setFilter] = useState<FilterType>("all")
   const [mounted, setMounted] = useState(false)
   const [statsMode, setStatsMode] = useState<"monthly" | "overall">("monthly")
+
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return "Good morning"
+    if (hour < 17) return "Good afternoon"
+    return "Good evening"
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -71,8 +78,14 @@ export function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
-      
       <main className="container mx-auto px-4 py-6 space-y-6">
+        {user && (
+          <div className="space-y-0.5">
+            <h2 className="text-2xl font-bold tracking-tight">{getGreeting()}, {user.name.split(' ')[0]} 👋</h2>
+            <p className="text-muted-foreground">Here's an overview of your attendance.</p>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-1 p-1 bg-secondary/30 rounded-xl border border-border/50 w-fit">
             <Button 
