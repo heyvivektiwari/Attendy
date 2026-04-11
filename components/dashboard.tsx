@@ -316,13 +316,13 @@ export function Dashboard() {
                  <p className="text-muted-foreground">
                    Send us an email and we'll get back to you within 24 hours.
                  </p>
-                 <a href="mailto:support@attendy.com" className="flex items-center gap-4 p-5 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-all group border-2 border-border/60 hover:border-primary/50 mt-4">
+                 <a href="mailto:support@attendy.com" className="flex items-center gap-4 p-5 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-all group border-2 border-border/60 hover:border-primary/50 mt-4 overflow-hidden min-w-0">
                    <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors border border-primary/20">
                      <Mail className="h-6 w-6" />
                    </div>
                    <div className="flex flex-col">
                      <span className="text-xs font-black text-primary uppercase tracking-widest">Official Email</span>
-                     <span className="font-extrabold text-xl">support@attendy.com</span>
+                     <span className="font-extrabold text-base sm:text-xl break-all">support@attendy.com</span>
                    </div>
                  </a>
               </div>
