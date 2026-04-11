@@ -7,6 +7,7 @@ export function getDb(): Pool {
 
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 5000, // Timeout after 5 seconds to prevent hanging
     // Add sslmode=require if it isn't in the connection string, required by Supabase
     ssl: {
       rejectUnauthorized: false
