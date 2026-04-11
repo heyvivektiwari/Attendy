@@ -26,7 +26,7 @@ function PasswordInput({ value, onChange, placeholder, disabled, id, minLength }
         required
         disabled={disabled}
         minLength={minLength}
-        className="pr-10"
+        className="pr-10 h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
       />
       <button
         type="button"
@@ -167,10 +167,8 @@ export function LoginForm() {
       </div>
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <Logo imageSize={80} textSize="text-4xl" className="flex-col gap-4" />
-          </div>
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-black tracking-tighter text-primary">Attendy</h1>
           <p className="text-muted-foreground text-lg">Track your attendance, stay on track</p>
         </div>
 
@@ -200,6 +198,7 @@ export function LoginForm() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       disabled={isLoading}
+                      className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
                   <Field>
@@ -293,6 +292,7 @@ export function LoginForm() {
                       onChange={(e) => setName(e.target.value)}
                       required
                       disabled={isLoading}
+                      className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
                   <Field>
@@ -305,6 +305,7 @@ export function LoginForm() {
                       onChange={(e) => setRollNo(e.target.value.toUpperCase())}
                       required
                       disabled={isLoading}
+                      className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
                   <Field>
@@ -317,6 +318,7 @@ export function LoginForm() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       disabled={isLoading}
+                      className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
                   <Field>
@@ -411,6 +413,7 @@ export function LoginForm() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       disabled={isLoading}
+                      className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
                 </FieldGroup>
