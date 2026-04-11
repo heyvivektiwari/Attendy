@@ -1,24 +1,27 @@
 import { Pool } from "pg"
 
+// Force bypass SSL certificate validation globally for this server instance
+// This is required for some Supabase connection poolers on Vercel
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
 let pool: Pool | null = null
 
 export function getDb(): Pool {
   if (pool) return pool
 
-  // Force bypass SSL certificate validation for serverless connection to Supabase
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  const connectionString = process.env.DATABASE_URL?.trim()
 
-  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.trim() === "") {
-    throw new Error("Critical Error: DATABASE_URL is missing or empty in environment variables. Please add it to Vercel settings.")
+  if (!connectionString) {
+    throw new Error("Critical Error: DATABASE_URL is missing or empty. Please check Vercel environment variables.")
   }
 
   pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    connectionTimeoutMillis: 5000,
-    max: 1, // Crucial for Vercel Serverless! Prevents pool exhaustion
+    connectionString: connectionString,
+    max: 1,
+    connectionTimeoutMillis: 10000,
     idleTimeoutMillis: 30000,
     ssl: {
-      rejectUnauthorized: false,
+      rejectUnauthorized: false
     }
   })
 
