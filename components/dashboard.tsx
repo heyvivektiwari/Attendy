@@ -99,9 +99,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          <div className="relative z-10 flex items-center gap-4 bg-background/50 backdrop-blur-md p-4 rounded-2xl border border-border/50 shadow-xl self-start md:self-center">
-            <Logo imageSize={64} textSize="text-3xl" isBold={true} className="gap-5" />
-          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

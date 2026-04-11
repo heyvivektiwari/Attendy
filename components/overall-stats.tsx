@@ -121,13 +121,8 @@ export function OverallStats({ theory, lab, overall }: OverallStatsProps) {
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="flex items-center gap-6">
-              <div className="relative">
-                <div className={cn("p-4 rounded-2xl", overallStatus.bg)}>
-                  <StatusIcon className={cn("h-8 w-8", overallStatus.color)} />
-                </div>
-                <div className="absolute -bottom-2 -right-2 bg-background p-1 rounded-lg border shadow-sm">
-                  <Logo showText={false} imageSize={20} />
-                </div>
+              <div className={cn("p-4 rounded-2xl", overallStatus.bg)}>
+                <StatusIcon className={cn("h-8 w-8", overallStatus.color)} />
               </div>
               <div>
                 <div className="flex items-baseline gap-2">
