@@ -251,7 +251,7 @@ export function DashboardHeader() {
             </SheetContent>
           </Sheet>
           <span 
-            className="font-bold text-3xl hidden sm:block cursor-pointer hover:opacity-80 transition-opacity ml-2"
+            className="font-black text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition-opacity ml-1 sm:ml-2 tracking-tighter"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" })
               setTimeout(() => window.location.reload(), 400)
