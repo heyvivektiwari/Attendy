@@ -88,8 +88,7 @@ export async function sendPasswordResetEmail({
             If you didn't request this, you can safely ignore this email. Your password won't be changed.
           </p>
           <hr style="border: none; border-top: 1px solid #2a2b3d; margin: 24px 0;" />
-          <p style="font-size: 11px; color: #52525b; text-align: center;">
-            Lokmanya Tilak College of Engineering · SE Sem IV Div A
+            Lokmanya Tilak College of Engineering
           </p>
         </div>
       </div>

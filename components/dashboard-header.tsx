@@ -17,7 +17,7 @@ export function DashboardHeader() {
           </div>
           <div>
             <h1 className="font-bold text-lg leading-none">Attendy</h1>
-            <p className="text-xs text-muted-foreground">SE Sem IV Div A</p>
+            <p className="text-xs text-muted-foreground">College Attendance</p>
           </div>
         </div>
 

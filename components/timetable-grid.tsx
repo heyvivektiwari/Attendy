@@ -269,9 +269,9 @@ function WeekSection({
               const { before, after } = splitByBreak(dayLectures)
               
               return (
-                <div key={day} className="space-y-2">
-                  <div className="py-1.5 px-3 bg-secondary/30 rounded-md">
-                    <p className="font-medium text-xs">{dayLabels[day]}</p>
+                <div key={day} className="space-y-3 pb-4 border-b border-border/40 last:border-0 last:pb-0">
+                  <div className="py-2.5 px-4 bg-secondary/80 rounded-lg shadow-sm border border-border/50">
+                    <p className="font-bold text-md text-primary tracking-wide">{dayLabels[day]}</p>
                   </div>
                   <div className="space-y-2">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -344,7 +344,7 @@ export function TimetableGrid({ lectures, currentMonth, currentYear, onMonthChan
             <div>
               <CardTitle className="text-lg">Monthly Timetable</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {monthLabel} · {presentThisMonth}/{totalThisMonth} present ({monthPercentage}%) · A3 Batch
+                {monthLabel} · {presentThisMonth}/{totalThisMonth} present ({monthPercentage}%)
               </p>
             </div>
           </div>
