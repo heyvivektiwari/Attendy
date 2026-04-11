@@ -4,6 +4,7 @@ import { useAttendanceStore } from "@/lib/attendance-store"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, LogOut } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
+import { Logo } from "@/components/logo"
 
 export function DashboardHeader() {
   const { user, logout } = useAttendanceStore()
@@ -11,14 +12,8 @@ export function DashboardHeader() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <GraduationCap className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="font-bold text-lg leading-none">Attendy</h1>
-            <p className="text-xs text-muted-foreground">College Attendance</p>
-          </div>
+        <div className="flex items-center gap-4">
+          <Logo imageSize={44} textSize="text-2xl" />
         </div>
 
         <div className="flex items-center gap-3">

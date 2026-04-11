@@ -7,9 +7,10 @@ import { OverallStats } from "./overall-stats"
 import { SubjectCard } from "./subject-card"
 import { TimetableGrid } from "./timetable-grid"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LayoutGrid, Calendar, AlertTriangle, Filter, BookOpen, FlaskConical } from "lucide-react"
+import { LayoutGrid, Calendar, AlertTriangle, Filter, BookOpen, FlaskConical, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Logo } from "@/components/logo"
 
 type FilterType = "all" | "warning" | "critical"
 
@@ -79,14 +80,29 @@ export function Dashboard() {
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       <main className="container mx-auto px-4 py-6 space-y-6">
-        {user && (
-          <div className="space-y-0.5">
-            <h2 className="text-2xl font-bold tracking-tight">
-              {getGreeting()}, {user.name.split(' ')[0].charAt(0).toUpperCase() + user.name.split(' ')[0].slice(1).toLowerCase()} 👋
-            </h2>
-            <p className="text-muted-foreground">Here's an overview of your attendance.</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-primary/5 p-8 rounded-3xl border border-primary/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
+          
+          <div className="relative z-10 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
+              <Sparkles className="h-3 w-3" />
+              Student Portal
+            </div>
+            <div>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                {getGreeting()}, <span className="text-primary">{user?.name.split(' ')[0]}</span>!
+              </h2>
+              <p className="text-muted-foreground text-lg mt-2 max-w-md">
+                Welcome back to <span className="font-bold text-foreground">Attendy</span>. Your attendance overview is ready.
+              </p>
+            </div>
           </div>
-        )}
+
+          <div className="relative z-10 flex items-center gap-4 bg-background/50 backdrop-blur-md p-4 rounded-2xl border border-border/50 shadow-xl self-start md:self-center">
+            <Logo imageSize={64} textSize="text-3xl" isBold={true} className="gap-5" />
+          </div>
+        </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-1 p-1 bg-secondary/30 rounded-xl border border-border/50 w-fit">

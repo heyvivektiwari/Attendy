@@ -9,6 +9,7 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu" // Unrelated, just 
 import { GraduationCap, Sparkles, Loader2, AlertCircle, CheckCircle2, ArrowLeft, Eye, EyeOff } from "lucide-react"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { ModeToggle } from "@/components/mode-toggle"
+import { Logo } from "@/components/logo"
 
 type View = "login" | "register" | "forgot-password"
 
@@ -166,12 +167,11 @@ export function LoginForm() {
       </div>
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/10 mb-4">
-            <GraduationCap className="h-10 w-10 text-primary" />
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <Logo imageSize={80} textSize="text-4xl" className="flex-col gap-4" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Attendy</h1>
-          <p className="text-muted-foreground">Track your attendance, stay on track</p>
+          <p className="text-muted-foreground text-lg">Track your attendance, stay on track</p>
         </div>
 
         {/* ============ LOGIN VIEW ============ */}
