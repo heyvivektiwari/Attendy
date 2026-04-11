@@ -14,17 +14,26 @@ export async function POST(request: NextRequest) {
 
     const db = getDb()
 
-    // Look up the student by email (case-insensitive)
+    // 1. Look up the student by email ONLY (case-insensitive)
     const result = await db.query(
-      "SELECT id, name, roll_no, division FROM students WHERE LOWER(email) = LOWER($1) AND password = $2",
-      [email.trim(), password.trim()]
+      "SELECT id, name, roll_no, division, password FROM students WHERE LOWER(email) = LOWER($1)",
+      [email.trim()]
     )
     
     const student = result.rows[0]
 
+    // 2. If the email is not found at all
     if (!student) {
       return NextResponse.json(
-        { success: false, message: "Invalid email or password" },
+        { success: false, message: "Not a registered email" },
+        { status: 404 }
+      )
+    }
+
+    // 3. If the email exists, but the password does not match
+    if (student.password !== password.trim()) {
+      return NextResponse.json(
+        { success: false, message: "Invalid password" },
         { status: 401 }
       )
     }
