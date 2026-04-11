@@ -430,7 +430,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-a3",
+      name: "attendance-storage-monthly-v2",
     }
   )
 )
