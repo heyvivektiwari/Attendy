@@ -18,6 +18,22 @@ const dayLabels = {
   FRI: "Friday",
 }
 
+const headerColors = {
+  MON: "bg-blue-500/15 text-blue-700 dark:text-blue-400 dark:bg-blue-500/20",
+  TUE: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-500/20",
+  WED: "bg-amber-500/15 text-amber-700 dark:text-amber-400 dark:bg-amber-500/20",
+  THU: "bg-purple-500/15 text-purple-700 dark:text-purple-400 dark:bg-purple-500/20",
+  FRI: "bg-rose-500/15 text-rose-700 dark:text-rose-400 dark:bg-rose-500/20",
+}
+
+const mobileHeaderColors = {
+  MON: "bg-blue-500/15 text-blue-700 dark:text-blue-400 dark:bg-blue-500/20 border-blue-500/20",
+  TUE: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-500/20 border-emerald-500/20",
+  WED: "bg-amber-500/15 text-amber-700 dark:text-amber-400 dark:bg-amber-500/20 border-amber-500/20",
+  THU: "bg-purple-500/15 text-purple-700 dark:text-purple-400 dark:bg-purple-500/20 border-purple-500/20",
+  FRI: "bg-rose-500/15 text-rose-700 dark:text-rose-400 dark:bg-rose-500/20 border-rose-500/20",
+}
+
 interface TimetableGridProps {
   lectures: Lecture[]
   currentMonth: number
@@ -212,18 +228,18 @@ function WeekSection({
       {isExpanded && (
         <>
           {/* Desktop Grid */}
-          <div className="hidden lg:grid lg:grid-cols-5 gap-4">
+          <div className="hidden lg:grid lg:grid-cols-5 gap-0 border border-border rounded-lg overflow-hidden shrink-0">
             {days.map((day) => {
               const dayLectures = getLecturesForDay(day)
               const { before, after } = splitByBreak(dayLectures)
               const hasAfternoon = after.length > 0
               
               return (
-                <div key={day} className="space-y-2">
-                  <div className="text-center py-1.5 bg-secondary/30 rounded-md">
-                    <p className="font-medium text-xs">{dayLabels[day]}</p>
+                <div key={day} className="flex flex-col border-r border-border last:border-r-0 bg-card min-h-[250px]">
+                  <div className={cn("text-center py-2.5 border-b border-border/50", headerColors[day])}>
+                    <p className="font-bold text-sm tracking-wide">{dayLabels[day]}</p>
                   </div>
-                  <div className="space-y-2 min-h-[120px]">
+                  <div className="p-3 space-y-2 flex-1 bg-secondary/5">
                     {dayLectures.length > 0 ? (
                       <>
                         {before.map((lecture) => (
@@ -235,7 +251,7 @@ function WeekSection({
                         ))}
                         
                         {hasAfternoon && before.length > 0 && (
-                          <div className="flex items-center justify-center gap-1 py-1 text-xs text-muted-foreground">
+                          <div className="flex items-center justify-center gap-1 py-1.5 border-y border-dashed border-border/60 my-2 text-xs text-muted-foreground bg-secondary/30 rounded-md">
                             <Coffee className="h-3 w-3" />
                             <span>Break</span>
                           </div>
@@ -250,8 +266,8 @@ function WeekSection({
                         ))}
                       </>
                     ) : (
-                      <div className="text-center py-6 text-muted-foreground text-xs">
-                        No lectures
+                      <div className="flex items-center justify-center h-full text-muted-foreground text-xs font-medium">
+                        <span className="bg-secondary/40 px-3 py-1.5 rounded-md">Free Day 🎉</span>
                       </div>
                     )}
                   </div>
@@ -261,7 +277,7 @@ function WeekSection({
           </div>
 
           {/* Mobile/Tablet List */}
-          <div className="lg:hidden space-y-3">
+          <div className="lg:hidden space-y-4">
             {days.map((day) => {
               const dayLectures = getLecturesForDay(day)
               if (dayLectures.length === 0) return null
@@ -269,12 +285,17 @@ function WeekSection({
               const { before, after } = splitByBreak(dayLectures)
               
               return (
-                <div key={day} className="space-y-3 pb-4 border-b border-border/40 last:border-0 last:pb-0">
-                  <div className="py-2.5 px-4 bg-secondary/80 rounded-lg shadow-sm border border-border/50">
-                    <p className="font-bold text-md text-primary tracking-wide">{dayLabels[day]}</p>
+                <div key={day} className="rounded-xl border border-border overflow-hidden bg-card shadow-sm">
+                  <div className={cn("py-3 px-4 border-b", mobileHeaderColors[day])}>
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold text-[15px] tracking-wide">{dayLabels[day]}</p>
+                      <Badge variant="outline" className="bg-background/50 border-current/20 text-xs">
+                        {dayLectures.length} Lectures
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="p-3.5 space-y-3 bg-secondary/5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {before.map((lecture) => (
                         <LectureCard
                           key={lecture.id}
@@ -286,7 +307,7 @@ function WeekSection({
                     
                     {after.length > 0 && before.length > 0 && <BreakRow />}
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {after.map((lecture) => (
                         <LectureCard
                           key={lecture.id}
