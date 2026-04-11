@@ -30,9 +30,9 @@ export function DashboardHeader() {
 
         <div className="flex items-center gap-2">
           {user && (
-            <div className="hidden sm:block text-right mr-4">
-              <p className="text-sm font-medium">{getGreeting()}, {user.name.split(' ')[0]} 👋</p>
-              <p className="text-xs text-muted-foreground">Roll No: {user.rollNo}</p>
+            <div className="flex flex-col text-right mr-2 sm:mr-4">
+              <p className="text-[13px] sm:text-sm font-medium whitespace-nowrap">{getGreeting()}, {user.name.split(' ')[0]} 👋</p>
+              <p className="hidden sm:block text-xs text-muted-foreground">Roll No: {user.rollNo}</p>
             </div>
           )}
           

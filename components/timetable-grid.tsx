@@ -35,19 +35,19 @@ const mobileHeaderColors = {
 }
 
 const tableOuterBorders = {
-  MON: "border-border/60 dark:border-blue-500/50 dark:shadow-[0_0_20px_rgba(59,130,246,0.1)]",
-  TUE: "border-border/60 dark:border-emerald-500/50 dark:shadow-[0_0_20px_rgba(16,185,129,0.1)]",
-  WED: "border-border/60 dark:border-amber-500/50 dark:shadow-[0_0_20px_rgba(245,158,11,0.1)]",
-  THU: "border-border/60 dark:border-purple-500/50 dark:shadow-[0_0_20px_rgba(168,85,247,0.1)]",
-  FRI: "border-border/60 dark:border-cyan-500/50 dark:shadow-[0_0_20px_rgba(6,182,212,0.1)]",
+  MON: "border-blue-200 shadow-lg shadow-blue-500/10 dark:shadow-[0_0_20px_rgba(59,130,246,0.1)] dark:border-blue-500/50",
+  TUE: "border-emerald-200 shadow-lg shadow-emerald-500/10 dark:shadow-[0_0_20px_rgba(16,185,129,0.1)] dark:border-emerald-500/50",
+  WED: "border-amber-200 shadow-lg shadow-amber-500/10 dark:shadow-[0_0_20px_rgba(245,158,11,0.1)] dark:border-amber-500/50",
+  THU: "border-purple-200 shadow-lg shadow-purple-500/10 dark:shadow-[0_0_20px_rgba(168,85,247,0.1)] dark:border-purple-500/50",
+  FRI: "border-cyan-200 shadow-lg shadow-cyan-500/10 dark:shadow-[0_0_20px_rgba(6,182,212,0.1)] dark:border-cyan-500/50",
 }
 
 const tableBodyBackgrounds = {
-  MON: "bg-secondary/5 dark:bg-blue-950/20",
-  TUE: "bg-secondary/5 dark:bg-emerald-950/20",
-  WED: "bg-secondary/5 dark:bg-amber-950/20",
-  THU: "bg-secondary/5 dark:bg-purple-950/20",
-  FRI: "bg-secondary/5 dark:bg-cyan-950/20",
+  MON: "bg-blue-50/50 dark:bg-blue-950/20",
+  TUE: "bg-emerald-50/50 dark:bg-emerald-950/20",
+  WED: "bg-amber-50/50 dark:bg-amber-950/20",
+  THU: "bg-purple-50/50 dark:bg-purple-950/20",
+  FRI: "bg-cyan-50/50 dark:bg-cyan-950/20",
 }
 
 interface TimetableGridProps {
@@ -262,8 +262,8 @@ function WeekSection({
               const hasAfternoon = after.length > 0
               
               return (
-                <div key={day} className={cn("flex flex-col border-2 rounded-xl overflow-hidden bg-card min-h-[250px] transition-all hover:border-primary/50 hover:shadow-lg", tableOuterBorders[day])}>
-                  <div className={cn("text-center py-2.5 border-b-2 border-border/60 dark:border-opacity-30", headerColors[day])}>
+                <div key={day} className={cn("flex flex-col border-2 rounded-xl overflow-hidden bg-card min-h-[250px] transition-all hover:border-primary/50 hover:shadow-xl", tableOuterBorders[day])}>
+                  <div className={cn("text-center py-2.5 border-b-2 border-current/20 dark:border-opacity-30", headerColors[day])}>
                     <p className="font-bold text-sm tracking-wide">{dayLabels[day]}</p>
                   </div>
                   <div className={cn("p-3 space-y-2 flex-1", tableBodyBackgrounds[day])}>
@@ -312,8 +312,8 @@ function WeekSection({
               const { before, after } = splitByBreak(dayLectures)
               
               return (
-                <div key={day} className={cn("rounded-xl border-2 overflow-hidden bg-card shadow-sm", tableOuterBorders[day])}>
-                  <div className={cn("py-3 px-4 border-b-2 border-border/60 dark:border-opacity-30", mobileHeaderColors[day])}>
+                <div key={day} className={cn("rounded-xl border-2 overflow-hidden bg-card transition-shadow hover:shadow-md", tableOuterBorders[day])}>
+                  <div className={cn("py-3 px-4 border-b-2 border-current/20 dark:border-opacity-30", mobileHeaderColors[day])}>
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-[15px] tracking-wide">{dayLabels[day]}</p>
                       <Badge variant="outline" className="bg-background/50 border-current/20 text-xs">
