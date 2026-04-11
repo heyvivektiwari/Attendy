@@ -1,0 +1,340 @@
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+
+export type Subject = {
+  id: string
+  code: string
+  name: string
+  shortName: string
+  faculty: string
+  facultyCode: string
+  type: "theory" | "lab"
+}
+
+export type Lecture = {
+  id: string
+  subjectId: string
+  day: "MON" | "TUE" | "WED" | "THU" | "FRI"
+  startTime: string
+  endTime: string
+  room?: string
+  isAbsent: boolean
+  weekNumber: number
+}
+
+export type AttendanceRecord = {
+  subjectId: string
+  totalLectures: number
+  attendedLectures: number
+}
+
+// Theory subjects from the timetable
+export const theorySubjects: Subject[] = [
+  {
+    id: "dsgt",
+    code: "CEPCC401",
+    name: "Discrete Mathematics & Graph Theory",
+    shortName: "DSGT",
+    faculty: "Prof. Dipika Matke",
+    facultyCode: "DM",
+    type: "theory",
+  },
+  {
+    id: "dbms",
+    code: "CEPCC402",
+    name: "Database Management System",
+    shortName: "DBMS",
+    faculty: "Dr. Sheeba P.S.",
+    facultyCode: "SPS",
+    type: "theory",
+  },
+  {
+    id: "os",
+    code: "CEPCC403",
+    name: "Operating System",
+    shortName: "OS",
+    faculty: "Dr. Shital K. Dhamal",
+    facultyCode: "SKD",
+    type: "theory",
+  },
+  {
+    id: "mpmc",
+    code: "ETMDM401",
+    name: "Microprocessor & Microcontroller",
+    shortName: "MPMC",
+    faculty: "Prof. Sanjay D. Naravadkar",
+    facultyCode: "SDN",
+    type: "theory",
+  },
+  {
+    id: "smpf",
+    code: "OE4013",
+    name: "Stock Market & Personal Finance",
+    shortName: "OE-II: SMPF",
+    faculty: "Dr. Smita A. Attarde",
+    facultyCode: "SAA",
+    type: "theory",
+  },
+  {
+    id: "dbm",
+    code: "EEMC401",
+    name: "Digital Business Management",
+    shortName: "DBM",
+    faculty: "Prof. Shobha S. Lolge",
+    facultyCode: "SSL",
+    type: "theory",
+  },
+  {
+    id: "bcs",
+    code: "VEC401",
+    name: "Business Communication Skills",
+    shortName: "BCS",
+    faculty: "Dr. G. Geetha",
+    facultyCode: "GG",
+    type: "theory",
+  },
+]
+
+// Lab subjects - A3 batch only
+export const labSubjects: Subject[] = [
+  {
+    id: "bcsl",
+    code: "VEC401",
+    name: "Business Communication Skills Lab",
+    shortName: "BCSL",
+    faculty: "Dr. G. Geetha",
+    facultyCode: "GG",
+    type: "lab",
+  },
+  {
+    id: "dbmsl",
+    code: "CEPCL402",
+    name: "DBMS Lab",
+    shortName: "DBMSL",
+    faculty: "Prof. Rajnandini Kumawat",
+    facultyCode: "RK",
+    type: "lab",
+  },
+  {
+    id: "osl",
+    code: "CEPCL403",
+    name: "Operating System Lab",
+    shortName: "OSL",
+    faculty: "Dr. Shital K. Dhamal",
+    facultyCode: "SKD",
+    type: "lab",
+  },
+  {
+    id: "mpmcl",
+    code: "ETMDML401",
+    name: "Microprocessor Lab",
+    shortName: "MPMCL",
+    faculty: "Prof. Sanjay D. Naravadkar",
+    facultyCode: "SDN",
+    type: "lab",
+  },
+]
+
+// All subjects combined
+export const subjects: Subject[] = [...theorySubjects, ...labSubjects]
+
+// Weekly timetable - A3 batch only (filtered labs)
+export const weeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber">[] = [
+  // Monday - Theory + BCSL Lab for A3
+  { subjectId: "mpmc", day: "MON", startTime: "09:30", endTime: "10:30" },
+  { subjectId: "bcsl", day: "MON", startTime: "10:30", endTime: "12:30", room: "A-410" }, // A3 batch lab
+  { subjectId: "smpf", day: "MON", startTime: "13:00", endTime: "14:00" },
+  { subjectId: "os", day: "MON", startTime: "14:00", endTime: "15:00" },
+  { subjectId: "dbm", day: "MON", startTime: "15:00", endTime: "16:00" },
+
+  // Tuesday - Theory only (Mini Project slot, no lab)
+  { subjectId: "dsgt", day: "TUE", startTime: "09:30", endTime: "10:30" },
+  { subjectId: "dbms", day: "TUE", startTime: "10:30", endTime: "11:30" },
+  { subjectId: "mpmc", day: "TUE", startTime: "11:30", endTime: "12:30" },
+  { subjectId: "smpf", day: "TUE", startTime: "13:00", endTime: "14:00" },
+
+  // Wednesday - DBMSL Lab for A3 + Theory
+  { subjectId: "dbmsl", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-511" }, // A3 batch lab
+  { subjectId: "dbm", day: "WED", startTime: "11:30", endTime: "12:30" },
+  { subjectId: "os", day: "WED", startTime: "13:00", endTime: "14:00" },
+  { subjectId: "bcs", day: "WED", startTime: "14:00", endTime: "15:00" },
+  { subjectId: "dsgt", day: "WED", startTime: "15:00", endTime: "16:00" },
+
+  // Thursday - OSL Lab for A3 + Theory
+  { subjectId: "bcs", day: "THU", startTime: "09:30", endTime: "10:30" },
+  { subjectId: "dbms", day: "THU", startTime: "10:30", endTime: "11:30" },
+  { subjectId: "osl", day: "THU", startTime: "11:30", endTime: "13:30", room: "C-612" }, // A3 batch lab
+  // Break: 13:30 - 14:00
+  { subjectId: "mpmc", day: "THU", startTime: "14:00", endTime: "15:00" },
+
+  // Friday - MPMCL Lab for A3 + Theory
+  { subjectId: "os", day: "FRI", startTime: "09:30", endTime: "10:30" },
+  { subjectId: "dbms", day: "FRI", startTime: "10:30", endTime: "11:30" },
+  { subjectId: "dsgt", day: "FRI", startTime: "11:30", endTime: "12:30" },
+  { subjectId: "mpmcl", day: "FRI", startTime: "13:00", endTime: "15:00", room: "C-702" }, // A3 batch lab
+]
+
+interface AttendanceStats {
+  bySubject: Map<string, AttendanceRecord>
+  theory: { attended: number; total: number; percentage: number }
+  lab: { attended: number; total: number; percentage: number }
+  overall: { attended: number; total: number; percentage: number }
+}
+
+interface AttendanceState {
+  lectures: Lecture[]
+  currentWeek: number
+  user: { name: string; rollNo: string; division: string } | null
+  isAuthenticated: boolean
+  isDarkMode: boolean
+
+  // Actions
+  login: (name: string, rollNo: string, division: string) => void
+  logout: () => void
+  toggleAbsent: (lectureId: string) => void
+  setCurrentWeek: (week: number) => void
+  toggleDarkMode: () => void
+  initializeWeek: (weekNumber: number) => void
+  getAttendanceStats: () => AttendanceStats
+}
+
+const generateLecturesForWeek = (weekNumber: number): Lecture[] => {
+  return weeklyTimetable.map((lecture, index) => ({
+    ...lecture,
+    id: `${weekNumber}-${lecture.day}-${lecture.subjectId}-${index}`,
+    isAbsent: false,
+    weekNumber,
+  }))
+}
+
+// Get current week number of the semester (starting from Jan 5, 2026)
+const getSemesterWeek = (): number => {
+  const semesterStart = new Date(2026, 0, 5) // Jan 5, 2026
+  const today = new Date()
+  const diffTime = today.getTime() - semesterStart.getTime()
+  const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7))
+  return Math.max(1, Math.min(diffWeeks + 1, 16)) // Semester is 16 weeks
+}
+
+export const useAttendanceStore = create<AttendanceState>()(
+  persist(
+    (set, get) => ({
+      lectures: [],
+      currentWeek: getSemesterWeek(),
+      user: null,
+      isAuthenticated: false,
+      isDarkMode: true,
+
+      login: (name, rollNo, division) => {
+        set({ user: { name, rollNo, division }, isAuthenticated: true })
+        // Initialize lectures for current week if not already done
+        const state = get()
+        if (state.lectures.filter((l) => l.weekNumber === state.currentWeek).length === 0) {
+          state.initializeWeek(state.currentWeek)
+        }
+      },
+
+      logout: () => {
+        set({ user: null, isAuthenticated: false })
+      },
+
+      toggleAbsent: (lectureId) => {
+        set((state) => ({
+          lectures: state.lectures.map((l) => (l.id === lectureId ? { ...l, isAbsent: !l.isAbsent } : l)),
+        }))
+      },
+
+      setCurrentWeek: (week) => {
+        set({ currentWeek: week })
+        const state = get()
+        if (state.lectures.filter((l) => l.weekNumber === week).length === 0) {
+          state.initializeWeek(week)
+        }
+      },
+
+      toggleDarkMode: () => {
+        set((state) => ({ isDarkMode: !state.isDarkMode }))
+      },
+
+      initializeWeek: (weekNumber) => {
+        const newLectures = generateLecturesForWeek(weekNumber)
+        set((state) => ({
+          lectures: [...state.lectures.filter((l) => l.weekNumber !== weekNumber), ...newLectures],
+        }))
+      },
+
+      getAttendanceStats: () => {
+        const { lectures } = get()
+        const bySubject = new Map<string, AttendanceRecord>()
+
+        // Initialize all subjects
+        subjects.forEach((subject) => {
+          bySubject.set(subject.id, {
+            subjectId: subject.id,
+            totalLectures: 0,
+            attendedLectures: 0,
+          })
+        })
+
+        // Calculate stats
+        lectures.forEach((lecture) => {
+          const record = bySubject.get(lecture.subjectId)
+          if (record) {
+            record.totalLectures++
+            if (!lecture.isAbsent) {
+              record.attendedLectures++
+            }
+          }
+        })
+
+        // Calculate theory stats
+        let theoryAttended = 0
+        let theoryTotal = 0
+        theorySubjects.forEach((subject) => {
+          const record = bySubject.get(subject.id)
+          if (record) {
+            theoryAttended += record.attendedLectures
+            theoryTotal += record.totalLectures
+          }
+        })
+
+        // Calculate lab stats
+        let labAttended = 0
+        let labTotal = 0
+        labSubjects.forEach((subject) => {
+          const record = bySubject.get(subject.id)
+          if (record) {
+            labAttended += record.attendedLectures
+            labTotal += record.totalLectures
+          }
+        })
+
+        // Calculate overall
+        const totalAttended = theoryAttended + labAttended
+        const totalLectures = theoryTotal + labTotal
+
+        return {
+          bySubject,
+          theory: {
+            attended: theoryAttended,
+            total: theoryTotal,
+            percentage: theoryTotal > 0 ? Math.round((theoryAttended / theoryTotal) * 100) : 100,
+          },
+          lab: {
+            attended: labAttended,
+            total: labTotal,
+            percentage: labTotal > 0 ? Math.round((labAttended / labTotal) * 100) : 100,
+          },
+          overall: {
+            attended: totalAttended,
+            total: totalLectures,
+            percentage: totalLectures > 0 ? Math.round((totalAttended / totalLectures) * 100) : 100,
+          },
+        }
+      },
+    }),
+    {
+      name: "attendance-storage-a3",
+    }
+  )
+)
