@@ -244,12 +244,29 @@ const dayCodeMap: Record<number, "MON" | "TUE" | "WED" | "THU" | "FRI"> = {
 
 // Get the week number within a month for a given date (1-based)
 function getWeekOfMonth(date: Date): number {
-  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-  // Find the first Monday of the month (or use day 1 if it's Mon-Fri)
-  const dayOfFirst = firstDay.getDay()
-  const offset = dayOfFirst === 0 ? 1 : (dayOfFirst === 6 ? 2 : 0) // days to skip to get to first weekday
-  const adjustedDate = date.getDate() - offset
-  return Math.ceil(adjustedDate / 7)
+  const month = date.getMonth()
+  const year = date.getFullYear()
+  const targetDay = date.getDate()
+  
+  let currentWeekNum = 1
+  let currentWeekStart = false
+  
+  for (let day = 1; day <= targetDay; day++) {
+    const d = new Date(year, month, day)
+    const dayOfWeek = d.getDay()
+    
+    // Skip weekends
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue
+    
+    // Start new week on Monday
+    if (dayOfWeek === 1 || !currentWeekStart) {
+      if (currentWeekStart) {
+        currentWeekNum++
+      }
+      currentWeekStart = true
+    }
+  }
+  return currentWeekNum
 }
 
 const generateLecturesForMonth = (month: number, year: number): Lecture[] => {
