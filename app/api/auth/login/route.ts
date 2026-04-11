@@ -47,10 +47,10 @@ export async function POST(request: NextRequest) {
         division: student.division,
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Login error:", error)
     return NextResponse.json(
-      { success: false, message: "Internal server error" },
+      { success: false, message: error.message || "Internal server error" },
       { status: 500 }
     )
   }
