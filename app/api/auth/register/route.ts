@@ -71,8 +71,17 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Registration successful! You can now log in.",
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Registration error:", error)
+    
+    // Postgres specific Unique Violation Error Code
+    if (error.code === '23505') {
+      return NextResponse.json(
+        { success: false, message: "A student with these details (Email or Roll No) already exists!" },
+        { status: 409 }
+      )
+    }
+
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }

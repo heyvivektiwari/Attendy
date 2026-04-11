@@ -42,8 +42,16 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Student added successfully",
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Add student error:", error)
+    
+    if (error.code === '23505') {
+      return NextResponse.json(
+        { success: false, message: "A student with these details (Email or Roll No) already exists in the database!" },
+        { status: 409 }
+      )
+    }
+
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }
