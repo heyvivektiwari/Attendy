@@ -286,7 +286,7 @@ export function DashboardHeader() {
               </Button>
             </div>
           )}
-          <ThemeCustomizer />
+
           <ModeToggle />
         </div>
       </div>
