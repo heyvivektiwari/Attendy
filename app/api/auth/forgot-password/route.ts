@@ -37,8 +37,12 @@ export async function POST(request: NextRequest) {
         [resetToken, tokenExpires, student.id]
       )
 
-      // 4. Send the email - fixing argument mismatch (added student.name)
-      await sendPasswordResetEmail(email.trim(), student.name, resetToken)
+      // 4. Send the email - using named object to prevent argument swapping
+      await sendPasswordResetEmail({
+        email: email.trim(),
+        name: student.name,
+        resetToken: resetToken
+      })
     }
 
     // Always return success to prevent email enumeration attacks

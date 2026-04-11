@@ -40,11 +40,15 @@ async function getTransporter() {
   return transporter
 }
 
-export async function sendPasswordResetEmail(
+export async function sendPasswordResetEmail({
+  email,
+  name,
+  resetToken
+}: {
   email: string,
   name: string,
   resetToken: string
-) {
+}) {
   const appUrl = process.env.APP_URL || "http://localhost:3000"
   const resetLink = `${appUrl}/reset-password?token=${resetToken}`
 
