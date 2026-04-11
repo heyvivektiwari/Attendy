@@ -204,11 +204,20 @@ function WeekSection({
   weekLectures, 
   onToggleAbsent 
 }: { 
-  weekInfo: { weekNum: number; label: string }
+  weekInfo: { weekNum: number; label: string; startDate?: Date; endDate?: Date }
   weekLectures: Lecture[]
   onToggleAbsent: (id: string) => void 
 }) {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (!weekInfo.startDate || !weekInfo.endDate) return false;
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const start = new Date(weekInfo.startDate);
+    const end = new Date(weekInfo.endDate);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+    return today >= start && today <= end;
+  })
   
   const getLecturesForDay = (day: typeof days[number]) => {
     return weekLectures

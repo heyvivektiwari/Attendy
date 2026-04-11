@@ -8,6 +8,13 @@ import { ModeToggle } from "@/components/mode-toggle"
 export function DashboardHeader() {
   const { user, logout } = useAttendanceStore()
 
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return "Good morning"
+    if (hour < 17) return "Good afternoon"
+    return "Good evening"
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -24,7 +31,7 @@ export function DashboardHeader() {
         <div className="flex items-center gap-2">
           {user && (
             <div className="hidden sm:block text-right mr-4">
-              <p className="text-sm font-medium">{user.name}</p>
+              <p className="text-sm font-medium">{getGreeting()}, {user.name.split(' ')[0]} 👋</p>
               <p className="text-xs text-muted-foreground">Roll No: {user.rollNo}</p>
             </div>
           )}
@@ -34,8 +41,12 @@ export function DashboardHeader() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={logout}
-            className="rounded-full text-muted-foreground hover:text-destructive"
+            onClick={() => {
+              if (window.confirm("Are you sure you want to log out of Attendy?")) {
+                logout()
+              }
+            }}
+            className="rounded-full text-muted-foreground hover:text-destructive transition-colors"
           >
             <LogOut className="h-5 w-5" />
             <span className="sr-only">Logout</span>
