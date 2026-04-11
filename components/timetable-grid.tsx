@@ -3,10 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { useAttendanceStore, subjects, type Lecture } from "@/lib/attendance-store"
+import { useAttendanceStore, subjects, SEMESTER_MONTHS, getMonthLabel, getMonthIndex, type Lecture } from "@/lib/attendance-store"
 import { cn } from "@/lib/utils"
-import { Calendar, ChevronLeft, ChevronRight, Coffee } from "lucide-react"
+import { Calendar, ChevronLeft, ChevronRight, Coffee, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 const days = ["MON", "TUE", "WED", "THU", "FRI"] as const
 const dayLabels = {
@@ -19,8 +20,9 @@ const dayLabels = {
 
 interface TimetableGridProps {
   lectures: Lecture[]
-  currentWeek: number
-  onWeekChange: (week: number) => void
+  currentMonth: number
+  currentYear: number
+  onMonthChange: (month: number, year: number) => void
   onToggleAbsent: (lectureId: string) => void
 }
 
@@ -94,63 +96,241 @@ function BreakRow() {
   )
 }
 
-export function TimetableGrid({ lectures, currentWeek, onWeekChange, onToggleAbsent }: TimetableGridProps) {
-  const weekLectures = lectures.filter((l) => l.weekNumber === currentWeek)
+// Split lectures into before and after break
+const splitByBreak = (dayLectures: Lecture[]) => {
+  const sorted = [...dayLectures].sort((a, b) => a.startTime.localeCompare(b.startTime))
+  
+  let breakIndex = -1
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const currentEnd = sorted[i].endTime
+    const nextStart = sorted[i + 1].startTime
+    
+    const [endH, endM] = currentEnd.split(':').map(Number)
+    const [startH, startM] = nextStart.split(':').map(Number)
+    
+    const endMins = endH * 60 + endM
+    const startMins = startH * 60 + startM
+    
+    if (startMins - endMins > 15) {
+      breakIndex = i
+      break
+    }
+  }
+  
+  if (breakIndex === -1) {
+    return { before: sorted, after: [] }
+  }
+  
+  return {
+    before: sorted.slice(0, breakIndex + 1),
+    after: sorted.slice(breakIndex + 1)
+  }
+}
 
+// Get the week ranges for a given month
+function getWeeksInMonth(month: number, year: number): { weekNum: number; startDate: Date; endDate: Date; label: string }[] {
+  const weeks: { weekNum: number; startDate: Date; endDate: Date; label: string }[] = []
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  
+  let currentWeekStart: Date | null = null
+  let currentWeekNum = 1
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day)
+    const dayOfWeek = date.getDay()
+    
+    // Skip weekends
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue
+    
+    // Start new week on Monday
+    if (dayOfWeek === 1 || !currentWeekStart) {
+      if (currentWeekStart) {
+        currentWeekNum++
+      }
+      currentWeekStart = date
+    }
+    
+    // End week on Friday or last weekday of month
+    if (dayOfWeek === 5 || day === daysInMonth || (day < daysInMonth && new Date(year, month, day + 1).getDay() === 6)) {
+      const formatDate = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      weeks.push({
+        weekNum: currentWeekNum,
+        startDate: currentWeekStart!,
+        endDate: date,
+        label: `${formatDate(currentWeekStart!)} - ${formatDate(date)}`
+      })
+    }
+  }
+  
+  return weeks
+}
+
+function WeekSection({ 
+  weekInfo, 
+  weekLectures, 
+  onToggleAbsent 
+}: { 
+  weekInfo: { weekNum: number; label: string }
+  weekLectures: Lecture[]
+  onToggleAbsent: (id: string) => void 
+}) {
+  const [isExpanded, setIsExpanded] = useState(true)
+  
   const getLecturesForDay = (day: typeof days[number]) => {
     return weekLectures
       .filter((l) => l.day === day)
       .sort((a, b) => a.startTime.localeCompare(b.startTime))
   }
 
-  // Split lectures into before and after break
-  // Break is typically 12:30-13:00, but on Thursday it's 13:30-14:00 (after OSL lab)
-  const splitByBreak = (dayLectures: Lecture[], day: string) => {
-    // Find if there's a gap in the schedule that indicates a break
-    const sorted = [...dayLectures].sort((a, b) => a.startTime.localeCompare(b.startTime))
-    
-    // Find the break point by looking for a gap > 15 mins between lectures
-    let breakIndex = -1
-    for (let i = 0; i < sorted.length - 1; i++) {
-      const currentEnd = sorted[i].endTime
-      const nextStart = sorted[i + 1].startTime
+  // Count absences this week
+  const totalThisWeek = weekLectures.length
+  const absentThisWeek = weekLectures.filter(l => l.isAbsent).length
+  const presentThisWeek = totalThisWeek - absentThisWeek
+  
+  return (
+    <div className="space-y-3">
+      <button 
+        className="w-full flex items-center justify-between py-2.5 px-4 bg-secondary/50 rounded-lg hover:bg-secondary/70 transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-sm">Week {weekInfo.weekNum}</span>
+          <span className="text-xs text-muted-foreground">{weekInfo.label}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">
+            {presentThisWeek}/{totalThisWeek} present
+          </span>
+          {isExpanded ? (
+            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          )}
+        </div>
+      </button>
       
-      const [endH, endM] = currentEnd.split(':').map(Number)
-      const [startH, startM] = nextStart.split(':').map(Number)
-      
-      const endMins = endH * 60 + endM
-      const startMins = startH * 60 + startM
-      
-      // If there's a gap of more than 15 minutes, that's the break
-      if (startMins - endMins > 15) {
-        breakIndex = i
-        break
-      }
-    }
-    
-    if (breakIndex === -1) {
-      return { before: sorted, after: [] }
-    }
-    
-    return {
-      before: sorted.slice(0, breakIndex + 1),
-      after: sorted.slice(breakIndex + 1)
+      {isExpanded && (
+        <>
+          {/* Desktop Grid */}
+          <div className="hidden lg:grid lg:grid-cols-5 gap-4">
+            {days.map((day) => {
+              const dayLectures = getLecturesForDay(day)
+              const { before, after } = splitByBreak(dayLectures)
+              const hasAfternoon = after.length > 0
+              
+              return (
+                <div key={day} className="space-y-2">
+                  <div className="text-center py-1.5 bg-secondary/30 rounded-md">
+                    <p className="font-medium text-xs">{dayLabels[day]}</p>
+                  </div>
+                  <div className="space-y-2 min-h-[120px]">
+                    {dayLectures.length > 0 ? (
+                      <>
+                        {before.map((lecture) => (
+                          <LectureCard
+                            key={lecture.id}
+                            lecture={lecture}
+                            onToggle={() => onToggleAbsent(lecture.id)}
+                          />
+                        ))}
+                        
+                        {hasAfternoon && before.length > 0 && (
+                          <div className="flex items-center justify-center gap-1 py-1 text-xs text-muted-foreground">
+                            <Coffee className="h-3 w-3" />
+                            <span>Break</span>
+                          </div>
+                        )}
+                        
+                        {after.map((lecture) => (
+                          <LectureCard
+                            key={lecture.id}
+                            lecture={lecture}
+                            onToggle={() => onToggleAbsent(lecture.id)}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      <div className="text-center py-6 text-muted-foreground text-xs">
+                        No lectures
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Mobile/Tablet List */}
+          <div className="lg:hidden space-y-3">
+            {days.map((day) => {
+              const dayLectures = getLecturesForDay(day)
+              if (dayLectures.length === 0) return null
+              
+              const { before, after } = splitByBreak(dayLectures)
+              
+              return (
+                <div key={day} className="space-y-2">
+                  <div className="py-1.5 px-3 bg-secondary/30 rounded-md">
+                    <p className="font-medium text-xs">{dayLabels[day]}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {before.map((lecture) => (
+                        <LectureCard
+                          key={lecture.id}
+                          lecture={lecture}
+                          onToggle={() => onToggleAbsent(lecture.id)}
+                        />
+                      ))}
+                    </div>
+                    
+                    {after.length > 0 && before.length > 0 && <BreakRow />}
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {after.map((lecture) => (
+                        <LectureCard
+                          key={lecture.id}
+                          lecture={lecture}
+                          onToggle={() => onToggleAbsent(lecture.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+export function TimetableGrid({ lectures, currentMonth, currentYear, onMonthChange, onToggleAbsent }: TimetableGridProps) {
+  const monthLectures = lectures.filter((l) => l.month === currentMonth && l.year === currentYear)
+  const monthIndex = getMonthIndex(currentMonth, currentYear)
+  const monthLabel = getMonthLabel(currentMonth, currentYear)
+  
+  const weeks = getWeeksInMonth(currentMonth, currentYear)
+  
+  // Count total stats for this month
+  const totalThisMonth = monthLectures.length
+  const absentThisMonth = monthLectures.filter(l => l.isAbsent).length
+  const presentThisMonth = totalThisMonth - absentThisMonth
+  const monthPercentage = totalThisMonth > 0 ? Math.round((presentThisMonth / totalThisMonth) * 100) : 100
+
+  const handlePrev = () => {
+    if (monthIndex > 0) {
+      const prev = SEMESTER_MONTHS[monthIndex - 1]
+      onMonthChange(prev.month, prev.year)
     }
   }
 
-  // Get the date range for the current week
-  const getWeekDates = (week: number) => {
-    const semesterStart = new Date(2026, 0, 5) // Jan 5, 2026
-    const weekStart = new Date(semesterStart)
-    weekStart.setDate(semesterStart.getDate() + (week - 1) * 7)
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekStart.getDate() + 4)
-    
-    const formatDate = (date: Date) => {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const handleNext = () => {
+    if (monthIndex < SEMESTER_MONTHS.length - 1) {
+      const next = SEMESTER_MONTHS[monthIndex + 1]
+      onMonthChange(next.month, next.year)
     }
-    
-    return `${formatDate(weekStart)} - ${formatDate(weekEnd)}`
   }
 
   return (
@@ -162,27 +342,29 @@ export function TimetableGrid({ lectures, currentWeek, onWeekChange, onToggleAbs
               <Calendar className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-lg">Weekly Timetable</CardTitle>
-              <p className="text-sm text-muted-foreground">{getWeekDates(currentWeek)} (A3 Batch)</p>
+              <CardTitle className="text-lg">Monthly Timetable</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {monthLabel} · {presentThisMonth}/{totalThisMonth} present ({monthPercentage}%) · A3 Batch
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="icon"
-              onClick={() => onWeekChange(Math.max(1, currentWeek - 1))}
-              disabled={currentWeek <= 1}
+              onClick={handlePrev}
+              disabled={monthIndex <= 0}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="px-3 py-1 bg-secondary rounded-md text-sm font-medium min-w-[80px] text-center">
-              Week {currentWeek}
+            <span className="px-3 py-1 bg-secondary rounded-md text-sm font-medium min-w-[60px] text-center">
+              {new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'short' })}
             </span>
             <Button
               variant="outline"
               size="icon"
-              onClick={() => onWeekChange(Math.min(16, currentWeek + 1))}
-              disabled={currentWeek >= 16}
+              onClick={handleNext}
+              disabled={monthIndex >= SEMESTER_MONTHS.length - 1}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -192,102 +374,25 @@ export function TimetableGrid({ lectures, currentWeek, onWeekChange, onToggleAbs
           Check the box to mark as absent. Unchecked = Present.
         </p>
       </CardHeader>
-      <CardContent className="p-4">
-        {/* Desktop Grid */}
-        <div className="hidden lg:grid lg:grid-cols-5 gap-4">
-          {days.map((day) => {
-            const dayLectures = getLecturesForDay(day)
-            const { before, after } = splitByBreak(dayLectures, day)
-            const hasAfternoon = after.length > 0
-            
-            return (
-              <div key={day} className="space-y-3">
-                <div className="text-center py-2 bg-secondary/50 rounded-lg">
-                  <p className="font-semibold text-sm">{dayLabels[day]}</p>
-                </div>
-                <div className="space-y-2 min-h-[200px]">
-                  {dayLectures.length > 0 ? (
-                    <>
-                      {/* Morning lectures */}
-                      {before.map((lecture) => (
-                        <LectureCard
-                          key={lecture.id}
-                          lecture={lecture}
-                          onToggle={() => onToggleAbsent(lecture.id)}
-                        />
-                      ))}
-                      
-                      {/* Break indicator */}
-                      {hasAfternoon && before.length > 0 && (
-                        <div className="flex items-center justify-center gap-1 py-2 text-xs text-muted-foreground">
-                          <Coffee className="h-3 w-3" />
-                          <span>Break</span>
-                        </div>
-                      )}
-                      
-                      {/* Afternoon lectures */}
-                      {after.map((lecture) => (
-                        <LectureCard
-                          key={lecture.id}
-                          lecture={lecture}
-                          onToggle={() => onToggleAbsent(lecture.id)}
-                        />
-                      ))}
-                    </>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground text-sm">
-                      No lectures
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Mobile/Tablet List */}
-        <div className="lg:hidden space-y-4">
-          {days.map((day) => {
-            const dayLectures = getLecturesForDay(day)
-            if (dayLectures.length === 0) return null
-            
-            const { before, after } = splitByBreak(dayLectures, day)
-            
-            return (
-              <div key={day} className="space-y-2">
-                <div className="py-2 px-3 bg-secondary/50 rounded-lg">
-                  <p className="font-semibold text-sm">{dayLabels[day]}</p>
-                </div>
-                <div className="space-y-2">
-                  {/* Morning */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {before.map((lecture) => (
-                      <LectureCard
-                        key={lecture.id}
-                        lecture={lecture}
-                        onToggle={() => onToggleAbsent(lecture.id)}
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Break */}
-                  {after.length > 0 && before.length > 0 && <BreakRow />}
-                  
-                  {/* Afternoon */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {after.map((lecture) => (
-                      <LectureCard
-                        key={lecture.id}
-                        lecture={lecture}
-                        onToggle={() => onToggleAbsent(lecture.id)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+      <CardContent className="p-4 space-y-4">
+        {weeks.map((weekInfo) => {
+          const weekLectures = monthLectures.filter(l => l.weekNumber === weekInfo.weekNum)
+          
+          return (
+            <WeekSection
+              key={weekInfo.weekNum}
+              weekInfo={weekInfo}
+              weekLectures={weekLectures}
+              onToggleAbsent={onToggleAbsent}
+            />
+          )
+        })}
+        
+        {weeks.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            No lectures this month
+          </div>
+        )}
       </CardContent>
     </Card>
   )

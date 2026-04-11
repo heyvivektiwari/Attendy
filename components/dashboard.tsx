@@ -14,17 +14,17 @@ import { cn } from "@/lib/utils"
 type FilterType = "all" | "warning" | "critical"
 
 export function Dashboard() {
-  const { lectures, currentWeek, setCurrentWeek, toggleAbsent, getAttendanceStats, initializeWeek } = useAttendanceStore()
+  const { lectures, currentMonth, currentYear, setCurrentMonth, toggleAbsent, getAttendanceStats, initializeMonth } = useAttendanceStore()
   const [filter, setFilter] = useState<FilterType>("all")
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Initialize current week if not done
-    if (lectures.filter((l) => l.weekNumber === currentWeek).length === 0) {
-      initializeWeek(currentWeek)
+    // Initialize current month if not done
+    if (lectures.filter((l) => l.month === currentMonth && l.year === currentYear).length === 0) {
+      initializeMonth(currentMonth, currentYear)
     }
-  }, [currentWeek, initializeWeek, lectures])
+  }, [currentMonth, currentYear, initializeMonth, lectures])
 
   if (!mounted) {
     return (
@@ -86,7 +86,7 @@ export function Dashboard() {
             </TabsTrigger>
             <TabsTrigger value="timetable" className="gap-2">
               <Calendar className="h-4 w-4" />
-              <span className="hidden sm:inline">Timetable</span>
+              <span className="hidden sm:inline">Monthly Timetable</span>
             </TabsTrigger>
           </TabsList>
 
@@ -174,8 +174,9 @@ export function Dashboard() {
           <TabsContent value="timetable">
             <TimetableGrid
               lectures={lectures}
-              currentWeek={currentWeek}
-              onWeekChange={setCurrentWeek}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              onMonthChange={setCurrentMonth}
               onToggleAbsent={toggleAbsent}
             />
           </TabsContent>

@@ -20,6 +20,8 @@ export type Lecture = {
   room?: string
   isAbsent: boolean
   weekNumber: number
+  month: number // 0-indexed month (0=Jan, 1=Feb, etc.)
+  year: number
 }
 
 export type AttendanceRecord = {
@@ -139,7 +141,7 @@ export const labSubjects: Subject[] = [
 export const subjects: Subject[] = [...theorySubjects, ...labSubjects]
 
 // Weekly timetable - A3 batch only (filtered labs)
-export const weeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber">[] = [
+export const weeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" | "month" | "year">[] = [
   // Monday - Theory + BCSL Lab for A3
   { subjectId: "mpmc", day: "MON", startTime: "09:30", endTime: "10:30" },
   { subjectId: "bcsl", day: "MON", startTime: "10:30", endTime: "12:30", room: "A-410" }, // A3 batch lab
@@ -181,9 +183,27 @@ interface AttendanceStats {
   overall: { attended: number; total: number; percentage: number }
 }
 
+// Semester months (Jan 2026 to Apr 2026)
+export const SEMESTER_MONTHS = [
+  { month: 0, year: 2026, label: "January 2026" },
+  { month: 1, year: 2026, label: "February 2026" },
+  { month: 2, year: 2026, label: "March 2026" },
+  { month: 3, year: 2026, label: "April 2026" },
+]
+
+export function getMonthLabel(month: number, year: number): string {
+  const entry = SEMESTER_MONTHS.find(m => m.month === month && m.year === year)
+  return entry?.label || new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
+
+export function getMonthIndex(month: number, year: number): number {
+  return SEMESTER_MONTHS.findIndex(m => m.month === month && m.year === year)
+}
+
 interface AttendanceState {
   lectures: Lecture[]
-  currentWeek: number
+  currentMonth: number // 0-indexed month
+  currentYear: number
   user: { name: string; rollNo: string; division: string } | null
   isAuthenticated: boolean
   isDarkMode: boolean
@@ -192,45 +212,104 @@ interface AttendanceState {
   login: (name: string, rollNo: string, division: string) => void
   logout: () => void
   toggleAbsent: (lectureId: string) => void
-  setCurrentWeek: (week: number) => void
+  setCurrentMonth: (month: number, year: number) => void
   toggleDarkMode: () => void
-  initializeWeek: (weekNumber: number) => void
+  initializeMonth: (month: number, year: number) => void
   getAttendanceStats: () => AttendanceStats
 }
 
-const generateLecturesForWeek = (weekNumber: number): Lecture[] => {
-  return weeklyTimetable.map((lecture, index) => ({
-    ...lecture,
-    id: `${weekNumber}-${lecture.day}-${lecture.subjectId}-${index}`,
-    isAbsent: false,
-    weekNumber,
-  }))
+// Get all weekdays (Mon-Fri) in a given month
+function getWeekdaysInMonth(month: number, year: number): Date[] {
+  const dates: Date[] = []
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day)
+    const dayOfWeek = date.getDay() // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+      dates.push(date)
+    }
+  }
+  return dates
 }
 
-// Get current week number of the semester (starting from Jan 5, 2026)
-const getSemesterWeek = (): number => {
-  const semesterStart = new Date(2026, 0, 5) // Jan 5, 2026
-  const today = new Date()
-  const diffTime = today.getTime() - semesterStart.getTime()
-  const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7))
-  return Math.max(1, Math.min(diffWeeks + 1, 16)) // Semester is 16 weeks
+// Map JS day-of-week (1=Mon..5=Fri) to our day codes
+const dayCodeMap: Record<number, "MON" | "TUE" | "WED" | "THU" | "FRI"> = {
+  1: "MON",
+  2: "TUE",
+  3: "WED",
+  4: "THU",
+  5: "FRI",
+}
+
+// Get the week number within a month for a given date (1-based)
+function getWeekOfMonth(date: Date): number {
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+  // Find the first Monday of the month (or use day 1 if it's Mon-Fri)
+  const dayOfFirst = firstDay.getDay()
+  const offset = dayOfFirst === 0 ? 1 : (dayOfFirst === 6 ? 2 : 0) // days to skip to get to first weekday
+  const adjustedDate = date.getDate() - offset
+  return Math.ceil(adjustedDate / 7)
+}
+
+const generateLecturesForMonth = (month: number, year: number): Lecture[] => {
+  const weekdays = getWeekdaysInMonth(month, year)
+  const lectures: Lecture[] = []
+  
+  weekdays.forEach((date) => {
+    const dayCode = dayCodeMap[date.getDay()]
+    if (!dayCode) return
+    
+    const weekNum = getWeekOfMonth(date)
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    
+    // Get timetable entries for this day
+    const dayLectures = weeklyTimetable.filter(l => l.day === dayCode)
+    
+    dayLectures.forEach((lecture, index) => {
+      lectures.push({
+        ...lecture,
+        id: `${dateStr}-${lecture.day}-${lecture.subjectId}-${index}`,
+        isAbsent: false,
+        weekNumber: weekNum,
+        month,
+        year,
+      })
+    })
+  })
+  
+  return lectures
+}
+
+// Get current month/year
+const getCurrentMonth = (): { month: number; year: number } => {
+  const now = new Date()
+  // Clamp to semester range
+  const semMonth = SEMESTER_MONTHS.find(m => m.month === now.getMonth() && m.year === now.getFullYear())
+  if (semMonth) {
+    return { month: semMonth.month, year: semMonth.year }
+  }
+  // Default to last month in semester if current date is past semester
+  const last = SEMESTER_MONTHS[SEMESTER_MONTHS.length - 1]
+  return { month: last.month, year: last.year }
 }
 
 export const useAttendanceStore = create<AttendanceState>()(
   persist(
     (set, get) => ({
       lectures: [],
-      currentWeek: getSemesterWeek(),
+      currentMonth: getCurrentMonth().month,
+      currentYear: getCurrentMonth().year,
       user: null,
       isAuthenticated: false,
       isDarkMode: true,
 
       login: (name, rollNo, division) => {
         set({ user: { name, rollNo, division }, isAuthenticated: true })
-        // Initialize lectures for current week if not already done
+        // Initialize lectures for current month if not already done
         const state = get()
-        if (state.lectures.filter((l) => l.weekNumber === state.currentWeek).length === 0) {
-          state.initializeWeek(state.currentWeek)
+        if (state.lectures.filter((l) => l.month === state.currentMonth && l.year === state.currentYear).length === 0) {
+          state.initializeMonth(state.currentMonth, state.currentYear)
         }
       },
 
@@ -244,11 +323,11 @@ export const useAttendanceStore = create<AttendanceState>()(
         }))
       },
 
-      setCurrentWeek: (week) => {
-        set({ currentWeek: week })
+      setCurrentMonth: (month, year) => {
+        set({ currentMonth: month, currentYear: year })
         const state = get()
-        if (state.lectures.filter((l) => l.weekNumber === week).length === 0) {
-          state.initializeWeek(week)
+        if (state.lectures.filter((l) => l.month === month && l.year === year).length === 0) {
+          state.initializeMonth(month, year)
         }
       },
 
@@ -256,10 +335,10 @@ export const useAttendanceStore = create<AttendanceState>()(
         set((state) => ({ isDarkMode: !state.isDarkMode }))
       },
 
-      initializeWeek: (weekNumber) => {
-        const newLectures = generateLecturesForWeek(weekNumber)
+      initializeMonth: (month, year) => {
+        const newLectures = generateLecturesForMonth(month, year)
         set((state) => ({
-          lectures: [...state.lectures.filter((l) => l.weekNumber !== weekNumber), ...newLectures],
+          lectures: [...state.lectures.filter((l) => !(l.month === month && l.year === year)), ...newLectures],
         }))
       },
 
@@ -276,7 +355,7 @@ export const useAttendanceStore = create<AttendanceState>()(
           })
         })
 
-        // Calculate stats
+        // Calculate stats from ALL months (cumulative)
         lectures.forEach((lecture) => {
           const record = bySubject.get(lecture.subjectId)
           if (record) {
@@ -334,7 +413,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-a3",
+      name: "attendance-storage-monthly-a3",
     }
   )
 )
