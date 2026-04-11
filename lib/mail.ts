@@ -76,7 +76,7 @@ export async function sendPasswordResetEmail({
           <p style="font-size: 16px; margin-bottom: 8px;">Hi <strong>${formattedName}</strong>,</p>
           <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6;">
             We received a request to reset your password. Click the button below to set a new password. 
-            This link will expire in <strong>1 hour</strong>.
+            This link will expire in <strong>10 minutes</strong>.
           </p>
           <div style="text-align: center; margin: 32px 0;">
             <a href="${resetLink}" 

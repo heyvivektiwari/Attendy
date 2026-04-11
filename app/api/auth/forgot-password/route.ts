@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
       // 2. Generate a secure random token
       const resetToken = crypto.randomBytes(32).toString("hex")
       
-      // Token expires in 1 hour (in milliseconds)
-      const tokenExpires = Date.now() + 3600000
+      // Token expires in 10 minutes (in milliseconds)
+      const tokenExpires = Date.now() + 600000
 
       // 3. Save token to database
       await db.query(
