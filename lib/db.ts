@@ -8,8 +8,8 @@ export function getDb(): Pool {
   // Force bypass SSL certificate validation for serverless connection to Supabase
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-  if (!process.env.DATABASE_URL) {
-    throw new Error("Critical Error: DATABASE_URL is missing in environment variables. Please add it to Vercel settings.")
+  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.trim() === "") {
+    throw new Error("Critical Error: DATABASE_URL is missing or empty in environment variables. Please add it to Vercel settings.")
   }
 
   pool = new Pool({
