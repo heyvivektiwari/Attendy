@@ -442,12 +442,11 @@ export function LoginForm() {
         )}
 
         {/* Info */}
-        <div className="text-center space-y-2">
-          <p className="text-xs text-muted-foreground">
-            SE Sem IV Div A (EVEN) - Effective from 05/01/2026
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Lokmanya Tilak College of Engineering
+        <div className="text-center pt-4">
+          <p className="text-xs text-muted-foreground font-medium flex items-center justify-center gap-1.5 transition-colors hover:text-primary">
+            <span>Attendy</span>
+            <span className="text-[10px] opacity-40">•</span>
+            <span>Developed by Thoners</span>
           </p>
         </div>
       </div>
