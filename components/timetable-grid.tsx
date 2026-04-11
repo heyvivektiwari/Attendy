@@ -34,6 +34,22 @@ const mobileHeaderColors = {
   FRI: "bg-rose-500/15 text-rose-700 dark:text-rose-400 dark:bg-rose-500/20 border-rose-500/20",
 }
 
+const tableOuterBorders = {
+  MON: "border-border/60 dark:border-blue-500/50 dark:shadow-[0_0_20px_rgba(59,130,246,0.1)]",
+  TUE: "border-border/60 dark:border-emerald-500/50 dark:shadow-[0_0_20px_rgba(16,185,129,0.1)]",
+  WED: "border-border/60 dark:border-amber-500/50 dark:shadow-[0_0_20px_rgba(245,158,11,0.1)]",
+  THU: "border-border/60 dark:border-purple-500/50 dark:shadow-[0_0_20px_rgba(168,85,247,0.1)]",
+  FRI: "border-border/60 dark:border-rose-500/50 dark:shadow-[0_0_20px_rgba(244,63,94,0.1)]",
+}
+
+const tableBodyBackgrounds = {
+  MON: "bg-secondary/5 dark:bg-blue-950/20",
+  TUE: "bg-secondary/5 dark:bg-emerald-950/20",
+  WED: "bg-secondary/5 dark:bg-amber-950/20",
+  THU: "bg-secondary/5 dark:bg-purple-950/20",
+  FRI: "bg-secondary/5 dark:bg-rose-950/20",
+}
+
 interface TimetableGridProps {
   lectures: Lecture[]
   currentMonth: number
@@ -235,11 +251,11 @@ function WeekSection({
               const hasAfternoon = after.length > 0
               
               return (
-                <div key={day} className="flex flex-col border-2 border-border/60 rounded-xl overflow-hidden bg-card min-h-[250px] shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
-                  <div className={cn("text-center py-2.5 border-b-2 border-border/60", headerColors[day])}>
+                <div key={day} className={cn("flex flex-col border-2 rounded-xl overflow-hidden bg-card min-h-[250px] transition-all hover:border-primary/50 hover:shadow-lg", tableOuterBorders[day])}>
+                  <div className={cn("text-center py-2.5 border-b-2 border-border/60 dark:border-opacity-30", headerColors[day])}>
                     <p className="font-bold text-sm tracking-wide">{dayLabels[day]}</p>
                   </div>
-                  <div className="p-3 space-y-2 flex-1 bg-secondary/5">
+                  <div className={cn("p-3 space-y-2 flex-1", tableBodyBackgrounds[day])}>
                     {dayLectures.length > 0 ? (
                       <>
                         {before.map((lecture) => (
@@ -285,8 +301,8 @@ function WeekSection({
               const { before, after } = splitByBreak(dayLectures)
               
               return (
-                <div key={day} className="rounded-xl border-2 border-border/60 overflow-hidden bg-card shadow-sm">
-                  <div className={cn("py-3 px-4 border-b-2 border-border/60", mobileHeaderColors[day])}>
+                <div key={day} className={cn("rounded-xl border-2 overflow-hidden bg-card shadow-sm", tableOuterBorders[day])}>
+                  <div className={cn("py-3 px-4 border-b-2 border-border/60 dark:border-opacity-30", mobileHeaderColors[day])}>
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-[15px] tracking-wide">{dayLabels[day]}</p>
                       <Badge variant="outline" className="bg-background/50 border-current/20 text-xs">
@@ -294,7 +310,7 @@ function WeekSection({
                       </Badge>
                     </div>
                   </div>
-                  <div className="p-3.5 space-y-3 bg-secondary/5">
+                  <div className={cn("p-3.5 space-y-3", tableBodyBackgrounds[day])}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {before.map((lecture) => (
                         <LectureCard
