@@ -13,6 +13,9 @@ export function getDb(): Pool {
     }
   })
 
+  // Start initialization in background
+  initializeDb().catch(console.error)
+
   return pool
 }
 
@@ -49,5 +52,3 @@ export type Student = {
   reset_token_expires?: number
 }
 
-// Fire and forget initialization to ensure the table structure exists in Supabase.
-initializeDb().catch(console.error)
