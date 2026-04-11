@@ -40,6 +40,15 @@ async function getTransporter() {
   return transporter
 }
 
+function formatName(name: string): string {
+  if (!name) return ""
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
 export async function sendPasswordResetEmail({
   email,
   name,
@@ -49,6 +58,7 @@ export async function sendPasswordResetEmail({
   name: string,
   resetToken: string
 }) {
+  const formattedName = formatName(name)
   const appUrl = process.env.APP_URL || "http://localhost:3000"
   const resetLink = `${appUrl}/reset-password?token=${resetToken}`
 
@@ -63,7 +73,7 @@ export async function sendPasswordResetEmail({
           <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px;">Password Reset Request</p>
         </div>
         <div style="padding: 32px;">
-          <p style="font-size: 16px; margin-bottom: 8px;">Hi <strong>${name}</strong>,</p>
+          <p style="font-size: 16px; margin-bottom: 8px;">Hi <strong>${formattedName}</strong>,</p>
           <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6;">
             We received a request to reset your password. Click the button below to set a new password. 
             This link will expire in <strong>1 hour</strong>.
