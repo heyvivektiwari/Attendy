@@ -284,7 +284,7 @@ export function Dashboard() {
                 <Calendar className="h-6 w-6 text-primary" />
                 Attendance Marker
               </h2>
-              <p className="text-muted-foreground">Select days or toggle absences in your timetable view.</p>
+
             </div>
             <TimetableGrid
               lectures={lectures}
