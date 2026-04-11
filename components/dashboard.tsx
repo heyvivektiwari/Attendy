@@ -81,7 +81,9 @@ export function Dashboard() {
       <main className="container mx-auto px-4 py-6 space-y-6">
         {user && (
           <div className="space-y-0.5">
-            <h2 className="text-2xl font-bold tracking-tight">{getGreeting()}, {user.name.split(' ')[0]} 👋</h2>
+            <h2 className="text-2xl font-bold tracking-tight">
+              {getGreeting()}, {user.name.split(' ')[0].charAt(0).toUpperCase() + user.name.split(' ')[0].slice(1).toLowerCase()} 👋
+            </h2>
             <p className="text-muted-foreground">Here's an overview of your attendance.</p>
           </div>
         )}
