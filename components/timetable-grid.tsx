@@ -104,8 +104,10 @@ function LectureCard({ lecture, onToggle }: { lecture: Lecture; onToggle: () => 
           checked={lecture.isAbsent}
           onCheckedChange={onToggle}
           className={cn(
-            "mt-0.5 transition-colors",
-            lecture.isAbsent ? "border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical" : ""
+            "mt-0.5 h-5 w-5 rounded transition-all ring-2 ring-offset-2 ring-offset-background",
+            lecture.isAbsent 
+              ? "border-critical ring-critical/20 hover:ring-critical/40 data-[state=checked]:bg-critical data-[state=checked]:border-critical" 
+              : "border-primary/50 ring-primary/20 hover:ring-primary/40 shadow-sm"
           )}
           onClick={(e) => e.stopPropagation()}
         />
@@ -120,10 +122,10 @@ function LectureCard({ lecture, onToggle }: { lecture: Lecture; onToggle: () => 
 
 function BreakRow() {
   return (
-    <div className="flex items-center justify-center gap-2 py-3 px-4 bg-secondary/30 rounded-lg border border-dashed border-border/50">
-      <Coffee className="h-4 w-4 text-muted-foreground" />
-      <span className="text-sm font-medium text-muted-foreground">BREAK</span>
-      <span className="text-xs text-muted-foreground">(12:30 - 01:00)</span>
+    <div className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-500/10 dark:bg-amber-500/5 rounded-lg border-2 border-dashed border-amber-500/40 dark:border-amber-500/30 shadow-sm">
+      <Coffee className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+      <span className="text-sm font-bold tracking-widest text-amber-600 dark:text-amber-400">BREAK</span>
+      <span className="text-xs font-medium text-amber-600/80 dark:text-amber-400/80">(12:30 - 01:00)</span>
     </div>
   )
 }
@@ -282,9 +284,9 @@ function WeekSection({
                         ))}
                         
                         {hasAfternoon && before.length > 0 && (
-                          <div className="flex items-center justify-center gap-1 py-1.5 border-y border-dashed border-border/60 my-2 text-xs text-muted-foreground bg-secondary/30 rounded-md">
-                            <Coffee className="h-3 w-3" />
-                            <span>Break</span>
+                          <div className="flex items-center justify-center gap-1.5 py-2 border-y-2 border-dashed border-amber-500/40 dark:border-amber-500/30 my-2 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/5 rounded-md shadow-sm">
+                            <Coffee className="h-3.5 w-3.5" />
+                            <span className="tracking-widest uppercase">Break</span>
                           </div>
                         )}
                         

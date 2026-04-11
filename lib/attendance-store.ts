@@ -215,7 +215,7 @@ interface AttendanceState {
   setCurrentMonth: (month: number, year: number) => void
   toggleDarkMode: () => void
   initializeMonth: (month: number, year: number) => void
-  getAttendanceStats: () => AttendanceStats
+  getAttendanceStats: (monthFilter?: number, yearFilter?: number) => AttendanceStats
 }
 
 // Get all weekdays (Mon-Fri) in a given month
@@ -359,7 +359,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         }))
       },
 
-      getAttendanceStats: () => {
+      getAttendanceStats: (monthFilter?: number, yearFilter?: number) => {
         const { lectures } = get()
         const bySubject = new Map<string, AttendanceRecord>()
 
@@ -372,8 +372,12 @@ export const useAttendanceStore = create<AttendanceState>()(
           })
         })
 
-        // Calculate stats from ALL months (cumulative)
+        // Calculate stats based on filters 
         lectures.forEach((lecture) => {
+          if (monthFilter !== undefined && yearFilter !== undefined) {
+             if (lecture.month !== monthFilter || lecture.year !== yearFilter) return
+          }
+          
           const record = bySubject.get(lecture.subjectId)
           if (record) {
             record.totalLectures++

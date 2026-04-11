@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAttendanceStore, theorySubjects, labSubjects } from "@/lib/attendance-store"
+import { useAttendanceStore, theorySubjects, labSubjects, SEMESTER_MONTHS } from "@/lib/attendance-store"
 import { DashboardHeader } from "./dashboard-header"
 import { OverallStats } from "./overall-stats"
 import { SubjectCard } from "./subject-card"
@@ -17,6 +17,7 @@ export function Dashboard() {
   const { lectures, currentMonth, currentYear, setCurrentMonth, toggleAbsent, getAttendanceStats, initializeMonth } = useAttendanceStore()
   const [filter, setFilter] = useState<FilterType>("all")
   const [mounted, setMounted] = useState(false)
+  const [statsMode, setStatsMode] = useState<"monthly" | "overall">("monthly")
 
   useEffect(() => {
     setMounted(true)
@@ -34,7 +35,9 @@ export function Dashboard() {
     )
   }
 
-  const stats = getAttendanceStats()
+  const stats = statsMode === "monthly" ? getAttendanceStats(currentMonth, currentYear) : getAttendanceStats()
+  
+  const monthIndex = SEMESTER_MONTHS.findIndex(m => m.month === currentMonth && m.year === currentYear)
 
   const getFilteredSubjects = (subjects: typeof theorySubjects) => {
     return subjects.filter((subject) => {
@@ -70,6 +73,65 @@ export function Dashboard() {
       <DashboardHeader />
       
       <main className="container mx-auto px-4 py-6 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-1 p-1 bg-secondary/30 rounded-xl border border-border/50 w-fit">
+            <Button 
+              variant={statsMode === "monthly" ? "default" : "ghost"} 
+              size="sm" 
+              onClick={() => setStatsMode("monthly")}
+              className="px-4 py-2 h-auto text-sm rounded-lg"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Monthly Average
+            </Button>
+            <Button 
+              variant={statsMode === "overall" ? "default" : "ghost"} 
+              size="sm" 
+              onClick={() => setStatsMode("overall")}
+              className="px-4 py-2 h-auto text-sm rounded-lg"
+            >
+              <LayoutGrid className="w-4 h-4 mr-2" />
+              Overall Average
+            </Button>
+          </div>
+          
+          {statsMode === "monthly" && (
+            <div className="flex items-center gap-2 bg-secondary/20 p-1 rounded-xl border border-border/30">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3"
+                disabled={monthIndex <= 0}
+                onClick={() => {
+                  if (monthIndex > 0) {
+                    const prev = SEMESTER_MONTHS[monthIndex - 1]
+                    setCurrentMonth(prev.month, prev.year)
+                  }
+                }}
+              >
+                Previous
+              </Button>
+              <span className="text-sm font-semibold px-3 py-1 bg-background rounded-md shadow-sm border border-border/50">
+                {new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3"
+                disabled={monthIndex >= SEMESTER_MONTHS.length - 1 || monthIndex === -1}
+                onClick={() => {
+                  if (monthIndex < SEMESTER_MONTHS.length - 1 && monthIndex !== -1) {
+                    const next = SEMESTER_MONTHS[monthIndex + 1]
+                    setCurrentMonth(next.month, next.year)
+                  }
+                }}
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* Overall Stats - Now shows Theory and Lab separately */}
         <OverallStats
           theory={stats.theory}
