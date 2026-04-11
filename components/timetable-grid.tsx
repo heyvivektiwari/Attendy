@@ -23,7 +23,7 @@ const headerColors = {
   TUE: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-500/20",
   WED: "bg-amber-500/15 text-amber-700 dark:text-amber-400 dark:bg-amber-500/20",
   THU: "bg-purple-500/15 text-purple-700 dark:text-purple-400 dark:bg-purple-500/20",
-  FRI: "bg-rose-500/15 text-rose-700 dark:text-rose-400 dark:bg-rose-500/20",
+  FRI: "bg-cyan-500/15 text-cyan-700 dark:text-cyan-400 dark:bg-cyan-500/20",
 }
 
 const mobileHeaderColors = {
@@ -31,7 +31,7 @@ const mobileHeaderColors = {
   TUE: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-500/20 border-emerald-500/20",
   WED: "bg-amber-500/15 text-amber-700 dark:text-amber-400 dark:bg-amber-500/20 border-amber-500/20",
   THU: "bg-purple-500/15 text-purple-700 dark:text-purple-400 dark:bg-purple-500/20 border-purple-500/20",
-  FRI: "bg-rose-500/15 text-rose-700 dark:text-rose-400 dark:bg-rose-500/20 border-rose-500/20",
+  FRI: "bg-cyan-500/15 text-cyan-700 dark:text-cyan-400 dark:bg-cyan-500/20 border-cyan-500/20",
 }
 
 const tableOuterBorders = {
@@ -39,7 +39,7 @@ const tableOuterBorders = {
   TUE: "border-border/60 dark:border-emerald-500/50 dark:shadow-[0_0_20px_rgba(16,185,129,0.1)]",
   WED: "border-border/60 dark:border-amber-500/50 dark:shadow-[0_0_20px_rgba(245,158,11,0.1)]",
   THU: "border-border/60 dark:border-purple-500/50 dark:shadow-[0_0_20px_rgba(168,85,247,0.1)]",
-  FRI: "border-border/60 dark:border-rose-500/50 dark:shadow-[0_0_20px_rgba(244,63,94,0.1)]",
+  FRI: "border-border/60 dark:border-cyan-500/50 dark:shadow-[0_0_20px_rgba(6,182,212,0.1)]",
 }
 
 const tableBodyBackgrounds = {
@@ -47,7 +47,7 @@ const tableBodyBackgrounds = {
   TUE: "bg-secondary/5 dark:bg-emerald-950/20",
   WED: "bg-secondary/5 dark:bg-amber-950/20",
   THU: "bg-secondary/5 dark:bg-purple-950/20",
-  FRI: "bg-secondary/5 dark:bg-rose-950/20",
+  FRI: "bg-secondary/5 dark:bg-cyan-950/20",
 }
 
 interface TimetableGridProps {
