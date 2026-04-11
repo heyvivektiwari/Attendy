@@ -15,8 +15,10 @@ export function getDb(): Pool {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     connectionTimeoutMillis: 5000,
+    max: 1, // Crucial for Vercel Serverless! Prevents pool exhaustion
+    idleTimeoutMillis: 30000,
     ssl: {
-      rejectUnauthorized: false, // This allows the self-signed certificate from the pooler
+      rejectUnauthorized: false,
     }
   })
 
