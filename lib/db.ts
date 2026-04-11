@@ -5,6 +5,10 @@ let pool: Pool | null = null
 export function getDb(): Pool {
   if (pool) return pool
 
+  if (!process.env.DATABASE_URL) {
+    throw new Error("Critical Error: DATABASE_URL is missing in environment variables. Please add it to Vercel settings.")
+  }
+
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     connectionTimeoutMillis: 5000, // Timeout after 5 seconds to prevent hanging
