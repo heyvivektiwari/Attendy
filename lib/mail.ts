@@ -67,29 +67,31 @@ export async function sendPasswordResetEmail({
     to: email,
     subject: "Reset Your Attendy Password",
     html: `
-      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #1a1b26; color: #e1e1e6; border-radius: 16px; overflow: hidden;">
-        <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 32px; text-align: center;">
-          <h1 style="margin: 0; font-size: 28px; color: white;">🎓 Attendy</h1>
-          <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px;">Password Reset Request</p>
+      <div style="font-family: 'Geist', 'Segoe UI', sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; color: #1A132F; border: 2px solid #1A132F; border-radius: 24px; overflow: hidden; shadow: 0 10px 40px rgba(26,19,47,0.12);">
+        <div style="background: #1A132F; padding: 40px 32px; text-align: center;">
+          <h1 style="margin: 0; font-size: 32px; color: #ffffff; letter-spacing: -1px; font-weight: 900;">🎓 Attendy</h1>
+          <p style="margin: 8px 0 0; color: #2ec7ff; font-size: 14px; font-weight: 700; text-transform: uppercase; tracking: 0.1em;">Password Reset Request</p>
         </div>
-        <div style="padding: 32px;">
-          <p style="font-size: 16px; margin-bottom: 8px;">Hi <strong>${formattedName}</strong>,</p>
-          <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6;">
+        <div style="padding: 40px 32px;">
+          <p style="font-size: 18px; margin-bottom: 12px; font-weight: 700;">Hi <strong>${formattedName}</strong>,</p>
+          <p style="font-size: 15px; color: #4B5563; line-height: 1.6; margin-bottom: 32px;">
             We received a request to reset your password. Click the button below to set a new password. 
-            This link will expire in <strong>10 minutes</strong>.
+            This link will expire in <strong style="color: #1A132F;">1 hour</strong>.
           </p>
-          <div style="text-align: center; margin: 32px 0;">
+          <div style="text-align: center; margin: 40px 0;">
             <a href="${resetLink}" 
-               style="display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;">
+               style="display: inline-block; background: #005691; color: #ffffff; padding: 16px 40px; border-radius: 14px; text-decoration: none; font-weight: 900; font-size: 16px; border: 3px solid #1A132F; box-shadow: 0 4px 15px rgba(0,86,145,0.25);">
               Reset Password
             </a>
           </div>
-          <p style="font-size: 12px; color: #71717a; line-height: 1.6;">
+          <p style="font-size: 13px; color: #6B7280; line-height: 1.6; font-style: italic;">
             If you didn't request this, you can safely ignore this email. Your password won't be changed.
           </p>
-          <hr style="border: none; border-top: 1px solid #2a2b3d; margin: 24px 0;" />
-            Lokmanya Tilak College of Engineering
-          </p>
+          <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid #f3f4f6; text-align: center;">
+            <p style="font-size: 12px; color: #9CA3AF; margin: 0; font-weight: 600;">
+              Attendy Support Team · LTCE
+            </p>
+          </div>
         </div>
       </div>
     `,
