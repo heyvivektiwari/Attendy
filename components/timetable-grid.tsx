@@ -228,15 +228,15 @@ function WeekSection({
       {isExpanded && (
         <>
           {/* Desktop Grid */}
-          <div className="hidden lg:grid lg:grid-cols-5 gap-0 border border-border rounded-lg overflow-hidden shrink-0">
+          <div className="hidden lg:grid lg:grid-cols-5 gap-4 shrink-0">
             {days.map((day) => {
               const dayLectures = getLecturesForDay(day)
               const { before, after } = splitByBreak(dayLectures)
               const hasAfternoon = after.length > 0
               
               return (
-                <div key={day} className="flex flex-col border-r border-border last:border-r-0 bg-card min-h-[250px]">
-                  <div className={cn("text-center py-2.5 border-b border-border/50", headerColors[day])}>
+                <div key={day} className="flex flex-col border-2 border-border/60 rounded-xl overflow-hidden bg-card min-h-[250px] shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
+                  <div className={cn("text-center py-2.5 border-b-2 border-border/60", headerColors[day])}>
                     <p className="font-bold text-sm tracking-wide">{dayLabels[day]}</p>
                   </div>
                   <div className="p-3 space-y-2 flex-1 bg-secondary/5">
@@ -285,8 +285,8 @@ function WeekSection({
               const { before, after } = splitByBreak(dayLectures)
               
               return (
-                <div key={day} className="rounded-xl border border-border overflow-hidden bg-card shadow-sm">
-                  <div className={cn("py-3 px-4 border-b", mobileHeaderColors[day])}>
+                <div key={day} className="rounded-xl border-2 border-border/60 overflow-hidden bg-card shadow-sm">
+                  <div className={cn("py-3 px-4 border-b-2 border-border/60", mobileHeaderColors[day])}>
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-[15px] tracking-wide">{dayLabels[day]}</p>
                       <Badge variant="outline" className="bg-background/50 border-current/20 text-xs">
