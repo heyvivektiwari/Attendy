@@ -89,7 +89,7 @@ export async function sendPasswordResetEmail({
           </p>
           <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid #f3f4f6; text-align: center;">
             <p style="font-size: 12px; color: #9CA3AF; margin: 0; font-weight: 600;">
-              Attendy Support Team · LTCE
+              Attendy Support Team
             </p>
           </div>
         </div>
