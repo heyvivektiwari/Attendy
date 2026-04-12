@@ -17,3 +17,11 @@ next.user-config.*
 node_modules
 .next/
 .DS_Store
+
+# Android build artifacts
+android/app/build/
+android/.gradle/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+*.apk
+*.keystore

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Attendy</string>
+    <string name="title_activity_main">Attendy</string>
+    <string name="package_name">com.attendy.app</string>
+    <string name="custom_url_scheme">com.attendy.app</string>
+</resources>
