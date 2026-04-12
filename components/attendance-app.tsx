@@ -59,17 +59,15 @@ export function AttendanceApp() {
 
       // 4. Push Notifications (Only if native)
       if (isNative) {
-        let permStatus = await PushNotifications.checkPermissions()
-        if (permStatus.receive === 'prompt') {
-          permStatus = await PushNotifications.requestPermissions()
-        }
-        if (permStatus.receive === 'granted') {
-          await PushNotifications.register()
-        }
+        PushNotifications.requestPermissions().then(result => {
+          if (result.receive === 'granted') {
+            PushNotifications.register();
+          }
+        });
 
         PushNotifications.addListener('registration', token => {
-          console.log('Push registration success, token: ' + token.value)
-        })
+          console.log('DEVICE TOKEN:', token.value);
+        });
 
         PushNotifications.addListener('pushNotificationReceived', notification => {
           toast(notification.title || "New Alert", {
