@@ -59,21 +59,22 @@ export function AttendanceApp() {
 
       // 4. Push Notifications (Only if native)
       if (isNative) {
-        PushNotifications.requestPermissions().then(result => {
-          if (result.receive === 'granted') {
-            PushNotifications.register();
-          }
-        });
-
+        // Add listeners before calling register
         PushNotifications.addListener('registration', token => {
-          console.log('DEVICE TOKEN:', token.value);
+          alert("TOKEN: " + token.value);
         });
 
         PushNotifications.addListener('pushNotificationReceived', notification => {
           toast(notification.title || "New Alert", {
             description: notification.body
           })
-        })
+        });
+
+        PushNotifications.requestPermissions().then(result => {
+          if (result.receive === 'granted') {
+            PushNotifications.register();
+          }
+        });
       }
 
       // 5. Hide splash screen
