@@ -67,29 +67,28 @@ export async function sendPasswordResetEmail({
     to: email,
     subject: "Reset Your Attendy Password",
     html: `
-      <div style="font-family: 'Geist', 'Segoe UI', sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; color: #1A132F; border: 2px solid #1A132F; border-radius: 24px; overflow: hidden; shadow: 0 10px 40px rgba(26,19,47,0.12);">
-        <div style="background: #1A132F; padding: 40px 32px; text-align: center;">
-          <h1 style="margin: 0; font-size: 32px; color: #ffffff; letter-spacing: -1px; font-weight: 900;">🎓 Attendy</h1>
-          <p style="margin: 8px 0 0; color: #2ec7ff; font-size: 14px; font-weight: 700; text-transform: uppercase; tracking: 0.1em;">Password Reset Request</p>
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 20px auto; background: #070411; color: #61A4BC; border: 3px solid #1A132F; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+        <div style="background: #1A132F; padding: 45px 32px; text-align: center; border-bottom: 2px solid rgba(97, 164, 188, 0.1);">
+          <h1 style="margin: 0; font-size: 36px; color: #ffffff; letter-spacing: -1.5px; font-weight: 900;">🎓 Attendy</h1>
+          <p style="margin: 10px 0 0; color: #5B7DB1; font-size: 13px; font-weight: 800; text-transform: uppercase; tracking: 0.2em;">Secure Access Portal</p>
         </div>
-        <div style="padding: 40px 32px;">
-          <p style="font-size: 18px; margin-bottom: 12px; font-weight: 700;">Hi <strong>${formattedName}</strong>,</p>
-          <p style="font-size: 15px; color: #4B5563; line-height: 1.6; margin-bottom: 32px;">
-            We received a request to reset your password. Click the button below to set a new password. 
-            This link will expire in <strong style="color: #1A132F;">1 hour</strong>.
+        <div style="padding: 45px 35px; background: #070411;">
+          <p style="font-size: 20px; margin-bottom: 15px; font-weight: 700; color: #ffffff;">Hi <strong>${formattedName}</strong>,</p>
+          <p style="font-size: 16px; color: #61A4BC; line-height: 1.7; margin-bottom: 35px; opacity: 0.9;">
+            A password reset was requested for your Attendy account. To secure your account, click the button below to choose a new password. This link is valid for <strong style="color: #ffffff;">1 hour</strong>.
           </p>
-          <div style="text-align: center; margin: 40px 0;">
+          <div style="text-align: center; margin: 45px 0;">
             <a href="${resetLink}" 
-               style="display: inline-block; background: #005691; color: #ffffff; padding: 16px 40px; border-radius: 14px; text-decoration: none; font-weight: 900; font-size: 16px; border: 3px solid #1A132F; box-shadow: 0 4px 15px rgba(0,86,145,0.25);">
+               style="display: inline-block; background: #5B7DB1; color: #ffffff; padding: 18px 45px; border-radius: 16px; text-decoration: none; font-weight: 900; font-size: 17px; border: 3px solid #1A132F; box-shadow: 0 8px 25px rgba(91, 125, 177, 0.3);">
               Reset Password
             </a>
           </div>
-          <p style="font-size: 13px; color: #6B7280; line-height: 1.6; font-style: italic;">
-            If you didn't request this, you can safely ignore this email. Your password won't be changed.
+          <p style="font-size: 14px; color: #61A4BC; line-height: 1.6; font-style: italic; opacity: 0.7; text-align: center;">
+            Didn't request this? Relax, your account is safe and you can delete this email.
           </p>
-          <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid #f3f4f6; text-align: center;">
-            <p style="font-size: 12px; color: #9CA3AF; margin: 0; font-weight: 600;">
-              Attendy Support Team
+          <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #1A132F; text-align: center;">
+            <p style="font-size: 11px; color: #5B7DB1; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+              Attendy Intelligence Service
             </p>
           </div>
         </div>
