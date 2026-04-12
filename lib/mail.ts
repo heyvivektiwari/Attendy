@@ -67,32 +67,50 @@ export async function sendPasswordResetEmail({
     to: email,
     subject: "Reset Your Attendy Password",
     html: `
-      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 20px auto; background: #070411; color: #61A4BC; border: 3px solid #1A132F; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-        <div style="background: #1A132F; padding: 45px 32px; text-align: center; border-bottom: 2px solid rgba(97, 164, 188, 0.1);">
-          <h1 style="margin: 0; font-size: 36px; color: #ffffff; letter-spacing: -1.5px; font-weight: 900;">🎓 Attendy</h1>
-          <p style="margin: 10px 0 0; color: #5B7DB1; font-size: 13px; font-weight: 800; text-transform: uppercase; tracking: 0.2em;">Secure Access Portal</p>
-        </div>
-        <div style="padding: 45px 35px; background: #070411;">
-          <p style="font-size: 20px; margin-bottom: 15px; font-weight: 700; color: #ffffff;">Hi <strong>${formattedName}</strong>,</p>
-          <p style="font-size: 16px; color: #61A4BC; line-height: 1.7; margin-bottom: 35px; opacity: 0.9;">
-            A password reset was requested for your Attendy account. To secure your account, click the button below to choose a new password. This link is valid for <strong style="color: #ffffff;">1 hour</strong>.
-          </p>
-          <div style="text-align: center; margin: 45px 0;">
-            <a href="${resetLink}" 
-               style="display: inline-block; background: #5B7DB1; color: #ffffff; padding: 18px 45px; border-radius: 16px; text-decoration: none; font-weight: 900; font-size: 17px; border: 3px solid #1A132F; box-shadow: 0 8px 25px rgba(91, 125, 177, 0.3);">
-              Reset Password
-            </a>
+      <html>
+        <head>
+          <style>
+            @media (prefers-color-scheme: dark) {
+              .email-wrapper { background-color: #070411 !important; color: #61A4BC !important; }
+              .content-box { background-color: #070411 !important; border-color: #1A132F !important; }
+              .header-box { background-color: #1A132F !important; }
+              .text-main { color: #ffffff !important; }
+              .text-muted { color: #61A4BC !important; }
+              .footer-text { color: #5B7DB1 !important; }
+            }
+          </style>
+        </head>
+        <body style="margin: 0; padding: 0;">
+          <div class="email-wrapper" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; padding: 20px 10px;">
+            <div class="content-box" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #1A132F; border: 3px solid #1A132F; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+              <div class="header-box" style="background: #1A132F; padding: 45px 32px; text-align: center;">
+                <h1 style="margin: 0; font-size: 36px; color: #ffffff; letter-spacing: -1.5px; font-weight: 900;">🎓 Attendy</h1>
+                <p style="margin: 10px 0 0; color: #2ec7ff; font-size: 13px; font-weight: 800; text-transform: uppercase; tracking: 0.2em;">Security Notification</p>
+              </div>
+              <div style="padding: 45px 35px;">
+                <p class="text-main" style="font-size: 20px; margin-bottom: 15px; font-weight: 700;">Hi <strong>${formattedName}</strong>,</p>
+                <p class="text-muted" style="font-size: 16px; color: #4B5563; line-height: 1.7; margin-bottom: 35px;">
+                  We received a request to reset your Attendy password. Safeguard your account by clicking the button below to choose a new password. This link will expire in <strong style="color: #1A132F;">1 hour</strong>.
+                </p>
+                <div style="text-align: center; margin: 45px 0;">
+                  <a href="${resetLink}" 
+                     style="display: inline-block; background: #005691; color: #ffffff; padding: 18px 45px; border-radius: 16px; text-decoration: none; font-weight: 900; font-size: 17px; border: 3px solid #1A132F; box-shadow: 0 8px 15px rgba(0,86,145,0.15);">
+                    Reset Password
+                  </a>
+                </div>
+                <p class="text-muted" style="font-size: 14px; color: #6B7280; line-height: 1.6; font-style: italic; text-align: center;">
+                  If you didn't request this change, you can safely ignore this mail.
+                </p>
+                <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #f3f4f6; text-align: center;">
+                  <p class="footer-text" style="font-size: 11px; color: #9CA3AF; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                    Attendy Intelligence Service
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          <p style="font-size: 14px; color: #61A4BC; line-height: 1.6; font-style: italic; opacity: 0.7; text-align: center;">
-            Didn't request this? Relax, your account is safe and you can delete this email.
-          </p>
-          <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #1A132F; text-align: center;">
-            <p style="font-size: 11px; color: #5B7DB1; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-              Attendy Intelligence Service
-            </p>
-          </div>
-        </div>
-      </div>
+        </body>
+      </html>
     `,
   }
 
