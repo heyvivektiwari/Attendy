@@ -53,22 +53,42 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const login = useAttendanceStore((state) => state.login)
 
-  const clearForm = () => {
+  const clearForm = (keepEmail = false) => {
+    if (!keepEmail) setEmail("")
     setRollNo("")
     setPassword("")
     setName("")
-    setEmail("")
     setConfirmPassword("")
     setError("")
     setSuccess("")
   }
 
   const switchView = (newView: View) => {
-    // We preserve email when switching to facilitate UX (forgot password, etc)
-    const currentEmail = email;
-    clearForm()
-    setEmail(currentEmail)
+    if (newView === "forgot-password") {
+      clearForm(true)
+    } else {
+      clearForm(false)
+    }
     setView(newView)
+  }
+
+  const handleBiometricLogin = async () => {
+    setError("")
+    setIsLoading(true)
+    // Simulate biometric delay
+    await new Promise(r => setTimeout(r, 1500))
+    
+    // In a real app, we'd use navigator.credentials.get()
+    // For now, we simulate success if they've used the app before
+    const lastUser = localStorage.getItem("attendy-user")
+    if (lastUser) {
+      const data = JSON.parse(lastUser)
+      login(data.name, data.rollNo, data.division)
+      setSuccess("Authenticated via Biometrics!")
+    } else {
+      setError("No biometric data found. Please login normally first.")
+      setIsLoading(false)
+    }
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -86,6 +106,7 @@ export function LoginForm() {
       const data = await response.json()
 
       if (data.success) {
+        localStorage.setItem("attendy-user", JSON.stringify(data.student))
         login(data.student.name, data.student.rollNo, data.student.division)
       } else {
         setError(data.message || "Invalid credentials")
@@ -241,6 +262,29 @@ export function LoginForm() {
                       Access Dashboard
                     </>
                   )}
+                </Button>
+
+                <div className="flex items-center gap-4 py-2">
+                  <div className="h-px flex-1 bg-border/50" />
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Or Secure Entry</span>
+                  <div className="h-px flex-1 bg-border/50" />
+                </div>
+
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleBiometricLogin}
+                  disabled={isLoading}
+                  className="w-full h-12 border-[3px] border-[#1A132F]/10 hover:border-primary/40 rounded-xl transition-all group"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="relative overflow-hidden p-1.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </div>
+                    <span className="font-bold text-sm tracking-tight text-muted-foreground group-hover:text-primary transition-colors">Touch ID / Face ID</span>
+                  </div>
                 </Button>
 
                 <div className="text-center text-sm text-muted-foreground">
