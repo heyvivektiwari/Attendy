@@ -10,6 +10,8 @@ import { SEMESTER_MONTHS } from "@/lib/attendance-store"
 import { Logo } from "@/components/logo"
 import { ThemeCustomizer } from "@/components/theme-customizer"
 import { cn } from "@/lib/utils"
+import { Capacitor } from '@capacitor/core'
+import { Preferences } from '@capacitor/preferences'
 
 import { useState } from "react"
 
@@ -238,8 +240,11 @@ export function DashboardHeader() {
                   variant="destructive"
                   size="sm"
                   className="w-full justify-start h-10 rounded-lg"
-                  onClick={() => {
+                  onClick={async () => {
                     if (window.confirm("Are you sure you want to log out of Attendy?")) {
+                      if (Capacitor.isNativePlatform()) {
+                        await Preferences.remove({ key: 'attendy-user' })
+                      }
                       logout()
                     }
                   }}

@@ -10,6 +10,8 @@ import { GraduationCap, Sparkles, Loader2, AlertCircle, CheckCircle2, ArrowLeft,
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Logo } from "@/components/logo"
+import { Capacitor } from '@capacitor/core'
+import { Preferences } from '@capacitor/preferences'
 
 type View = "login" | "register" | "forgot-password"
 
@@ -98,6 +100,9 @@ export function LoginForm() {
 
       if (data.success) {
         localStorage.setItem("attendy-user", JSON.stringify(data.student))
+        if (Capacitor.isNativePlatform()) {
+          await Preferences.set({ key: 'attendy-user', value: JSON.stringify(data.student) })
+        }
         login(data.student.name, data.student.rollNo, data.student.division)
       } else {
         setError(data.message || "Invalid credentials")
