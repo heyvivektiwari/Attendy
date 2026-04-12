@@ -85,17 +85,25 @@ export function LoginForm() {
     setIsLoading(true)
 
     try {
-      // Simulate real browser Biometric Prompt (using a mock delay and UX)
-      // This makes it feel "Actual" as requested
-      if (window.confirm("Verify your identity with Touch ID / Face ID?")) {
+      // Simulate real browser Biometric Prompt
+      const isVerified = window.confirm("Verify your identity with Touch ID / Face ID?")
+      
+      if (isVerified) {
         await new Promise(r => setTimeout(r, 1200))
         const data = JSON.parse(lastUser)
-        login(data.name, data.rollNo, data.division)
-        setSuccess("Securely Authenticated!")
+        // Final sanity check before login
+        if (data && data.name) {
+          login(data.name, data.rollNo, data.division)
+          setSuccess("Securely Authenticated!")
+        } else {
+          throw new Error("Invalid session")
+        }
       } else {
+        // User cancelled - STOPS authentication
         setIsLoading(false)
+        setError("Verification was cancelled.")
       }
-    } catch {
+    } catch (err) {
       setError("Biometric verification failed.")
       setIsLoading(false)
     }
