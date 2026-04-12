@@ -380,11 +380,17 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
 
       login: (name, rollNo, division) => {
-        set({ user: { name, rollNo, division }, isAuthenticated: true })
+        const current = getCurrentMonth()
+        set({ 
+          user: { name, rollNo, division }, 
+          isAuthenticated: true,
+          currentMonth: current.month,
+          currentYear: current.year
+        })
         // Initialize lectures for current month if not already done
         const state = get()
-        if (state.lectures.filter((l) => l.month === state.currentMonth && l.year === state.currentYear).length === 0) {
-          state.initializeMonth(state.currentMonth, state.currentYear)
+        if (state.lectures.filter((l) => l.month === current.month && l.year === current.year).length === 0) {
+          state.initializeMonth(current.month, current.year)
         }
       },
 
