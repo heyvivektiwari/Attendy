@@ -132,7 +132,7 @@ export function Dashboard() {
         {mainView !== "contact" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             {subjectMode === "theory" ? (
-              <div className="w-full h-full p-6 border-[3px] border-[#1A132F]/20 rounded-2xl bg-white dark:bg-card text-card-foreground shadow-[0_10px_40px_rgba(26,19,47,0.12)] transition-all hover:shadow-[0_15px_50px_rgba(26,19,47,0.2)] hover:-translate-y-1">
+              <div className="w-full h-full p-6 border-[3px] border-[#1A132F]/15 dark:border-primary/40 rounded-2xl bg-white dark:bg-card text-card-foreground shadow-[0_10px_40px_rgba(26,19,47,0.12)] transition-all hover:shadow-[0_15px_50px_rgba(26,19,47,0.2)] hover:-translate-y-1">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="p-3 rounded-lg bg-primary/10">
                     <BookOpen className="h-6 w-6 text-primary" />
@@ -154,7 +154,7 @@ export function Dashboard() {
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full p-6 border-[3px] border-[#1A132F]/20 rounded-2xl bg-white dark:bg-card text-card-foreground shadow-[0_10px_40px_rgba(26,19,47,0.12)] transition-all hover:shadow-[0_15px_50px_rgba(26,19,47,0.2)] hover:-translate-y-1">
+              <div className="w-full h-full p-6 border-[3px] border-[#1A132F]/15 dark:border-primary/40 rounded-2xl bg-white dark:bg-card text-card-foreground shadow-[0_10px_40px_rgba(26,19,47,0.12)] transition-all hover:shadow-[0_15px_50px_rgba(26,19,47,0.2)] hover:-translate-y-1">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="p-3 rounded-lg bg-primary/10">
                     <FlaskConical className="h-6 w-6 text-primary" />
@@ -308,7 +308,7 @@ export function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch pt-4">
-              <div className="bg-card border-2 border-border/80 p-8 rounded-3xl shadow-xl space-y-6 flex flex-col justify-center">
+              <div className="bg-card border-[3px] border-[#1A132F]/15 dark:border-primary/40 p-8 rounded-3xl shadow-[0_10px_40px_rgba(26,19,47,0.12)] space-y-6 relative overflow-hidden flex flex-col justify-between">
                  <h3 className="text-2xl font-extrabold flex items-center gap-3">
                    <Mail className="h-6 w-6 text-primary" />
                    Email Support
@@ -327,7 +327,7 @@ export function Dashboard() {
                  </a>
               </div>
 
-              <div className="bg-card border-2 border-border/80 p-8 rounded-3xl shadow-xl space-y-6 relative overflow-hidden flex flex-col justify-between">
+              <div className="bg-card border-[3px] border-[#1A132F]/15 dark:border-primary/40 p-8 rounded-3xl shadow-[0_10px_40px_rgba(26,19,47,0.12)] space-y-6 relative overflow-hidden flex flex-col justify-between">
                 <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
                 <div className="relative z-10 space-y-6">
                   <h3 className="text-2xl font-extrabold">System Information</h3>

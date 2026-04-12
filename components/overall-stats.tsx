@@ -61,7 +61,7 @@ function StatCard({
   const needToAttend = Math.ceil((0.75 * data.total - data.attended) / 0.25)
 
   return (
-    <Card className={cn("overflow-hidden border transition-colors duration-300", status.border)}>
+    <Card className={cn("overflow-hidden border-[3px] shadow-[0_10px_40px_rgba(26,19,47,0.12)] bg-white dark:bg-card border-[#1A132F]/15 dark:border-primary/40 transition-all duration-300")}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -117,7 +117,7 @@ export function OverallStats({ theory, lab, overall }: OverallStatsProps) {
   return (
     <div className="space-y-4">
       {/* Main Overall Card */}
-      <Card className={cn("overflow-hidden border-2 transition-colors duration-300", overallStatus.border)}>
+      <Card className={cn("overflow-hidden border-[3px] shadow-[0_10px_40px_rgba(26,19,47,0.12)] bg-white dark:bg-card border-[#1A132F]/15 dark:border-primary/40 transition-all duration-300")}>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="flex items-center gap-6">

@@ -253,8 +253,8 @@ export function DashboardHeader() {
           <span 
             className="font-black text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition-opacity ml-1 sm:ml-2 tracking-tighter"
             onClick={() => {
+              setMainView("dashboard")
               window.scrollTo({ top: 0, behavior: "smooth" })
-              setTimeout(() => window.location.reload(), 400)
             }}
           >
             Attendy
