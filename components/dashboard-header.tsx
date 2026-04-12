@@ -36,7 +36,7 @@ export function DashboardHeader() {
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden lg:flex w-12 h-12 border-[3px] border-[#1A132F]/20 dark:border-primary/40 rounded-full shadow-[0_4px_15px_rgba(26,19,47,0.08)] bg-white dark:bg-transparent hover:border-primary transition-all active:scale-95">
+              <Button variant="ghost" size="icon" className="md:hidden lg:flex w-12 h-12 border-[3px] border-[#1A132F]/20 dark:border-primary/40 rounded-xl shadow-[0_4px_15px_rgba(26,19,47,0.08)] bg-white dark:bg-transparent hover:border-primary transition-all active:scale-95">
                 <Menu className="h-8 w-8" strokeWidth={3} />
                 <span className="sr-only">Toggle menu</span>
               </Button>

@@ -12,7 +12,7 @@ export function ModeToggle() {
     <Button
       variant="outline"
       size="icon"
-      className="rounded-full w-12 h-12 border-[3px] border-[#1A132F]/20 dark:border-primary/40 shadow-[0_4px_15px_rgba(26,19,47,0.08)] bg-white dark:bg-transparent hover:border-primary transition-all active:scale-90"
+      className="rounded-xl w-12 h-12 border-[3px] border-[#1A132F]/20 dark:border-primary/40 shadow-[0_4px_15px_rgba(26,19,47,0.08)] bg-white dark:bg-transparent hover:border-primary transition-all active:scale-90"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
       <Sun className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
