@@ -27,25 +27,37 @@ jobs:
       - name: Sync Capacitor Android
         run: npx cap sync android
 
+      # Setup Java FIRST so JAVA_HOME is stable
       - name: Setup Java JDK 21
+        id: setup-java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
+      # Setup Android SDK but use Java from previous step
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
+      # Restore the JDK 21 JAVA_HOME that setup-android may have overridden
+      - name: Restore JDK 21 JAVA_HOME
+        run: |
+          echo "JAVA_HOME=${{ steps.setup-java.outputs.path }}" >> $GITHUB_ENV
+          echo "${{ steps.setup-java.outputs.path }}/bin" >> $GITHUB_PATH
+
+      - name: Verify Java version
+        run: java -version
 
       - name: Make Gradle executable
         run: chmod +x android/gradlew
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Build Release APK
         working-directory: android
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
