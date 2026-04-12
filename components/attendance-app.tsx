@@ -12,10 +12,8 @@ import { Capacitor } from '@capacitor/core'
 import { toast } from "sonner"
 
 export function AttendanceApp() {
-  const { isAuthenticated, login } = useAttendanceStore((state) => ({
-    isAuthenticated: state.isAuthenticated,
-    login: state.login,
-  }))
+  const isAuthenticated = useAttendanceStore((state) => state.isAuthenticated)
+  const login = useAttendanceStore((state) => state.login)
   const [mounted, setMounted] = useState(false)
   const [isOffline, setIsOffline] = useState(false)
 
