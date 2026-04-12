@@ -13,7 +13,7 @@ import { Logo } from "@/components/logo"
 
 type View = "login" | "register" | "forgot-password"
 
-function PasswordInput({ value, onChange, placeholder, disabled, id, minLength }: any) {
+function PasswordInput({ value, onChange, placeholder, disabled, id, minLength, autoComplete }: any) {
   const [show, setShow] = useState(false)
   return (
     <div className="relative">
@@ -26,6 +26,7 @@ function PasswordInput({ value, onChange, placeholder, disabled, id, minLength }
         required
         disabled={disabled}
         minLength={minLength}
+        autoComplete={autoComplete}
         className="pr-10 h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
       />
       <button
@@ -63,7 +64,10 @@ export function LoginForm() {
   }
 
   const switchView = (newView: View) => {
+    // We preserve email when switching to facilitate UX (forgot password, etc)
+    const currentEmail = email;
     clearForm()
+    setEmail(currentEmail)
     setView(newView)
   }
 
@@ -198,6 +202,7 @@ export function LoginForm() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       disabled={isLoading}
+                      autoComplete="username"
                       className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
@@ -209,6 +214,7 @@ export function LoginForm() {
                       value={password}
                       onChange={(e: any) => setPassword(e.target.value)}
                       disabled={isLoading}
+                      autoComplete="current-password"
                     />
                   </Field>
                 </FieldGroup>
@@ -318,6 +324,7 @@ export function LoginForm() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       disabled={isLoading}
+                      autoComplete="username"
                       className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
@@ -330,6 +337,7 @@ export function LoginForm() {
                       onChange={(e: any) => setPassword(e.target.value)}
                       disabled={isLoading}
                       minLength={4}
+                      autoComplete="new-password"
                     />
                   </Field>
                   <Field>
@@ -341,6 +349,7 @@ export function LoginForm() {
                       onChange={(e: any) => setConfirmPassword(e.target.value)}
                       disabled={isLoading}
                       minLength={4}
+                      autoComplete="new-password"
                     />
                   </Field>
                 </FieldGroup>
@@ -413,6 +422,7 @@ export function LoginForm() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       disabled={isLoading}
+                      autoComplete="username"
                       className="h-12 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl"
                     />
                   </Field>
