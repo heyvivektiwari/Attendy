@@ -13,12 +13,13 @@ import { Logo } from "@/components/logo"
 
 type View = "login" | "register" | "forgot-password"
 
-function PasswordInput({ value, onChange, placeholder, disabled, id, minLength, autoComplete }: any) {
+function PasswordInput({ value, onChange, placeholder, disabled, id, minLength, autoComplete, name }: any) {
   const [show, setShow] = useState(false)
   return (
     <div className="relative">
       <Input
         id={id}
+        name={name}
         type={show ? "text" : "password"}
         placeholder={placeholder}
         value={value}
@@ -53,6 +54,11 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const login = useAttendanceStore((state) => state.login)
 
+  useEffect(() => {
+    // Clear form on mount to ensure no stale data after logout
+    clearForm()
+  }, [])
+
   const clearForm = (keepEmail = false) => {
     if (!keepEmail) setEmail("")
     setRollNo("")
@@ -74,6 +80,10 @@ export function LoginForm() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!email || !password) {
+       setError("Please enter your credentials")
+       return
+    }
     setError("")
     setIsLoading(true)
 
@@ -198,6 +208,7 @@ export function LoginForm() {
                     <FieldLabel htmlFor="loginEmail">Email Address</FieldLabel>
                     <Input
                       id="loginEmail"
+                      name="email"
                       type="email"
                       placeholder="your.email@example.com"
                       value={email}
@@ -212,6 +223,7 @@ export function LoginForm() {
                     <FieldLabel htmlFor="loginPassword">Password</FieldLabel>
                     <PasswordInput
                       id="loginPassword"
+                      name="password"
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e: any) => setPassword(e.target.value)}
