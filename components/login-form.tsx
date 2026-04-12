@@ -287,7 +287,7 @@ export function LoginForm() {
                     <Input
                       id="regName"
                       type="text"
-                      placeholder="e.g., Vivek T"
+                      placeholder="e.g., John Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
@@ -300,7 +300,7 @@ export function LoginForm() {
                     <Input
                       id="regRollNo"
                       type="text"
-                      placeholder="e.g., SEA156"
+                      placeholder="e.g., CS101"
                       value={rollNo}
                       onChange={(e) => setRollNo(e.target.value.toUpperCase())}
                       required
