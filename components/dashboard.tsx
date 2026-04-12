@@ -142,9 +142,16 @@ export function Dashboard() {
                     <p className="text-sm text-muted-foreground">{stats.theory.attended}/{stats.theory.total} lectures attended</p>
                   </div>
                 </div>
-                <div className="flex items-end gap-3 mb-3">
-                  <span className="text-4xl font-bold">{stats.theory.percentage}%</span>
-                  <span className="text-sm text-muted-foreground mb-1">Overall Average</span>
+                <div className="flex items-center justify-between mb-3 mt-auto">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-black tabular-nums tracking-tighter">{stats.theory.percentage}%</span>
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-70 mb-1">Total Average</span>
+                  </div>
+                  <div className={cn("text-xs font-black uppercase tracking-widest", (stats.theory.attended - 0.75 * stats.theory.total) / 0.75 >= 0 ? "text-safe" : "text-critical")}>
+                    {(stats.theory.attended - 0.75 * stats.theory.total) / 0.75 >= 0 
+                      ? `Can miss ${Math.floor((stats.theory.attended - 0.75 * stats.theory.total) / 0.75)}` 
+                      : `Need ${Math.ceil((0.75 * stats.theory.total - stats.theory.attended) / 0.25)} more`}
+                  </div>
                 </div>
                 <div className="bg-[#E8F1F5] dark:bg-[#070411] rounded-full h-4 overflow-hidden border border-[#004A7C]/50 dark:border-[#2ec7ff] shadow-[0_4px_10px_rgba(0,74,124,0.3)] dark:shadow-[0_0_12px_rgba(7,176,35,0.5)]">
                   <div 
@@ -164,9 +171,16 @@ export function Dashboard() {
                     <p className="text-sm text-muted-foreground">{stats.lab.attended}/{stats.lab.total} labs attended</p>
                   </div>
                 </div>
-                <div className="flex items-end gap-3 mb-3">
-                  <span className="text-4xl font-bold">{stats.lab.percentage}%</span>
-                  <span className="text-sm text-muted-foreground mb-1">Overall Average</span>
+                <div className="flex items-center justify-between mb-3 mt-auto">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-black tabular-nums tracking-tighter">{stats.lab.percentage}%</span>
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-70 mb-1">Total Average</span>
+                  </div>
+                  <div className={cn("text-xs font-black uppercase tracking-widest", (stats.lab.attended - 0.75 * stats.lab.total) / 0.75 >= 0 ? "text-safe" : "text-critical")}>
+                    {(stats.lab.attended - 0.75 * stats.lab.total) / 0.75 >= 0 
+                      ? `Can miss ${Math.floor((stats.lab.attended - 0.75 * stats.lab.total) / 0.75)}` 
+                      : `Need ${Math.ceil((0.75 * stats.lab.total - stats.lab.attended) / 0.25)} more`}
+                  </div>
                 </div>
                 <div className="bg-[#E8F1F5] dark:bg-[#070411] rounded-full h-4 overflow-hidden border border-[#004A7C]/50 dark:border-[#2ec7ff] shadow-[0_4px_10px_rgba(0,74,124,0.3)] dark:shadow-[0_0_12px_rgba(7,176,35,0.5)]">
                   <div 
