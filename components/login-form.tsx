@@ -182,7 +182,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative transition-colors duration-500">
       <div className="absolute top-4 right-4">
         <ModeToggle />
       </div>

@@ -81,7 +81,7 @@ export function Dashboard() {
   const criticalCount = countByStatus(theorySubjects, "critical") + countByStatus(labSubjects, "critical")
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background transition-colors duration-500">
       <DashboardHeader />
       <main className="container mx-auto px-4 py-6 space-y-6">
         {mainView !== "contact" && (
