@@ -5,7 +5,6 @@ import { useAttendanceStore } from "@/lib/attendance-store"
 import { LoginForm } from "./login-form"
 import { Dashboard } from "./dashboard"
 import { Preferences } from '@capacitor/preferences'
-import { PushNotifications } from '@capacitor/push-notifications'
 import { Network } from '@capacitor/network'
 import { SplashScreen } from '@capacitor/splash-screen'
 import { Capacitor } from '@capacitor/core'
@@ -57,25 +56,6 @@ export function AttendanceApp() {
         })
       }
 
-      // 4. Push Notifications (Only if native)
-      if (isNative) {
-        // Add listeners before calling register
-        PushNotifications.addListener('registration', token => {
-          alert("TOKEN: " + token.value);
-        });
-
-        PushNotifications.addListener('pushNotificationReceived', notification => {
-          toast(notification.title || "New Alert", {
-            description: notification.body
-          })
-        });
-
-        PushNotifications.requestPermissions().then(result => {
-          if (result.receive === 'granted') {
-            PushNotifications.register();
-          }
-        });
-      }
 
       // 5. Hide splash screen
       if (isNative) {
@@ -90,7 +70,6 @@ export function AttendanceApp() {
     return () => {
       if (Capacitor.isNativePlatform()) {
         Network.removeAllListeners()
-        PushNotifications.removeAllListeners()
       }
     }
   }, [login])
