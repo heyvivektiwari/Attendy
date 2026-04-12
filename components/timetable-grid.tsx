@@ -68,10 +68,10 @@ function LectureCard({ lecture, onToggle }: { lecture: Lecture; onToggle: () => 
   return (
     <div
       className={cn(
-        "group relative p-3 rounded-xl border-[3px] shadow-sm transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-y-0.5",
+        "group relative p-3 rounded-xl border-2 shadow-sm transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-y-0.5",
         lecture.isAbsent
           ? "bg-critical/10 border-critical/40 hover:border-critical/60 hover:bg-critical/15"
-          : "bg-white dark:bg-card border-[#1A132F]/15 dark:border-primary/30 hover:bg-secondary/20 hover:border-primary/50"
+          : "bg-card border-border/60 hover:bg-secondary/20 hover:border-primary/50 dark:border-primary/20"
       )}
       onClick={onToggle}
     >
@@ -121,7 +121,7 @@ function LectureCard({ lecture, onToggle }: { lecture: Lecture; onToggle: () => 
 
 function BreakRow() {
   return (
-    <div className="flex items-center justify-center gap-2 py-3 px-4 bg-orange-300/10 dark:bg-orange-300/5 rounded-xl border-[3px] border-dashed border-orange-300/50 dark:border-orange-300/40 shadow-inner">
+    <div className="flex items-center justify-center gap-2 py-3 px-4 bg-orange-300/10 dark:bg-orange-300/5 rounded-xl border-2 border-dashed border-orange-300/50 dark:border-orange-300/40 shadow-inner">
       <Coffee className="h-4 w-4 text-orange-400 dark:text-orange-300" />
       <span className="text-sm font-bold tracking-widest text-orange-400 dark:text-orange-300">BREAK</span>
       <span className="text-xs font-medium text-orange-400/80 dark:text-orange-300/80">(12:30 - 01:00)</span>
@@ -265,7 +265,7 @@ function WeekSection({
               const hasAfternoon = after.length > 0
               
               return (
-                <div key={day} className={cn("flex flex-col border-[3px] rounded-xl overflow-hidden bg-white dark:bg-card min-h-[250px] transition-all hover:border-primary/50 hover:shadow-xl", tableOuterBorders[day])}>
+                <div key={day} className={cn("flex flex-col border-2 rounded-xl overflow-hidden bg-card min-h-[250px] transition-all hover:border-primary/50 hover:shadow-xl", tableOuterBorders[day])}>
                   <div className={cn("text-center py-2.5 border-b-2 border-current/20 dark:border-opacity-30", headerColors[day])}>
                     <p className="font-bold text-sm tracking-wide">{dayLabels[day]}</p>
                   </div>
@@ -319,7 +319,7 @@ function WeekSection({
               const { before, after } = splitByBreak(dayLectures)
               
               return (
-                <div key={day} className={cn("rounded-xl border-[3px] overflow-hidden bg-white dark:bg-card transition-shadow hover:shadow-md", tableOuterBorders[day])}>
+                <div key={day} className={cn("rounded-xl border-2 overflow-hidden bg-card transition-shadow hover:shadow-md", tableOuterBorders[day])}>
                   <div className={cn("py-3 px-4 border-b-2 border-current/20 dark:border-opacity-30", mobileHeaderColors[day])}>
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-[15px] tracking-wide">{dayLabels[day]}</p>
@@ -427,11 +427,11 @@ export function TimetableGrid({ lectures, currentMonth, currentYear, onMonthChan
                 size="icon"
                 onClick={handlePrev}
                 disabled={monthIndex <= 0}
-                className="h-10 w-10 rounded-lg border-[3px] border-[#1A132F]/15 dark:bg-primary/20 dark:border-primary/50 dark:text-white transition-all hover:bg-primary/30 active:scale-95 disabled:opacity-30"
+                className="h-10 w-10 rounded-lg border-2 dark:bg-primary/20 dark:border-primary/50 dark:text-white transition-all hover:bg-primary/30 active:scale-95 disabled:opacity-30"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              <span className="px-3 py-1 bg-transparent border-[3px] border-[#1A132F]/15 dark:border-border/50 rounded-md text-sm font-bold min-w-[60px] text-center">
+              <span className="px-3 py-1 bg-transparent border-2 border-border/50 rounded-md text-sm font-bold min-w-[60px] text-center">
                 {new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'short' })}
               </span>
               <Button
@@ -439,7 +439,7 @@ export function TimetableGrid({ lectures, currentMonth, currentYear, onMonthChan
                 size="icon"
                 onClick={handleNext}
                 disabled={monthIndex >= SEMESTER_MONTHS.length - 1}
-                className="h-10 w-10 rounded-lg border-[3px] border-[#1A132F]/15 dark:bg-primary/20 dark:border-primary/50 dark:text-white transition-all hover:bg-primary/30 active:scale-95 disabled:opacity-30"
+                className="h-10 w-10 rounded-lg border-2 dark:bg-primary/20 dark:border-primary/50 dark:text-white transition-all hover:bg-primary/30 active:scale-95 disabled:opacity-30"
               >
                 <ChevronRight className="h-5 w-5" />
               </Button>
