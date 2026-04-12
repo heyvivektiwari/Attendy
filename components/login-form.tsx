@@ -174,7 +174,7 @@ export function LoginForm() {
 
         {/* ============ LOGIN VIEW ============ */}
         {view === "login" && (
-          <Card className="border-2">
+          <Card className="border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-[0_10px_40px_rgba(26,19,47,0.12)] bg-white dark:bg-card">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl">Welcome back</CardTitle>
               <CardDescription>Enter your email and password to login</CardDescription>
@@ -254,7 +254,7 @@ export function LoginForm() {
 
         {/* ============ REGISTER VIEW ============ */}
         {view === "register" && (
-          <Card className="border-2">
+          <Card className="border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-[0_10px_40px_rgba(26,19,47,0.12)] bg-white dark:bg-card">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl flex items-center gap-2">
                 <button
@@ -373,7 +373,7 @@ export function LoginForm() {
 
         {/* ============ FORGOT PASSWORD VIEW ============ */}
         {view === "forgot-password" && (
-          <Card className="border-2">
+          <Card className="border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-[0_10px_40px_rgba(26,19,47,0.12)] bg-white dark:bg-card">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl flex items-center gap-2">
                 <button
