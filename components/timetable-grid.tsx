@@ -372,7 +372,11 @@ function WeekSection({
 }
 
 export function TimetableGrid({ lectures, currentMonth, currentYear, onMonthChange, pendingChanges, setPendingChange }: TimetableGridProps) {
-  const monthLectures = lectures.filter((l) => l.month === currentMonth && l.year === currentYear)
+  const { selectedBatch, selectedElective } = useAttendanceStore()
+  const monthLectures = lectures
+    .filter((l) => l.month === currentMonth && l.year === currentYear)
+    .filter((l) => !l.batch || l.batch === selectedBatch)
+    .filter((l) => !l.elective || l.elective === selectedElective)
   const monthIndex = getMonthIndex(currentMonth, currentYear)
   const monthLabel = getMonthLabel(currentMonth, currentYear)
   

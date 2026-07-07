@@ -24,7 +24,8 @@ export function DashboardHeader() {
     rangeStartMonth, rangeStartYear,
     rangeEndMonth, rangeEndYear,
     setRange,
-    hasPendingChanges, saveChanges, discardChanges
+    hasPendingChanges, saveChanges, discardChanges,
+    selectedBatch, selectedElective, setSelectedBatch, setSelectedElective
   } = useAttendanceStore()
   
   const [isCustomRangeActive, setIsCustomRangeActive] = useState(false)
@@ -220,7 +221,44 @@ export function DashboardHeader() {
                   </div>
                 )}
 
-                <div className="pt-4 mt-auto border-t border-border/40">
+                <div className="space-y-4 pt-4 border-t border-border/40">
+                  <h3 className="text-base font-black text-primary uppercase tracking-tighter pl-1">Class Settings</h3>
+                  <div className="space-y-3 p-3 bg-secondary/20 dark:bg-secondary/10 border border-border/50 rounded-xl">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-primary uppercase pl-1">Batch</label>
+                      <Select 
+                        value={selectedBatch} 
+                        onValueChange={(val: any) => setSelectedBatch(val)}
+                      >
+                        <SelectTrigger className="h-10 border-[3px] border-[#1A132F]/15 dark:border-border/60 bg-white dark:bg-transparent rounded-xl focus:ring-primary/20">
+                          <SelectValue placeholder="Select Batch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="A1">Batch A1</SelectItem>
+                          <SelectItem value="A2">Batch A2</SelectItem>
+                          <SelectItem value="A3">Batch A3</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-primary uppercase pl-1">Program Elective</label>
+                      <Select 
+                        value={selectedElective} 
+                        onValueChange={(val: any) => setSelectedElective(val)}
+                      >
+                        <SelectTrigger className="h-10 border-[3px] border-[#1A132F]/15 dark:border-border/60 bg-white dark:bg-transparent rounded-xl focus:ring-primary/20">
+                          <SelectValue placeholder="Select Elective" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="NLP">NLP (Natural Language)</SelectItem>
+                          <SelectItem value="BDA">BDA (Big Data Analytics)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-border/40">
                   <Button 
                     variant="ghost" 
                     className={cn(

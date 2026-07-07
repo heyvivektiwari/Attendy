@@ -18,7 +18,8 @@ export function Dashboard() {
     statsMode, mainView, 
     rangeStartMonth, rangeStartYear, 
     rangeEndMonth, rangeEndYear,
-    pendingChanges, setPendingChange, hasPendingChanges, saveChanges, discardChanges 
+    pendingChanges, setPendingChange, hasPendingChanges, saveChanges, discardChanges,
+    selectedBatch, selectedElective
   } = useAttendanceStore()
   const [filter, setFilter] = useState<FilterType>("all")
   const [mounted, setMounted] = useState(false)
@@ -51,6 +52,18 @@ export function Dashboard() {
     ? getAttendanceStats({ month: currentMonth, year: currentYear }) 
     : getAttendanceStats({ startMonth: rangeStartMonth, startYear: rangeStartYear, endMonth: rangeEndMonth, endYear: rangeEndYear })
 
+  const visibleTheorySubjects = theorySubjects.filter((subject) => {
+    if (subject.id === "pec_nlp" && selectedElective !== "NLP") return false
+    if (subject.id === "pec_bda" && selectedElective !== "BDA") return false
+    return true
+  })
+
+  const visibleLabSubjects = labSubjects.filter((subject) => {
+    if (subject.id === "pecl_nlp" && selectedElective !== "NLP") return false
+    if (subject.id === "pecl_bda" && selectedElective !== "BDA") return false
+    return true
+  })
+
   const getFilteredSubjects = (subjects: typeof theorySubjects) => {
     return subjects.filter((subject) => {
       const record = stats.bySubject.get(subject.id)
@@ -64,8 +77,8 @@ export function Dashboard() {
     })
   }
 
-  const filteredTheory = getFilteredSubjects(theorySubjects)
-  const filteredLabs = getFilteredSubjects(labSubjects)
+  const filteredTheory = getFilteredSubjects(visibleTheorySubjects)
+  const filteredLabs = getFilteredSubjects(visibleLabSubjects)
 
   const countByStatus = (subjects: typeof theorySubjects, status: "warning" | "critical") => {
     return subjects.filter((s) => {
@@ -77,8 +90,8 @@ export function Dashboard() {
     }).length
   }
 
-  const warningCount = countByStatus(theorySubjects, "warning") + countByStatus(labSubjects, "warning")
-  const criticalCount = countByStatus(theorySubjects, "critical") + countByStatus(labSubjects, "critical")
+  const warningCount = countByStatus(visibleTheorySubjects, "warning") + countByStatus(visibleLabSubjects, "warning")
+  const criticalCount = countByStatus(visibleTheorySubjects, "critical") + countByStatus(visibleLabSubjects, "critical")
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-500">
@@ -90,9 +103,17 @@ export function Dashboard() {
             <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
             
             <div className="relative z-10 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
-                <Sparkles className="h-3 w-3" />
-                Student Portal
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
+                  <Sparkles className="h-3 w-3" />
+                  Student Portal
+                </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005691]/10 border border-[#005691]/20 dark:bg-primary/10 dark:border-primary/20 text-foreground text-xs font-bold uppercase tracking-widest">
+                  {selectedBatch} Batch
+                </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005691]/10 border border-[#005691]/20 dark:bg-primary/10 dark:border-primary/20 text-foreground text-xs font-bold uppercase tracking-widest">
+                  Elective: {selectedElective}
+                </div>
               </div>
               <div>
                 <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
@@ -208,7 +229,7 @@ export function Dashboard() {
                     : "border-transparent"
                 )}
               >
-                All ({theorySubjects.length + labSubjects.length})
+                All ({visibleTheorySubjects.length + visibleLabSubjects.length})
               </Button>
               <Button
                 variant="outline"

@@ -22,6 +22,8 @@ export type Lecture = {
   weekNumber: number
   month: number // 0-indexed month (0=Jan, 1=Feb, etc.)
   year: number
+  batch?: "A1" | "A2" | "A3"
+  elective?: "NLP" | "BDA"
 }
 
 export type AttendanceRecord = {
@@ -33,106 +35,115 @@ export type AttendanceRecord = {
 // Theory subjects from the timetable
 export const theorySubjects: Subject[] = [
   {
-    id: "dsgt",
-    code: "CEPCC401",
-    name: "Discrete Mathematics & Graph Theory",
-    shortName: "DSGT",
-    faculty: "Prof. Dipika Matke",
-    facultyCode: "DM",
+    id: "toc",
+    code: "CEPCC501",
+    name: "Theory of Computation",
+    shortName: "TOC",
+    faculty: "Prof. Manish R. Umale",
+    facultyCode: "MRU",
     type: "theory",
   },
   {
-    id: "dbms",
-    code: "CEPCC402",
-    name: "Database Management System",
-    shortName: "DBMS",
-    faculty: "Dr. Sheeba P.S.",
-    facultyCode: "SPS",
-    type: "theory",
-  },
-  {
-    id: "os",
-    code: "CEPCC403",
-    name: "Operating System",
-    shortName: "OS",
-    faculty: "Dr. Shital K. Dhamal",
+    id: "ml",
+    code: "CEPCC502",
+    name: "Machine Learning",
+    shortName: "ML",
+    faculty: "Dr. Shital Dhamal",
     facultyCode: "SKD",
     type: "theory",
   },
   {
-    id: "mpmc",
-    code: "ETMDM401",
-    name: "Microprocessor & Microcontroller",
-    shortName: "MPMC",
-    faculty: "Prof. Sanjay D. Naravadkar",
-    facultyCode: "SDN",
+    id: "cn",
+    code: "CEPCC503",
+    name: "Computer Network",
+    shortName: "CN",
+    faculty: "Prof. Chitra S. Ramteke",
+    facultyCode: "CSR",
     type: "theory",
   },
   {
-    id: "smpf",
-    code: "OE4013",
-    name: "Stock Market & Personal Finance",
-    shortName: "OE-II: SMPF",
-    faculty: "Dr. Smita A. Attarde",
-    facultyCode: "SAA",
-    type: "theory",
-  },
-  {
-    id: "dbm",
-    code: "EEMC401",
-    name: "Digital Business Management",
-    shortName: "DBM",
-    faculty: "Prof. Shobha S. Lolge",
+    id: "pec_nlp",
+    code: "CEPEC5011",
+    name: "Program Elective Course I - Natural Language Processing",
+    shortName: "PEC-I: NLP",
+    faculty: "Dr. Shobha S. Lolge",
     facultyCode: "SSL",
     type: "theory",
   },
   {
-    id: "bcs",
-    code: "VEC401",
-    name: "Business Communication Skills",
-    shortName: "BCS",
-    faculty: "Dr. G. Geetha",
-    facultyCode: "GG",
+    id: "pec_bda",
+    code: "CEPEC5014",
+    name: "Program Elective Course I - Big Data Analytics",
+    shortName: "PEC-I: BDA",
+    faculty: "Dr. Rakhi D. Akhare",
+    facultyCode: "RDA",
+    type: "theory",
+  },
+  {
+    id: "dcst",
+    code: "ETMDM501",
+    name: "Multidisciplinary Minor Course II: Digital Communication & Sensor Technology",
+    shortName: "MDM-II: DCST",
+    faculty: "Prof. Kaikashan S.",
+    facultyCode: "KSI",
     type: "theory",
   },
 ]
 
-// Lab subjects - A3 batch only
+// Lab subjects
 export const labSubjects: Subject[] = [
   {
-    id: "bcsl",
-    code: "VEC401",
-    name: "Business Communication Skills Lab",
-    shortName: "BCSL",
-    faculty: "Dr. G. Geetha",
-    facultyCode: "GG",
+    id: "comp_lab",
+    code: "CEVSEC501",
+    name: "Computational Lab",
+    shortName: "Comp.Lab",
+    faculty: "Prof. Chitra S. Ramteke, Prof. Pranjali V. Gurnule",
+    facultyCode: "CSR/PVG",
     type: "lab",
   },
   {
-    id: "dbmsl",
-    code: "CEPCL402",
-    name: "DBMS Lab",
-    shortName: "DBMSL",
-    faculty: "Prof. Rajnandini Kumawat",
-    facultyCode: "RK",
-    type: "lab",
-  },
-  {
-    id: "osl",
-    code: "CEPCL403",
-    name: "Operating System Lab",
-    shortName: "OSL",
-    faculty: "Dr. Shital K. Dhamal",
+    id: "mll",
+    code: "CEPCL501",
+    name: "Machine Learning Lab",
+    shortName: "MLL",
+    faculty: "Dr. Shital Dhamal",
     facultyCode: "SKD",
     type: "lab",
   },
   {
-    id: "mpmcl",
-    code: "ETMDML401",
-    name: "Microprocessor Lab",
-    shortName: "MPMCL",
-    faculty: "Prof. Sanjay D. Naravadkar",
-    facultyCode: "SDN",
+    id: "cnl",
+    code: "CEPCL502",
+    name: "Computer Network Lab",
+    shortName: "CNL",
+    faculty: "Prof. Chitra S. Ramteke",
+    facultyCode: "CSR",
+    type: "lab",
+  },
+  {
+    id: "pecl_nlp",
+    code: "CEPEL5011",
+    name: "Program Elective Course Lab I - Natural Language Processing Lab",
+    shortName: "PECL-I: NLPL",
+    faculty: "Dr. Shobha S. Lolge",
+    facultyCode: "SSL",
+    type: "lab",
+  },
+  {
+    id: "pecl_bda",
+    code: "CEPEL5014",
+    name: "Program Elective Course Lab I - Big Data Analytics Lab",
+    shortName: "PECL-I: BDAL",
+    faculty: "Dr. Rakhi D. Akhare",
+    facultyCode: "RDA",
+    type: "lab",
+  },
+  {
+    id: "mdml_dcst",
+    code: "ETMDML501",
+    name: "Multidisciplinary Minor Lab II",
+    shortName: "MDML-II",
+    faculty: "Prof. Kaikashan S.",
+    facultyCode: "KSI",
     type: "lab",
   },
 ]
@@ -140,40 +151,52 @@ export const labSubjects: Subject[] = [
 // All subjects combined
 export const subjects: Subject[] = [...theorySubjects, ...labSubjects]
 
-// Weekly timetable - A3 batch only (filtered labs)
+// Weekly timetable - all batches and electives
 export const weeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" | "month" | "year">[] = [
-  // Monday - Theory + BCSL Lab for A3
-  { subjectId: "mpmc", day: "MON", startTime: "09:30", endTime: "10:30" },
-  { subjectId: "bcsl", day: "MON", startTime: "10:30", endTime: "12:30", room: "A-410" }, // A3 batch lab
-  { subjectId: "smpf", day: "MON", startTime: "13:00", endTime: "14:00" },
-  { subjectId: "os", day: "MON", startTime: "14:00", endTime: "15:00" },
-  { subjectId: "dbm", day: "MON", startTime: "15:00", endTime: "16:00" },
+  // Monday
+  { subjectId: "cnl", day: "MON", startTime: "09:30", endTime: "11:30", room: "C-511", batch: "A3" },
+  { subjectId: "comp_lab", day: "MON", startTime: "09:30", endTime: "11:30", room: "C-502", batch: "A1" },
+  { subjectId: "pecl_bda", day: "MON", startTime: "09:30", endTime: "11:30", room: "C-602", batch: "A2", elective: "BDA" },
+  { subjectId: "dcst", day: "MON", startTime: "11:30", endTime: "12:30" },
+  { subjectId: "toc", day: "MON", startTime: "13:00", endTime: "14:00" },
+  { subjectId: "cn", day: "MON", startTime: "14:00", endTime: "15:00" },
+  { subjectId: "comp_lab", day: "MON", startTime: "15:00", endTime: "16:00" },
 
-  // Tuesday - Theory only (Mini Project slot, no lab)
-  { subjectId: "dsgt", day: "TUE", startTime: "09:30", endTime: "10:30" },
-  { subjectId: "dbms", day: "TUE", startTime: "10:30", endTime: "11:30" },
-  { subjectId: "mpmc", day: "TUE", startTime: "11:30", endTime: "12:30" },
-  { subjectId: "smpf", day: "TUE", startTime: "13:00", endTime: "14:00" },
+  // Tuesday
+  { subjectId: "pec_nlp", day: "TUE", startTime: "09:30", endTime: "10:30", room: "C-607", elective: "NLP" },
+  { subjectId: "pec_bda", day: "TUE", startTime: "09:30", endTime: "10:30", room: "C-508", elective: "BDA" },
+  { subjectId: "ml", day: "TUE", startTime: "10:30", endTime: "11:30" },
+  { subjectId: "dcst", day: "TUE", startTime: "11:30", endTime: "12:30" },
+  { subjectId: "mll", day: "TUE", startTime: "13:00", endTime: "15:00", room: "C-612", batch: "A1" },
+  { subjectId: "cnl", day: "TUE", startTime: "13:00", endTime: "15:00", room: "C-511", batch: "A2" },
+  { subjectId: "pecl_bda", day: "TUE", startTime: "13:00", endTime: "15:00", room: "C-602", batch: "A3", elective: "BDA" },
+  { subjectId: "comp_lab", day: "TUE", startTime: "15:00", endTime: "16:00" },
 
-  // Wednesday - DBMSL Lab for A3 + Theory
-  { subjectId: "dbmsl", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-511" }, // A3 batch lab
-  { subjectId: "dbm", day: "WED", startTime: "11:30", endTime: "12:30" },
-  { subjectId: "os", day: "WED", startTime: "13:00", endTime: "14:00" },
-  { subjectId: "bcs", day: "WED", startTime: "14:00", endTime: "15:00" },
-  { subjectId: "dsgt", day: "WED", startTime: "15:00", endTime: "16:00" },
+  // Wednesday
+  { subjectId: "mll", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-612", batch: "A2" },
+  { subjectId: "cnl", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-511", batch: "A1" },
+  { subjectId: "mdml_dcst", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-512", batch: "A3" },
+  { subjectId: "pec_nlp", day: "WED", startTime: "11:30", endTime: "12:30", room: "C-607", elective: "NLP" },
+  { subjectId: "pec_bda", day: "WED", startTime: "11:30", endTime: "12:30", room: "C-508", elective: "BDA" },
+  { subjectId: "dcst", day: "WED", startTime: "13:00", endTime: "14:00" },
+  { subjectId: "cn", day: "WED", startTime: "14:00", endTime: "15:00" },
 
-  // Thursday - OSL Lab for A3 + Theory
-  { subjectId: "bcs", day: "THU", startTime: "09:30", endTime: "10:30" },
-  { subjectId: "dbms", day: "THU", startTime: "10:30", endTime: "11:30" },
-  { subjectId: "osl", day: "THU", startTime: "11:30", endTime: "13:30", room: "C-612" }, // A3 batch lab
-  // Break: 13:30 - 14:00
-  { subjectId: "mpmc", day: "THU", startTime: "14:00", endTime: "15:00" },
+  // Thursday
+  { subjectId: "mdml_dcst", day: "THU", startTime: "09:30", endTime: "11:30", room: "C-512", batch: "A2" },
+  { subjectId: "comp_lab", day: "THU", startTime: "09:30", endTime: "11:30", room: "C-511", batch: "A3" },
+  { subjectId: "pecl_nlp", day: "THU", startTime: "09:30", endTime: "11:30", room: "C-611", batch: "A1", elective: "NLP" },
+  { subjectId: "ml", day: "THU", startTime: "11:30", endTime: "12:30", room: "C-605" },
+  { subjectId: "cn", day: "THU", startTime: "13:00", endTime: "14:00" },
+  { subjectId: "toc", day: "THU", startTime: "14:00", endTime: "15:00" },
 
-  // Friday - MPMCL Lab for A3 + Theory
-  { subjectId: "os", day: "FRI", startTime: "09:30", endTime: "10:30" },
-  { subjectId: "dbms", day: "FRI", startTime: "10:30", endTime: "11:30" },
-  { subjectId: "dsgt", day: "FRI", startTime: "11:30", endTime: "12:30" },
-  { subjectId: "mpmcl", day: "FRI", startTime: "13:00", endTime: "15:00", room: "C-702" }, // A3 batch lab
+  // Friday
+  { subjectId: "pec_nlp", day: "FRI", startTime: "09:30", endTime: "10:30", room: "C-607", elective: "NLP" },
+  { subjectId: "pec_bda", day: "FRI", startTime: "09:30", endTime: "10:30", room: "C-508", elective: "BDA" },
+  { subjectId: "ml", day: "FRI", startTime: "10:30", endTime: "11:30" },
+  { subjectId: "toc", day: "FRI", startTime: "11:30", endTime: "12:30" },
+  { subjectId: "comp_lab", day: "FRI", startTime: "13:00", endTime: "15:00", room: "C-511", batch: "A2" },
+  { subjectId: "mll", day: "FRI", startTime: "13:00", endTime: "15:00", room: "C-612", batch: "A3" },
+  { subjectId: "mdml_dcst", day: "FRI", startTime: "13:00", endTime: "15:00", room: "C-512", batch: "A1" },
 ]
 
 interface AttendanceStats {
@@ -213,6 +236,8 @@ interface AttendanceState {
   user: { name: string; rollNo: string; division: string } | null
   isAuthenticated: boolean
   isDarkMode: boolean
+  selectedBatch: "A1" | "A2" | "A3"
+  selectedElective: "NLP" | "BDA"
 
   // Actions
   login: (name: string, rollNo: string, division: string) => void
@@ -220,6 +245,8 @@ interface AttendanceState {
   toggleAbsent: (lectureId: string) => void
   setCurrentMonth: (month: number, year: number) => void
   toggleDarkMode: () => void
+  setSelectedBatch: (batch: "A1" | "A2" | "A3") => void
+  setSelectedElective: (elective: "NLP" | "BDA") => void
   initializeMonth: (month: number, year: number) => void
   getAttendanceStats: (filter?: { month?: number, year?: number, startMonth?: number, startYear?: number, endMonth?: number, endYear?: number }) => AttendanceStats
   statsMode: "monthly" | "overall"
@@ -340,6 +367,8 @@ export const useAttendanceStore = create<AttendanceState>()(
       user: null,
       isAuthenticated: false,
       isDarkMode: true,
+      selectedBatch: "A3",
+      selectedElective: "BDA",
       statsMode: "monthly",
       mainView: "dashboard",
       rangeStartMonth: SEMESTER_MONTHS[0].month,
@@ -352,6 +381,8 @@ export const useAttendanceStore = create<AttendanceState>()(
       setRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) => {
         set({ rangeStartMonth: startMonth, rangeStartYear: startYear, rangeEndMonth: endMonth, rangeEndYear: endYear })
       },
+      setSelectedBatch: (batch) => set({ selectedBatch: batch }),
+      setSelectedElective: (elective) => set({ selectedElective: elective }),
       pendingChanges: {},
       setPendingChange: (id, isAbsent) => {
         set((state) => ({
@@ -449,6 +480,10 @@ export const useAttendanceStore = create<AttendanceState>()(
             }
           }
           
+          const { selectedBatch, selectedElective } = get()
+          if (lecture.batch && lecture.batch !== selectedBatch) return
+          if (lecture.elective && lecture.elective !== selectedElective) return
+
           const record = bySubject.get(lecture.subjectId)
           if (record) {
             record.totalLectures++
@@ -505,7 +540,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v2",
+      name: "attendance-storage-monthly-v3",
     }
   )
 )
