@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAttendanceStore, theorySubjects, labSubjects } from "@/lib/attendance-store"
+import { useAttendanceStore, theorySubjects, labSubjects, dsTheorySubjects, dsLabSubjects } from "@/lib/attendance-store"
 import { DashboardHeader } from "./dashboard-header"
 import { SubjectCard } from "./subject-card"
 import { TimetableGrid } from "./timetable-grid"
@@ -19,7 +19,7 @@ export function Dashboard() {
     rangeStartMonth, rangeStartYear, 
     rangeEndMonth, rangeEndYear,
     pendingChanges, setPendingChange, hasPendingChanges, saveChanges, discardChanges,
-    selectedBatch, selectedElective
+    selectedBatch, selectedElective, branch, syncAbsences
   } = useAttendanceStore()
   const [filter, setFilter] = useState<FilterType>("all")
   const [mounted, setMounted] = useState(false)
@@ -31,6 +31,10 @@ export function Dashboard() {
     if (hour < 17) return "Good afternoon"
     return "Good evening"
   }
+
+  useEffect(() => {
+    syncAbsences()
+  }, [syncAbsences])
 
   useEffect(() => {
     setMounted(true)
@@ -52,13 +56,13 @@ export function Dashboard() {
     ? getAttendanceStats({ month: currentMonth, year: currentYear }) 
     : getAttendanceStats({ startMonth: rangeStartMonth, startYear: rangeStartYear, endMonth: rangeEndMonth, endYear: rangeEndYear })
 
-  const visibleTheorySubjects = theorySubjects.filter((subject) => {
+  const visibleTheorySubjects = (branch === "DataScience" ? dsTheorySubjects : theorySubjects).filter((subject) => {
     if (subject.id === "pec_nlp" && selectedElective !== "NLP") return false
     if (subject.id === "pec_bda" && selectedElective !== "BDA") return false
     return true
   })
 
-  const visibleLabSubjects = labSubjects.filter((subject) => {
+  const visibleLabSubjects = (branch === "DataScience" ? dsLabSubjects : labSubjects).filter((subject) => {
     if (subject.id === "pecl_nlp" && selectedElective !== "NLP") return false
     if (subject.id === "pecl_bda" && selectedElective !== "BDA") return false
     return true
@@ -111,9 +115,15 @@ export function Dashboard() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005691]/10 border border-[#005691]/20 dark:bg-primary/10 dark:border-primary/20 text-foreground text-xs font-bold uppercase tracking-widest">
                   {selectedBatch} Batch
                 </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005691]/10 border border-[#005691]/20 dark:bg-primary/10 dark:border-primary/20 text-foreground text-xs font-bold uppercase tracking-widest">
-                  Elective: {selectedElective}
-                </div>
+                {branch === "DataScience" ? (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 dark:bg-teal-500/10 dark:border-teal-500/20 text-teal-700 dark:text-teal-300 text-xs font-bold uppercase tracking-widest">
+                    Data Science (CSE-DS)
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005691]/10 border border-[#005691]/20 dark:bg-primary/10 dark:border-primary/20 text-foreground text-xs font-bold uppercase tracking-widest">
+                    Elective: {selectedElective}
+                  </div>
+                )}
               </div>
               <div>
                 <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">

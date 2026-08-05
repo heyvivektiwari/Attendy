@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+export type Branch = "Computer" | "DataScience"
+
 export type Subject = {
   id: string
   code: string
@@ -24,6 +26,7 @@ export type Lecture = {
   year: number
   batch?: "A1" | "A2" | "A3"
   elective?: "NLP" | "BDA"
+  branch?: Branch
 }
 
 export type AttendanceRecord = {
@@ -148,19 +151,138 @@ export const labSubjects: Subject[] = [
   },
 ]
 
-// All subjects combined
-export const subjects: Subject[] = [...theorySubjects, ...labSubjects]
+// =============================================
+// DATA SCIENCE BRANCH SUBJECTS
+// =============================================
+export const dsTheorySubjects: Subject[] = [
+  {
+    id: "ds_ai",
+    code: "DS-AI",
+    name: "Artificial Intelligence",
+    shortName: "AI",
+    faculty: "Prof. Vrushali Bendre",
+    facultyCode: "VB",
+    type: "theory",
+  },
+  {
+    id: "ds_ml",
+    code: "DS-ML",
+    name: "Machine Learning",
+    shortName: "ML",
+    faculty: "Prof. Dr Ranjana Kumari",
+    facultyCode: "RK",
+    type: "theory",
+  },
+  {
+    id: "ds_sdav",
+    code: "DS-SDAV",
+    name: "Statistical Data Analysis and Visualization",
+    shortName: "SDAV",
+    faculty: "Prof. Shradha Chaudhari",
+    facultyCode: "SC",
+    type: "theory",
+  },
+  {
+    id: "ds_cns",
+    code: "DS-CNS",
+    name: "Computer Network & Security",
+    shortName: "CNS",
+    faculty: "Prof. Yogita Gawde",
+    facultyCode: "YG",
+    type: "theory",
+  },
+  {
+    id: "ds_dcst",
+    code: "DS-DCST",
+    name: "Digital Communication & Sensor Technology",
+    shortName: "DCST",
+    faculty: "Prof. Shraddha Kunkunkar",
+    facultyCode: "SK",
+    type: "theory",
+  },
+]
+
+export const dsLabSubjects: Subject[] = [
+  {
+    id: "ds_uiux",
+    code: "DS-UIUX",
+    name: "UI & UX Design",
+    shortName: "UI&UX",
+    faculty: "Prof. Sapna Bhuskute",
+    facultyCode: "SB",
+    type: "lab",
+  },
+  {
+    id: "ds_aiml",
+    code: "DS-AIML",
+    name: "Artificial Intelligence & Machine Learning Lab",
+    shortName: "AIML",
+    faculty: "Prof. Vrushali Bendre",
+    facultyCode: "VB",
+    type: "lab",
+  },
+]
+
+// All DS subjects combined
+export const dsSubjects: Subject[] = [...dsTheorySubjects, ...dsLabSubjects]
+
+// =============================================
+// DATA SCIENCE WEEKLY TIMETABLE (AY 2026-27 ODD, TE_SEM_V)
+// Batches: A1, A2, A3 for labs
+// =============================================
+export const dsWeeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" | "month" | "year">[] = [
+  // Monday
+  { subjectId: "ds_dcst", day: "MON", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
+  { subjectId: "ds_ai",   day: "MON", startTime: "10:30", endTime: "11:30", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "MON", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
+  { subjectId: "ds_sdav", day: "MON", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_aiml", day: "MON", startTime: "14:00", endTime: "16:00", room: "C-305", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_uiux", day: "MON", startTime: "14:00", endTime: "16:00", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "MON", startTime: "14:00", endTime: "16:00", room: "C-302", batch: "A3", branch: "DataScience" },
+
+  // Tuesday
+  { subjectId: "ds_uiux", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-307", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_sdav", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-308", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_sdav", day: "TUE", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
+  { subjectId: "ds_ai",   day: "TUE", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_ml",   day: "TUE", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "TUE", startTime: "15:00", endTime: "16:00", branch: "DataScience" },
+
+  // Wednesday
+  { subjectId: "ds_sdav", day: "WED", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-302", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_aiml", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_uiux", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-307", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "WED", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_ai",   day: "WED", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
+
+  // Thursday
+  { subjectId: "ds_ml",   day: "THU", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "THU", startTime: "10:30", endTime: "11:30", room: "C-305", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_sdav", day: "THU", startTime: "10:30", endTime: "11:30", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "THU", startTime: "10:30", endTime: "11:30", room: "C-302", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "THU", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+
+  // Friday
+  { subjectId: "ds_sdav", day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-301", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_aiml", day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "FRI", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
+  { subjectId: "ds_ml",   day: "FRI", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+]
+
+// All subjects combined (both branches for shared utilities)
+export const subjects: Subject[] = [...theorySubjects, ...labSubjects, ...dsTheorySubjects, ...dsLabSubjects]
 
 // Weekly timetable - all batches and electives
 export const weeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" | "month" | "year">[] = [
   // Monday
   { subjectId: "cnl", day: "MON", startTime: "09:30", endTime: "11:30", room: "C-511", batch: "A3" },
-  { subjectId: "comp_lab", day: "MON", startTime: "09:30", endTime: "11:30", room: "C-502", batch: "A1" },
   { subjectId: "pecl_bda", day: "MON", startTime: "09:30", endTime: "11:30", room: "C-602", batch: "A2", elective: "BDA" },
   { subjectId: "dcst", day: "MON", startTime: "11:30", endTime: "12:30" },
   { subjectId: "toc", day: "MON", startTime: "13:00", endTime: "14:00" },
   { subjectId: "cn", day: "MON", startTime: "14:00", endTime: "15:00" },
-  { subjectId: "comp_lab", day: "MON", startTime: "15:00", endTime: "16:00" },
 
   // Tuesday
   { subjectId: "pec_nlp", day: "TUE", startTime: "09:30", endTime: "10:30", room: "C-607", elective: "NLP" },
@@ -170,7 +292,6 @@ export const weeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" | "
   { subjectId: "mll", day: "TUE", startTime: "13:00", endTime: "15:00", room: "C-612", batch: "A1" },
   { subjectId: "cnl", day: "TUE", startTime: "13:00", endTime: "15:00", room: "C-511", batch: "A2" },
   { subjectId: "pecl_bda", day: "TUE", startTime: "13:00", endTime: "15:00", room: "C-602", batch: "A3", elective: "BDA" },
-  { subjectId: "comp_lab", day: "TUE", startTime: "15:00", endTime: "16:00" },
 
   // Wednesday
   { subjectId: "mll", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-612", batch: "A2" },
@@ -233,14 +354,16 @@ interface AttendanceState {
   lectures: Lecture[]
   currentMonth: number // 0-indexed month
   currentYear: number
-  user: { name: string; rollNo: string; division: string } | null
+  user: { id?: number; name: string; rollNo: string; division: string; branch: Branch } | null
   isAuthenticated: boolean
   isDarkMode: boolean
   selectedBatch: "A1" | "A2" | "A3"
   selectedElective: "NLP" | "BDA"
+  branch: Branch
+  absences: string[] // List of absent lecture IDs synced from cloud
 
   // Actions
-  login: (name: string, rollNo: string, division: string) => void
+  login: (id: number | undefined, name: string, rollNo: string, division: string, branch: Branch) => void
   logout: () => void
   toggleAbsent: (lectureId: string) => void
   setCurrentMonth: (month: number, year: number) => void
@@ -248,6 +371,7 @@ interface AttendanceState {
   setSelectedBatch: (batch: "A1" | "A2" | "A3") => void
   setSelectedElective: (elective: "NLP" | "BDA") => void
   initializeMonth: (month: number, year: number) => void
+  syncAbsences: () => Promise<void>
   getAttendanceStats: (filter?: { month?: number, year?: number, startMonth?: number, startYear?: number, endMonth?: number, endYear?: number }) => AttendanceStats
   statsMode: "monthly" | "overall"
   setStatsMode: (mode: "monthly" | "overall") => void
@@ -316,9 +440,10 @@ function getWeekOfMonth(date: Date): number {
   return currentWeekNum
 }
 
-const generateLecturesForMonth = (month: number, year: number): Lecture[] => {
+const generateLecturesForMonth = (month: number, year: number, branch: Branch = "Computer", absentIds: string[] = []): Lecture[] => {
   const weekdays = getWeekdaysInMonth(month, year)
   const lectures: Lecture[] = []
+  const timetable = branch === "DataScience" ? dsWeeklyTimetable : weeklyTimetable
   
   weekdays.forEach((date) => {
     const dayCode = dayCodeMap[date.getDay()]
@@ -328,13 +453,14 @@ const generateLecturesForMonth = (month: number, year: number): Lecture[] => {
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
     
     // Get timetable entries for this day
-    const dayLectures = weeklyTimetable.filter(l => l.day === dayCode)
+    const dayLectures = timetable.filter(l => l.day === dayCode)
     
     dayLectures.forEach((lecture, index) => {
+      const id = `${dateStr}-${lecture.day}-${lecture.subjectId}-${index}`
       lectures.push({
         ...lecture,
-        id: `${dateStr}-${lecture.day}-${lecture.subjectId}-${index}`,
-        isAbsent: false,
+        id,
+        isAbsent: absentIds.includes(id),
         weekNumber: weekNum,
         month,
         year,
@@ -369,6 +495,8 @@ export const useAttendanceStore = create<AttendanceState>()(
       isDarkMode: true,
       selectedBatch: "A3",
       selectedElective: "BDA",
+      branch: "Computer" as Branch,
+      absences: [],
       statsMode: "monthly",
       mainView: "dashboard",
       rangeStartMonth: SEMESTER_MONTHS[0].month,
@@ -396,37 +524,55 @@ export const useAttendanceStore = create<AttendanceState>()(
           return lecture && lecture.isAbsent !== isAbsent
         })
       },
-      saveChanges: () => {
-        const { pendingChanges, lectures } = get()
+      saveChanges: async () => {
+        const { pendingChanges, lectures, user } = get()
         const newLectures = lectures.map(l => {
           if (pendingChanges[l.id] !== undefined) {
             return { ...l, isAbsent: pendingChanges[l.id] }
           }
           return l
         })
-        set({ lectures: newLectures, pendingChanges: {} })
+        const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
+        set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
+
+        if (user) {
+          try {
+            await fetch("/api/attendance", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                studentId: user.id,
+                rollNo: user.rollNo,
+                absentLectureIds: newAbsences
+              })
+            })
+          } catch (e) {
+            console.error("Failed to sync absences to database", e)
+          }
+        }
       },
       discardChanges: () => {
         set({ pendingChanges: {} })
       },
 
-      login: (name, rollNo, division) => {
+      login: (id, name, rollNo, division, branch = "Computer") => {
         const current = getCurrentMonth()
         set({ 
-          user: { name, rollNo, division }, 
+          user: { id, name, rollNo, division, branch }, 
+          branch,
           isAuthenticated: true,
           currentMonth: current.month,
-          currentYear: current.year
+          currentYear: current.year,
+          lectures: [],
+          absences: [],
         })
-        // Initialize lectures for current month if not already done
         const state = get()
-        if (state.lectures.filter((l) => l.month === current.month && l.year === current.year).length === 0) {
-          state.initializeMonth(current.month, current.year)
-        }
+        state.initializeMonth(current.month, current.year)
+        state.syncAbsences()
       },
 
       logout: () => {
-        set({ user: null, isAuthenticated: false })
+        set({ user: null, isAuthenticated: false, absences: [], lectures: [] })
       },
 
       toggleAbsent: (lectureId) => {
@@ -448,10 +594,36 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
 
       initializeMonth: (month, year) => {
-        const newLectures = generateLecturesForMonth(month, year)
+        const { branch, absences } = get()
+        const newLectures = generateLecturesForMonth(month, year, branch, absences || [])
         set((state) => ({
           lectures: [...state.lectures.filter((l) => !(l.month === month && l.year === year)), ...newLectures],
         }))
+      },
+
+      syncAbsences: async () => {
+        const { user } = get()
+        if (!user) return
+        try {
+          const params = new URLSearchParams()
+          if (user.id) params.append("studentId", user.id.toString())
+          params.append("rollNo", user.rollNo)
+          
+          const res = await fetch(`/api/attendance?${params.toString()}`)
+          const data = await res.json()
+          if (data.success && Array.isArray(data.absences)) {
+            const serverAbsences = data.absences
+            set({ absences: serverAbsences })
+            set((state) => ({
+              lectures: state.lectures.map(l => ({
+                ...l,
+                isAbsent: serverAbsences.includes(l.id)
+              }))
+            }))
+          }
+        } catch (e) {
+          console.error("Failed to sync absences from database", e)
+        }
       },
 
       getAttendanceStats: (filter?: { month?: number, year?: number, startMonth?: number, startYear?: number, endMonth?: number, endYear?: number }) => {
@@ -468,6 +640,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         })
 
         // Calculate stats based on filters 
+        const { selectedBatch, selectedElective, branch } = get()
         lectures.forEach((lecture) => {
           if (filter) {
             if (filter.month !== undefined && filter.year !== undefined) {
@@ -480,9 +653,9 @@ export const useAttendanceStore = create<AttendanceState>()(
             }
           }
           
-          const { selectedBatch, selectedElective } = get()
           if (lecture.batch && lecture.batch !== selectedBatch) return
           if (lecture.elective && lecture.elective !== selectedElective) return
+          if (lecture.branch && lecture.branch !== branch) return
 
           const record = bySubject.get(lecture.subjectId)
           if (record) {
@@ -493,10 +666,13 @@ export const useAttendanceStore = create<AttendanceState>()(
           }
         })
 
-        // Calculate theory stats
+        // Calculate theory stats (branch-aware)
+        const activeTheory = branch === "DataScience" ? dsTheorySubjects : theorySubjects
+        const activeLabs   = branch === "DataScience" ? dsLabSubjects   : labSubjects
+
         let theoryAttended = 0
         let theoryTotal = 0
-        theorySubjects.forEach((subject) => {
+        activeTheory.forEach((subject) => {
           const record = bySubject.get(subject.id)
           if (record) {
             theoryAttended += record.attendedLectures
@@ -507,7 +683,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         // Calculate lab stats
         let labAttended = 0
         let labTotal = 0
-        labSubjects.forEach((subject) => {
+        activeLabs.forEach((subject) => {
           const record = bySubject.get(subject.id)
           if (record) {
             labAttended += record.attendedLectures
@@ -540,7 +716,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v3",
+      name: "attendance-storage-monthly-v4",
     }
   )
 )

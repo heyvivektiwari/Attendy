@@ -25,3 +25,9 @@ android/build/
 android/capacitor-cordova-android-plugins/build/
 *.apk
 *.keystore
+
+# Timetable PDFs
+*.pdf
+
+# Patch files
+*.patch

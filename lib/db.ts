@@ -39,6 +39,7 @@ export type Student = {
   email?: string
   password?: string
   division: string
+  branch?: string
   reset_token?: string
   reset_token_expires?: number
 }

@@ -28,7 +28,7 @@ export function AttendanceApp() {
           if (value) {
             const user = JSON.parse(value)
             if (user && user.name) {
-              login(user.name, user.rollNo, user.division)
+              login(user.id, user.name, user.rollNo, user.division, user.branch || "Computer")
             }
           }
         } catch (e) {

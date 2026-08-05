@@ -5,7 +5,7 @@ export const runtime = "nodejs"
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, rollNo, email, password, division } = await request.json()
+    const { name, rollNo, email, password, division, branch } = await request.json()
 
     if (!name || !rollNo || !email || !password) {
       return NextResponse.json(
@@ -59,13 +59,14 @@ export async function POST(request: NextRequest) {
 
     // Insert the new student
     await db.query(
-      "INSERT INTO students (name, roll_no, email, password, division) VALUES ($1, $2, $3, $4, $5)",
+      "INSERT INTO students (name, roll_no, email, password, division, branch) VALUES ($1, $2, $3, $4, $5, $6)",
       [
         name.trim(),
         rollNo.trim().toUpperCase(),
         email.trim().toLowerCase(),
         password.trim(),
-        (division || "A").trim().toUpperCase()
+        (division || "A").trim().toUpperCase(),
+        (branch || "Computer").trim()
       ]
     )
 

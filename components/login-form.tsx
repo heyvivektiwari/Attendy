@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAttendanceStore } from "@/lib/attendance-store"
+import type { Branch } from "@/lib/attendance-store"
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu" // Unrelated, just to preserve if any imports were there before
 import { GraduationCap, Sparkles, Loader2, AlertCircle, CheckCircle2, ArrowLeft, Eye, EyeOff } from "lucide-react"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -54,6 +55,7 @@ export function LoginForm() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [branch, setBranch] = useState<Branch>("Computer")
   const login = useAttendanceStore((state) => state.login)
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export function LoginForm() {
     setConfirmPassword("")
     setError("")
     setSuccess("")
+    setBranch("Computer")
   }
 
   const switchView = (newView: View) => {
@@ -103,7 +106,7 @@ export function LoginForm() {
         if (Capacitor.isNativePlatform()) {
           await Preferences.set({ key: 'attendy-user', value: JSON.stringify(data.student) })
         }
-        login(data.student.name, data.student.rollNo, data.student.division)
+        login(data.student.id, data.student.name, data.student.rollNo, data.student.division, data.student.branch || "Computer")
       } else {
         setError(data.message || "Invalid credentials")
       }
@@ -136,6 +139,7 @@ export function LoginForm() {
           email: email.trim(),
           password: password.trim(),
           division: "A",
+          branch,
         }),
       })
 
@@ -370,6 +374,19 @@ export function LoginForm() {
                       minLength={4}
                       autoComplete="new-password"
                     />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="regBranch">Branch</FieldLabel>
+                    <select
+                      id="regBranch"
+                      value={branch}
+                      onChange={(e) => setBranch(e.target.value as Branch)}
+                      disabled={isLoading}
+                      className="w-full h-12 px-4 border-[3px] border-[#1A132F]/20 dark:border-border/50 focus:border-primary transition-all rounded-xl bg-background text-foreground text-sm focus:outline-none focus:ring-0"
+                    >
+                      <option value="Computer">Computer Engineering</option>
+                      <option value="DataScience">Data Science (CSE-DS)</option>
+                    </select>
                   </Field>
                 </FieldGroup>
 

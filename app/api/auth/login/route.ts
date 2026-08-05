@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // 1. Look up the student by email ONLY (case-insensitive)
     const result = await db.query(
-      "SELECT id, name, roll_no, division, password FROM students WHERE LOWER(email) = LOWER($1)",
+      "SELECT id, name, roll_no, division, password, COALESCE(branch, 'Computer') as branch FROM students WHERE LOWER(email) = LOWER($1)",
       [email.trim()]
     )
     
@@ -44,9 +44,11 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Login successful",
       student: {
+        id: student.id,
         name: student.name,
         rollNo: student.roll_no,
         division: student.division,
+        branch: student.branch || "Computer",
       },
     })
   } catch (error: any) {
