@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SEMESTER_MONTHS } from "@/lib/attendance-store"
 import { Logo } from "@/components/logo"
 import { ExportReportModal } from "@/components/export-report-modal"
+import { StudentPassModal } from "@/components/student-pass-modal"
 import { cn } from "@/lib/utils"
 import { Capacitor } from '@capacitor/core'
 import { Preferences } from '@capacitor/preferences'
@@ -315,6 +316,7 @@ export function DashboardHeader() {
           )}
 
           <ExportReportModal />
+          <StudentPassModal />
           <ModeToggle />
         </div>
       </div>

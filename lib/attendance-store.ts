@@ -409,6 +409,11 @@ interface AttendanceState {
   saveChanges: () => void
   hasPendingChanges: () => boolean
   discardChanges: () => void
+
+  // July manual entry actions
+  updateJulySubjectAttendance: (subjectId: string, attendedCount: number) => Promise<void>
+  setJulyLecturesAttendance: (lectureStatusMap: Record<string, boolean>) => Promise<void>
+  resetJulyAttendance: () => Promise<void>
 }
 
 // Get all weekdays (Mon-Fri) in a given month
@@ -584,6 +589,62 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
       discardChanges: () => {
         set({ pendingChanges: {} })
+      },
+
+      updateJulySubjectAttendance: async (subjectId: string, attendedCount: number) => {
+        const state = get()
+        if (state.lectures.filter(l => l.month === 6 && l.year === 2026).length === 0) {
+          state.initializeMonth(6, 2026)
+        }
+        const updatedLectures = get().lectures
+        const julySubjectLectures = updatedLectures.filter(
+          (l) => l.month === 6 && l.year === 2026 && l.subjectId === subjectId
+        )
+        const total = julySubjectLectures.length
+        const clampedAttended = Math.max(0, Math.min(attendedCount, total))
+        const absentCountNeeded = total - clampedAttended
+
+        let absentCountSet = 0
+        const newLectures = updatedLectures.map((l) => {
+          if (l.month === 6 && l.year === 2026 && l.subjectId === subjectId) {
+            if (absentCountSet < absentCountNeeded) {
+              absentCountSet++
+              return { ...l, isAbsent: true }
+            } else {
+              return { ...l, isAbsent: false }
+            }
+          }
+          return l
+        })
+        const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
+        set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
+        await get().saveChanges()
+      },
+
+      setJulyLecturesAttendance: async (lectureStatusMap: Record<string, boolean>) => {
+        const { lectures } = get()
+        const newLectures = lectures.map((l) => {
+          if (lectureStatusMap[l.id] !== undefined) {
+            return { ...l, isAbsent: lectureStatusMap[l.id] }
+          }
+          return l
+        })
+        const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
+        set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
+        await get().saveChanges()
+      },
+
+      resetJulyAttendance: async () => {
+        const { lectures } = get()
+        const newLectures = lectures.map((l) => {
+          if (l.month === 6 && l.year === 2026) {
+            return { ...l, isAbsent: false }
+          }
+          return l
+        })
+        const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
+        set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
+        await get().saveChanges()
       },
 
       login: (id, name, rollNo, division, branch = "Computer") => {
