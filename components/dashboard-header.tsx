@@ -147,25 +147,10 @@ export function DashboardHeader() {
                     <div className="flex flex-col gap-2">
                       <Button
                         variant="ghost"
-                        className={cn(
-                          "justify-start text-xs h-10 px-4 rounded-xl border-[3px] border-transparent transition-all",
-                          rangeStartMonth === 0 && rangeEndMonth === 4 && "font-extrabold dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm"
-                        )}
-                        onClick={() => setRange(0, 2026, 4, 2026)}
-                      >
-                        Term 1 (Jan - May)
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        disabled={new Date().getMonth() < 6}
-                        className={cn(
-                          "justify-start text-xs h-10 px-4 rounded-xl border-[3px] border-transparent transition-all",
-                          rangeStartMonth === 6 && "font-extrabold dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm"
-                        )}
+                        className="justify-start text-xs h-10 px-4 rounded-xl border-[3px] border-transparent font-extrabold dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm"
                         onClick={() => setRange(6, 2026, 10, 2026)}
                       >
-                        Term 2 (July - Nov)
-                        {new Date().getMonth() < 6 && <span className="ml-auto opacity-50 text-[10px]">Locked</span>}
+                        Academic Semester (July - Nov 2026)
                       </Button>
                     </div>
 
@@ -184,7 +169,7 @@ export function DashboardHeader() {
                               <SelectValue placeholder="Start" />
                             </SelectTrigger>
                             <SelectContent>
-                               {SEMESTER_MONTHS.filter(m => rangeStartMonth < 5 ? m.month < 5 : m.month >= 6).map((m) => (
+                               {SEMESTER_MONTHS.map((m) => (
                                   <SelectItem key={`start-${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
                                     {m.label}
                                   </SelectItem>
@@ -205,10 +190,7 @@ export function DashboardHeader() {
                               <SelectValue placeholder="End" />
                             </SelectTrigger>
                              <SelectContent>
-                                {SEMESTER_MONTHS
-                                  .filter(m => rangeStartMonth < 5 ? m.month < 5 : m.month >= 6)
-                                  .filter(m => m.month <= new Date().getMonth())
-                                  .map((m) => (
+                                {SEMESTER_MONTHS.map((m) => (
                                     <SelectItem key={`end-${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
                                       {m.label}
                                     </SelectItem>
