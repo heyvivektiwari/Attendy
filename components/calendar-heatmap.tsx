@@ -68,10 +68,7 @@ export function CalendarHeatmap() {
                 <CalendarIcon className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-base font-extrabold tracking-tight">Attendance Calendar Heatmap</CardTitle>
-                <CardDescription className="text-xs">
-                  Visual daily breakdown. Click any date to inspect or mark attendance.
-                </CardDescription>
+                <CardTitle className="text-base font-extrabold tracking-tight">Attendance Calendar</CardTitle>
               </div>
             </div>
 
