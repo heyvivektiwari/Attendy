@@ -59,6 +59,10 @@ export function ExportReportModal() {
       csv += `"${sub.code}","${sub.name}","${sub.type.toUpperCase()}",${total},${attended},${absent},${pct}%,${status}\n`
     })
 
+    csv += `\nSUMMARY\n`
+    csv += `Theory Average,${stats.theory.attended}/${stats.theory.total},${stats.theory.percentage}%\n`
+    csv += `Lab Average,${stats.lab.attended}/${stats.lab.total},${stats.lab.percentage}%\n`
+
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
@@ -112,6 +116,10 @@ export function ExportReportModal() {
             .meta-val { font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 2px; }
             table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
             th { background: #005691; color: white; text-align: left; padding: 10px; font-size: 12px; text-transform: uppercase; }
+            .summary-box { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+            .card { padding: 15px; background: #f1f5f9; border-radius: 10px; text-align: center; border: 1px solid #cbd5e1; }
+            .card-title { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+            .card-val { font-size: 22px; font-weight: 900; color: #005691; margin-top: 5px; }
             .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
           </style>
         </head>
@@ -151,6 +159,19 @@ export function ExportReportModal() {
               ${rowsHtml}
             </tbody>
           </table>
+
+          <div class="summary-box">
+            <div class="card">
+              <div class="card-title">Theory Average</div>
+              <div class="card-val">${stats.theory.percentage}%</div>
+              <div style="font-size: 11px; color: #64748b;">${stats.theory.attended} / ${stats.theory.total} lectures</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Lab Average</div>
+              <div class="card-val">${stats.lab.percentage}%</div>
+              <div style="font-size: 11px; color: #64748b;">${stats.lab.attended} / ${stats.lab.total} labs</div>
+            </div>
+          </div>
 
           <div class="footer">
             Generated via Attendy Portal • Developed by Vivek Tiwari
