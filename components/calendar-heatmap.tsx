@@ -120,73 +120,91 @@ export function CalendarHeatmap() {
             </span>
           </div>
 
-          {/* Days of Week Header */}
-          <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
-              <span key={day} className={cn("text-[11px] font-black uppercase py-1", idx === 0 || idx === 6 ? "text-muted-foreground/60" : "text-primary")}>
-                {day}
-              </span>
-            ))}
-          </div>
-
-          {/* Calendar Day Cells */}
-          <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
-            {/* Blank offset cells for start of month */}
-            {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
-              <div key={`blank-${idx}`} className="h-11 sm:h-14 rounded-xl border border-transparent" />
-            ))}
-
-            {/* Days of month */}
-            {Array.from({ length: daysInMonth }).map((_, idx) => {
-              const dayNumber = idx + 1
-              const dayDate = new Date(currentYear, currentMonth, dayNumber)
-              const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6
-              const dayLectures = getDayLectures(dayNumber)
-              const hasLectures = dayLectures.length > 0
-
-              const absentCount = dayLectures.filter(l => l.isAbsent).length
-              const attendedCount = dayLectures.length - absentCount
-
-              let cellStyle = "bg-secondary/20 border-border/40 text-muted-foreground opacity-60"
-              if (hasLectures) {
-                if (absentCount === 0) {
-                  cellStyle = "bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 cursor-pointer shadow-sm"
-                } else if (attendedCount > 0) {
-                  cellStyle = "bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 cursor-pointer shadow-sm"
-                } else {
-                  cellStyle = "bg-destructive/15 border-destructive/40 text-destructive hover:bg-destructive/25 cursor-pointer shadow-sm"
-                }
-              }
-
-              return (
-                <button
-                  key={`day-${dayNumber}`}
-                  disabled={!hasLectures}
-                  onClick={() => handleDayClick(dayNumber)}
+          {/* Connected Calendar Grid Container */}
+          <div className="border-2 border-border/60 rounded-2xl overflow-hidden bg-card shadow-sm">
+            {/* Days of Week Header Row */}
+            <div className="grid grid-cols-7 border-b-2 border-border/60 bg-muted/40 text-center">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
+                <div 
+                  key={day} 
                   className={cn(
-                    "h-11 sm:h-14 rounded-2xl border-2 flex flex-col items-center justify-between p-1.5 transition-all relative overflow-hidden group",
-                    cellStyle
+                    "py-2.5 text-xs font-black uppercase tracking-wider border-r last:border-r-0 border-border/60", 
+                    idx === 0 || idx === 6 ? "text-muted-foreground/60" : "text-primary"
                   )}
                 >
-                  <span className="text-xs font-black">{dayNumber}</span>
-                  {hasLectures ? (
-                    <div className="flex items-center gap-0.5">
-                      {absentCount === 0 ? (
-                        <span className="text-[10px] font-black px-1 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-                          {attendedCount}/{dayLectures.length}
-                        </span>
-                      ) : (
-                        <span className={cn("text-[10px] font-black px-1 rounded", absentCount === dayLectures.length ? "bg-destructive/20 text-destructive" : "bg-amber-500/20 text-amber-600 dark:text-amber-400")}>
-                          -{absentCount}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-[9px] opacity-40">{isWeekend ? "W/E" : "Off"}</span>
-                  )}
-                </button>
-              )
-            })}
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Days Table Grid */}
+            <div className="grid grid-cols-7">
+              {/* Blank offset cells for start of month */}
+              {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
+                <div key={`blank-${idx}`} className="h-14 sm:h-16 bg-muted/15 border-r border-b border-border/40" />
+              ))}
+
+              {/* Days of month */}
+              {Array.from({ length: daysInMonth }).map((_, idx) => {
+                const dayNumber = idx + 1
+                const dayDate = new Date(currentYear, currentMonth, dayNumber)
+                const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6
+                const dayLectures = getDayLectures(dayNumber)
+                const hasLectures = dayLectures.length > 0
+
+                const absentCount = dayLectures.filter(l => l.isAbsent).length
+                const attendedCount = dayLectures.length - absentCount
+
+                let cellBgStyle = "bg-card text-muted-foreground hover:bg-muted/20"
+                if (hasLectures) {
+                  if (absentCount === 0) {
+                    cellBgStyle = "bg-emerald-500/10 text-emerald-950 dark:text-emerald-200 hover:bg-emerald-500/20 cursor-pointer"
+                  } else if (attendedCount > 0) {
+                    cellBgStyle = "bg-amber-500/10 text-amber-950 dark:text-amber-200 hover:bg-amber-500/20 cursor-pointer"
+                  } else {
+                    cellBgStyle = "bg-destructive/10 text-destructive hover:bg-destructive/20 cursor-pointer"
+                  }
+                } else if (isWeekend) {
+                  cellBgStyle = "bg-muted/15 text-muted-foreground/60"
+                }
+
+                return (
+                  <button
+                    key={`day-${dayNumber}`}
+                    disabled={!hasLectures}
+                    onClick={() => handleDayClick(dayNumber)}
+                    className={cn(
+                      "h-14 sm:h-16 p-1.5 border-r border-b border-border/40 flex flex-col justify-between items-start transition-all relative text-left group",
+                      cellBgStyle
+                    )}
+                  >
+                    <span className="text-xs font-black leading-none">{dayNumber}</span>
+                    {hasLectures ? (
+                      <div className="w-full flex items-center justify-end">
+                        {absentCount === 0 ? (
+                          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                            {attendedCount}/{dayLectures.length}
+                          </span>
+                        ) : (
+                          <span className={cn(
+                            "text-[10px] font-extrabold px-1.5 py-0.5 rounded-md border",
+                            absentCount === dayLectures.length 
+                              ? "bg-destructive/20 text-destructive border-destructive/40" 
+                              : "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                          )}>
+                            -{absentCount}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="w-full flex justify-end">
+                        <span className="text-[9px] font-semibold text-muted-foreground/50">{isWeekend ? "W/E" : "Off"}</span>
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </CardContent>
       </Card>
