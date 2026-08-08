@@ -5,6 +5,7 @@ import { useAttendanceStore, theorySubjects, labSubjects, dsTheorySubjects, dsLa
 import { DashboardHeader } from "./dashboard-header"
 import { SubjectCard } from "./subject-card"
 import { TimetableGrid } from "./timetable-grid"
+import { CalendarHeatmap } from "./calendar-heatmap"
 import { LayoutGrid, Calendar, AlertTriangle, Filter, BookOpen, FlaskConical, Sparkles, Mail, Github, Instagram, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -323,6 +324,11 @@ export function Dashboard() {
                 )}
               </div>
             )}
+
+            {/* Attendance Calendar Heatmap & Day Breakdown */}
+            <div className="pt-4">
+              <CalendarHeatmap />
+            </div>
           </div>
         ) : mainView === "attendance-marker" ? (
           <div>

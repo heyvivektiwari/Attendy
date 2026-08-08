@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     ],
     apple: '/logo.png',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Attendy',
+  },
 }
 
 export const viewport: Viewport = {
