@@ -221,6 +221,33 @@ export const dsLabSubjects: Subject[] = [
     facultyCode: "VB",
     type: "lab",
   },
+  {
+    id: "ds_cns_lab",
+    code: "DS-CNSL",
+    name: "Computer Network & Security Lab",
+    shortName: "CNS Lab",
+    faculty: "Prof. Yogita Gawde",
+    facultyCode: "YG",
+    type: "lab",
+  },
+  {
+    id: "ds_sdav_lab",
+    code: "DS-SDAVL",
+    name: "Statistical Data Analysis & Visualization Lab",
+    shortName: "SDAV Lab",
+    faculty: "Prof. Shradha Chaudhari",
+    facultyCode: "SC",
+    type: "lab",
+  },
+  {
+    id: "ds_dcst_lab",
+    code: "DS-DCSTL",
+    name: "Digital Communication & Sensor Technology Lab",
+    shortName: "DCST Lab",
+    faculty: "Prof. Shraddha Kunkunkar",
+    facultyCode: "SK",
+    type: "lab",
+  },
 ]
 
 // All DS subjects combined
@@ -232,44 +259,44 @@ export const dsSubjects: Subject[] = [...dsTheorySubjects, ...dsLabSubjects]
 // =============================================
 export const dsWeeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" | "month" | "year">[] = [
   // Monday
-  { subjectId: "ds_dcst", day: "MON", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
-  { subjectId: "ds_ai",   day: "MON", startTime: "10:30", endTime: "11:30", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "MON", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
-  { subjectId: "ds_sdav", day: "MON", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
-  { subjectId: "ds_aiml", day: "MON", startTime: "14:00", endTime: "16:00", room: "C-305", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_uiux", day: "MON", startTime: "14:00", endTime: "16:00", room: "C-311", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "MON", startTime: "14:00", endTime: "16:00", room: "C-302", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_dcst",    day: "MON", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
+  { subjectId: "ds_ai",      day: "MON", startTime: "10:30", endTime: "11:30", branch: "DataScience" },
+  { subjectId: "ds_cns",     day: "MON", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
+  { subjectId: "ds_sdav",    day: "MON", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_aiml",    day: "MON", startTime: "14:00", endTime: "16:00", room: "C-305", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_uiux",    day: "MON", startTime: "14:00", endTime: "16:00", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_cns_lab", day: "MON", startTime: "14:00", endTime: "16:00", room: "C-302", batch: "A3", branch: "DataScience" },
 
   // Tuesday
-  { subjectId: "ds_uiux", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-307", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_sdav", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-308", batch: "A3", branch: "DataScience" },
-  { subjectId: "ds_sdav", day: "TUE", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
-  { subjectId: "ds_ai",   day: "TUE", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
-  { subjectId: "ds_ml",   day: "TUE", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "TUE", startTime: "15:00", endTime: "16:00", branch: "DataScience" },
+  { subjectId: "ds_uiux",     day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-307", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_dcst_lab", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_sdav_lab", day: "TUE", startTime: "09:30", endTime: "11:30", room: "C-308", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_sdav",     day: "TUE", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
+  { subjectId: "ds_ai",       day: "TUE", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_ml",       day: "TUE", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
+  { subjectId: "ds_dcst",     day: "TUE", startTime: "15:00", endTime: "16:00", branch: "DataScience" },
 
   // Wednesday
-  { subjectId: "ds_sdav", day: "WED", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-302", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_aiml", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-305", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_uiux", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-307", batch: "A3", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "WED", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
-  { subjectId: "ds_ai",   day: "WED", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
+  { subjectId: "ds_sdav",     day: "WED", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
+  { subjectId: "ds_dcst_lab", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-302", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_aiml",     day: "WED", startTime: "10:30", endTime: "12:30", room: "C-305", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_uiux",     day: "WED", startTime: "10:30", endTime: "12:30", room: "C-307", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_cns",      day: "WED", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_ai",       day: "WED", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
 
   // Thursday
-  { subjectId: "ds_ml",   day: "THU", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "THU", startTime: "10:30", endTime: "12:30", room: "C-305", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_sdav", day: "THU", startTime: "10:30", endTime: "12:30", room: "C-311", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "THU", startTime: "10:30", endTime: "12:30", room: "C-302", batch: "A3", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "THU", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_ml",       day: "THU", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
+  { subjectId: "ds_cns_lab",  day: "THU", startTime: "10:30", endTime: "12:30", room: "C-305", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_sdav_lab", day: "THU", startTime: "10:30", endTime: "12:30", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_dcst_lab", day: "THU", startTime: "10:30", endTime: "12:30", room: "C-302", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_cns",      day: "THU", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
 
   // Friday
-  { subjectId: "ds_sdav", day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-301", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-311", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_aiml", day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A3", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "FRI", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
-  { subjectId: "ds_ml",   day: "FRI", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
+  { subjectId: "ds_sdav_lab", day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-301", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_cns_lab",  day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_aiml",     day: "FRI", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_dcst",     day: "FRI", startTime: "11:30", endTime: "12:30", branch: "DataScience" },
+  { subjectId: "ds_ml",       day: "FRI", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
 ]
 
 // All subjects combined (both branches for shared utilities)
@@ -509,7 +536,16 @@ export const useAttendanceStore = create<AttendanceState>()(
       setRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) => {
         set({ rangeStartMonth: startMonth, rangeStartYear: startYear, rangeEndMonth: endMonth, rangeEndYear: endYear })
       },
-      setSelectedBatch: (batch) => set({ selectedBatch: batch }),
+      setSelectedBatch: (batch) => {
+        set({ selectedBatch: batch })
+        const user = get().user
+        if (typeof window !== "undefined") {
+          if (user?.rollNo) {
+            localStorage.setItem(`attendy_batch_${user.rollNo}`, batch)
+          }
+          localStorage.setItem("attendy_saved_batch", batch)
+        }
+      },
       setSelectedElective: (elective) => set({ selectedElective: elective }),
       pendingChanges: {},
       setPendingChange: (id, isAbsent) => {
@@ -557,15 +593,23 @@ export const useAttendanceStore = create<AttendanceState>()(
 
       login: (id, name, rollNo, division, branch = "Computer") => {
         const current = getCurrentMonth()
-        set({ 
+        let savedBatch: "A1" | "A2" | "A3" | null = null
+        if (typeof window !== "undefined") {
+          const b = localStorage.getItem(`attendy_batch_${rollNo}`) || localStorage.getItem("attendy_saved_batch")
+          if (b === "A1" || b === "A2" || b === "A3") {
+            savedBatch = b
+          }
+        }
+        set((state) => ({ 
           user: { id, name, rollNo, division, branch }, 
           branch,
+          selectedBatch: savedBatch || state.selectedBatch || "A3",
           isAuthenticated: true,
           currentMonth: current.month,
           currentYear: current.year,
           lectures: [],
           absences: [],
-        })
+        }))
         const state = get()
         state.initializeMonth(current.month, current.year)
         state.syncAbsences()
@@ -718,7 +762,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v5",
+      name: "attendance-storage-monthly-v6",
     }
   )
 )

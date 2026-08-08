@@ -25,9 +25,9 @@ export function DashboardHeader() {
     rangeEndMonth, rangeEndYear,
     setRange,
     hasPendingChanges, saveChanges, discardChanges,
-    selectedBatch, selectedElective, setSelectedBatch, setSelectedElective
+    selectedBatch, selectedElective, setSelectedBatch, setSelectedElective, branch
   } = useAttendanceStore()
-  
+
   const [isCustomRangeActive, setIsCustomRangeActive] = useState(false)
   const currentMonthValue = `${currentMonth}-${currentYear}`
   const rangeStartValue = `${rangeStartMonth}-${rangeStartYear}`
@@ -240,21 +240,23 @@ export function DashboardHeader() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-primary uppercase pl-1">Program Elective</label>
-                      <Select 
-                        value={selectedElective} 
-                        onValueChange={(val: any) => setSelectedElective(val)}
-                      >
-                        <SelectTrigger className="h-10 border-[3px] border-[#1A132F]/15 dark:border-border/60 bg-white dark:bg-transparent rounded-xl focus:ring-primary/20">
-                          <SelectValue placeholder="Select Elective" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="NLP">NLP (Natural Language)</SelectItem>
-                          <SelectItem value="BDA">BDA (Big Data Analytics)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {branch !== "DataScience" && (
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-primary uppercase pl-1">Program Elective</label>
+                        <Select 
+                          value={selectedElective} 
+                          onValueChange={(val: any) => setSelectedElective(val)}
+                        >
+                          <SelectTrigger className="h-10 border-[3px] border-[#1A132F]/15 dark:border-border/60 bg-white dark:bg-transparent rounded-xl focus:ring-primary/20">
+                            <SelectValue placeholder="Select Elective" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="NLP">NLP (Natural Language)</SelectItem>
+                            <SelectItem value="BDA">BDA (Big Data Analytics)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
                 </div>
 

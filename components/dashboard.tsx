@@ -57,12 +57,14 @@ export function Dashboard() {
     : getAttendanceStats({ startMonth: rangeStartMonth, startYear: rangeStartYear, endMonth: rangeEndMonth, endYear: rangeEndYear })
 
   const visibleTheorySubjects = (branch === "DataScience" ? dsTheorySubjects : theorySubjects).filter((subject) => {
+    if (branch === "DataScience") return true
     if (subject.id === "pec_nlp" && selectedElective !== "NLP") return false
     if (subject.id === "pec_bda" && selectedElective !== "BDA") return false
     return true
   })
 
   const visibleLabSubjects = (branch === "DataScience" ? dsLabSubjects : labSubjects).filter((subject) => {
+    if (branch === "DataScience") return true
     if (subject.id === "pecl_nlp" && selectedElective !== "NLP") return false
     if (subject.id === "pecl_bda" && selectedElective !== "BDA") return false
     return true
