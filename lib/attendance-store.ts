@@ -517,7 +517,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       isDarkMode: true,
       selectedBatch: "A3",
       selectedElective: "BDA",
-      branch: "DataScience" as Branch,
+      branch: "Computer" as Branch,
       absences: [],
       statsMode: "monthly",
       mainView: "dashboard",
@@ -586,7 +586,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         set({ pendingChanges: {} })
       },
 
-      login: (id, name, rollNo, division, branch = "DataScience") => {
+      login: (id, name, rollNo, division, branch = "Computer") => {
         const current = getCurrentMonth()
         let savedBatch: "A1" | "A2" | "A3" | null = null
         if (typeof window !== "undefined") {
@@ -597,7 +597,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         }
         set((state) => ({ 
           user: { id, name, rollNo, division, branch }, 
-          branch: branch || "DataScience",
+          branch,
           selectedBatch: savedBatch || state.selectedBatch || "A3",
           isAuthenticated: true,
           currentMonth: current.month,
