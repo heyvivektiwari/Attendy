@@ -64,22 +64,25 @@ export function ExportReportModal() {
     csv += `Lab Average,${stats.lab.attended}/${stats.lab.total},${stats.lab.percentage}%\n`
 
     const fileName = `Attendance_Report_${user?.rollNo || "Student"}_${exportTarget}.csv`
-    const file = new File([csv], fileName, { type: "text/csv" })
+    const isMobileDevice = typeof navigator !== "undefined" && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
 
-    // On iOS Brave/Safari, use Native Web Share if available
-    if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+    // On Mobile devices (iOS Brave / Safari / Android), use Web Share for single CSV file (no text property to prevent extra text.txt)
+    if (isMobileDevice && navigator.canShare) {
       try {
-        await navigator.share({
-          files: [file],
-          title: "Attendance Report",
-          text: `Attendance report for ${user?.name || "Student"} (${scopeTitle})`
-        })
-        return
+        const file = new File([csv], fileName, { type: "text/csv" })
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: "Attendance Report"
+          })
+          return
+        }
       } catch (e) {
-        console.log("Share API cancelled or failed, falling back to download", e)
+        console.log("Share API cancelled or failed, falling back to download link", e)
       }
     }
 
+    // On Desktop / Laptop (Windows, Mac, Linux): Directly save CSV file to Downloads folder
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
