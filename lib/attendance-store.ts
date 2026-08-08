@@ -251,17 +251,17 @@ export const dsWeeklyTimetable: Omit<Lecture, "id" | "isAbsent" | "weekNumber" |
 
   // Wednesday
   { subjectId: "ds_sdav", day: "WED", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-302", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_aiml", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-305", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_uiux", day: "WED", startTime: "09:30", endTime: "11:30", room: "C-307", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-302", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_aiml", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-305", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_uiux", day: "WED", startTime: "10:30", endTime: "12:30", room: "C-307", batch: "A3", branch: "DataScience" },
   { subjectId: "ds_cns",  day: "WED", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
   { subjectId: "ds_ai",   day: "WED", startTime: "14:00", endTime: "15:00", branch: "DataScience" },
 
   // Thursday
   { subjectId: "ds_ml",   day: "THU", startTime: "09:30", endTime: "10:30", branch: "DataScience" },
-  { subjectId: "ds_cns",  day: "THU", startTime: "10:30", endTime: "11:30", room: "C-305", batch: "A1", branch: "DataScience" },
-  { subjectId: "ds_sdav", day: "THU", startTime: "10:30", endTime: "11:30", room: "C-311", batch: "A2", branch: "DataScience" },
-  { subjectId: "ds_dcst", day: "THU", startTime: "10:30", endTime: "11:30", room: "C-302", batch: "A3", branch: "DataScience" },
+  { subjectId: "ds_cns",  day: "THU", startTime: "10:30", endTime: "12:30", room: "C-305", batch: "A1", branch: "DataScience" },
+  { subjectId: "ds_sdav", day: "THU", startTime: "10:30", endTime: "12:30", room: "C-311", batch: "A2", branch: "DataScience" },
+  { subjectId: "ds_dcst", day: "THU", startTime: "10:30", endTime: "12:30", room: "C-302", batch: "A3", branch: "DataScience" },
   { subjectId: "ds_cns",  day: "THU", startTime: "13:00", endTime: "14:00", branch: "DataScience" },
 
   // Friday
@@ -639,6 +639,21 @@ export const useAttendanceStore = create<AttendanceState>()(
           })
         })
 
+        // Helper to check if a lecture is a lab (by subject type or duration >= 120 mins)
+        const isLabLecture = (l: Lecture) => {
+          const subject = subjects.find(s => s.id === l.subjectId)
+          if (!subject) return false
+          if (subject.type === "lab") return true
+          const [startH, startM] = l.startTime.split(":").map(Number)
+          const [endH, endM] = l.endTime.split(":").map(Number)
+          return (endH * 60 + endM) - (startH * 60 + startM) >= 120
+        }
+
+        let theoryAttended = 0
+        let theoryTotal = 0
+        let labAttended = 0
+        let labTotal = 0
+
         // Calculate stats based on filters 
         const { selectedBatch, selectedElective, branch } = get()
         lectures.forEach((lecture) => {
@@ -664,30 +679,17 @@ export const useAttendanceStore = create<AttendanceState>()(
               record.attendedLectures++
             }
           }
-        })
 
-        // Calculate theory stats (branch-aware)
-        const activeTheory = branch === "DataScience" ? dsTheorySubjects : theorySubjects
-        const activeLabs   = branch === "DataScience" ? dsLabSubjects   : labSubjects
-
-        let theoryAttended = 0
-        let theoryTotal = 0
-        activeTheory.forEach((subject) => {
-          const record = bySubject.get(subject.id)
-          if (record) {
-            theoryAttended += record.attendedLectures
-            theoryTotal += record.totalLectures
-          }
-        })
-
-        // Calculate lab stats
-        let labAttended = 0
-        let labTotal = 0
-        activeLabs.forEach((subject) => {
-          const record = bySubject.get(subject.id)
-          if (record) {
-            labAttended += record.attendedLectures
-            labTotal += record.totalLectures
+          if (isLabLecture(lecture)) {
+            labTotal++
+            if (!lecture.isAbsent) {
+              labAttended++
+            }
+          } else {
+            theoryTotal++
+            if (!lecture.isAbsent) {
+              theoryAttended++
+            }
           }
         })
 
@@ -716,7 +718,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v4",
+      name: "attendance-storage-monthly-v5",
     }
   )
 )

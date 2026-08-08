@@ -63,7 +63,13 @@ function LectureCard({ lecture, onToggle }: { lecture: Lecture; onToggle: () => 
   const subject = subjects.find((s) => s.id === lecture.subjectId)
   if (!subject) return null
 
-  const isLab = subject.type === "lab"
+  const getDurationMinutes = (start: string, end: string) => {
+    const [startH, startM] = start.split(":").map(Number)
+    const [endH, endM] = end.split(":").map(Number)
+    return (endH * 60 + endM) - (startH * 60 + startM)
+  }
+
+  const isLab = subject.type === "lab" || getDurationMinutes(lecture.startTime, lecture.endTime) >= 120
 
   return (
     <div
