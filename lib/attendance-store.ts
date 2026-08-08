@@ -517,7 +517,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       isDarkMode: true,
       selectedBatch: "A3",
       selectedElective: "BDA",
-      branch: "Computer" as Branch,
+      branch: "DataScience" as Branch,
       absences: [],
       statsMode: "monthly",
       mainView: "dashboard",
@@ -586,7 +586,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         set({ pendingChanges: {} })
       },
 
-      login: (id, name, rollNo, division, branch = "Computer") => {
+      login: (id, name, rollNo, division, branch = "DataScience") => {
         const current = getCurrentMonth()
         let savedBatch: "A1" | "A2" | "A3" | null = null
         if (typeof window !== "undefined") {
@@ -597,7 +597,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         }
         set((state) => ({ 
           user: { id, name, rollNo, division, branch }, 
-          branch,
+          branch: branch || "DataScience",
           selectedBatch: savedBatch || state.selectedBatch || "A3",
           isAuthenticated: true,
           currentMonth: current.month,
@@ -653,12 +653,8 @@ export const useAttendanceStore = create<AttendanceState>()(
           if (data.success && Array.isArray(data.absences)) {
             const serverAbsences = data.absences
             set({ absences: serverAbsences })
-            set((state) => ({
-              lectures: state.lectures.map(l => ({
-                ...l,
-                isAbsent: serverAbsences.includes(l.id)
-              }))
-            }))
+            const state = get()
+            SEMESTER_MONTHS.forEach(m => state.initializeMonth(m.month, m.year))
           }
         } catch (e) {
           console.error("Failed to sync absences from database", e)
@@ -770,7 +766,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v10",
+      name: "attendance-storage-monthly-v11",
     }
   )
 )
