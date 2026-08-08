@@ -196,6 +196,10 @@ export function CalendarHeatmap() {
                           </span>
                         )}
                       </div>
+                    ) : isWeekend ? (
+                      <div className="w-full flex items-center justify-center pb-0.5">
+                        <span className="text-[8px] sm:text-[9px] font-bold text-muted-foreground/60 leading-none">W/E</span>
+                      </div>
                     ) : null}
                   </button>
                 )
