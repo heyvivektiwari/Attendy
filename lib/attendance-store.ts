@@ -606,7 +606,7 @@ export const useAttendanceStore = create<AttendanceState>()(
           absences: [],
         }))
         const state = get()
-        state.initializeMonth(current.month, current.year)
+        SEMESTER_MONTHS.forEach(m => state.initializeMonth(m.month, m.year))
         state.syncAbsences()
       },
 
@@ -666,6 +666,19 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
 
       getAttendanceStats: (filter?: { month?: number, year?: number, startMonth?: number, startYear?: number, endMonth?: number, endYear?: number }) => {
+        const state = get()
+        if (filter?.month !== undefined && filter?.year !== undefined) {
+          if (state.lectures.filter((l) => l.month === filter.month && l.year === filter.year).length === 0) {
+            state.initializeMonth(filter.month, filter.year)
+          }
+        } else {
+          SEMESTER_MONTHS.forEach(m => {
+            if (state.lectures.filter((l) => l.month === m.month && l.year === m.year).length === 0) {
+              state.initializeMonth(m.month, m.year)
+            }
+          })
+        }
+
         const { lectures } = get()
         const bySubject = new Map<string, AttendanceRecord>()
 
@@ -757,7 +770,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v8",
+      name: "attendance-storage-monthly-v10",
     }
   )
 )
