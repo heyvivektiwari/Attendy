@@ -8,9 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SEMESTER_MONTHS } from "@/lib/attendance-store"
 import { Logo } from "@/components/logo"
-import { ThemeCustomizer } from "@/components/theme-customizer"
 import { ExportReportModal } from "@/components/export-report-modal"
-import { BunkCalculatorModal } from "@/components/bunk-calculator-modal"
 import { cn } from "@/lib/utils"
 import { Capacitor } from '@capacitor/core'
 import { Preferences } from '@capacitor/preferences'
@@ -334,9 +332,7 @@ export function DashboardHeader() {
             </div>
           )}
 
-          <BunkCalculatorModal />
           <ExportReportModal />
-          <ThemeCustomizer />
           <ModeToggle />
         </div>
       </div>
