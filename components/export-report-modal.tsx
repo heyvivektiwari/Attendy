@@ -4,17 +4,32 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FileText, Download, Printer, FileSpreadsheet, Sparkles, CheckCircle2 } from "lucide-react"
-import { useAttendanceStore, getMonthLabel, subjects, theorySubjects, labSubjects, dsTheorySubjects, dsLabSubjects } from "@/lib/attendance-store"
+import { FileText, Printer, FileSpreadsheet } from "lucide-react"
+import { useAttendanceStore, getMonthLabel, SEMESTER_MONTHS, theorySubjects, labSubjects, dsTheorySubjects, dsLabSubjects } from "@/lib/attendance-store"
 
 export function ExportReportModal() {
-  const { user, branch, selectedBatch, selectedElective, currentMonth, currentYear, getAttendanceStats, statsMode } = useAttendanceStore()
+  const { user, branch, selectedBatch, selectedElective, currentMonth, currentYear, getAttendanceStats } = useAttendanceStore()
   const [open, setOpen] = useState(false)
-  const [reportScope, setReportScope] = useState<"monthly" | "overall">(statsMode)
+  
+  // Default export option value format: "m-y" or "overall"
+  const [exportTarget, setExportTarget] = useState<string>(`${currentMonth}-${currentYear}`)
 
-  const stats = reportScope === "monthly"
-    ? getAttendanceStats({ month: currentMonth, year: currentYear })
-    : getAttendanceStats({ startMonth: 6, startYear: 2026, endMonth: 10, endYear: 2026 })
+  const getTargetStats = () => {
+    if (exportTarget === "overall") {
+      return getAttendanceStats({ startMonth: 6, startYear: 2026, endMonth: 10, endYear: 2026 })
+    }
+    const [m, y] = exportTarget.split("-").map(Number)
+    return getAttendanceStats({ month: m, year: y })
+  }
+
+  const getTargetLabel = () => {
+    if (exportTarget === "overall") return "Academic Term (July - Nov 2026)"
+    const [m, y] = exportTarget.split("-").map(Number)
+    return getMonthLabel(m, y)
+  }
+
+  const stats = getTargetStats()
+  const scopeTitle = getTargetLabel()
 
   const visibleSubjects = (branch === "DataScience" ? [...dsTheorySubjects, ...dsLabSubjects] : [...theorySubjects, ...labSubjects]).filter((s) => {
     if (branch === "DataScience") return true
@@ -24,7 +39,6 @@ export function ExportReportModal() {
   })
 
   const exportCSV = () => {
-    const scopeTitle = reportScope === "monthly" ? getMonthLabel(currentMonth, currentYear) : "Term (July-Nov 2026)"
     let csv = `ATTENDY OFFICIAL ATTENDANCE STATEMENT\n`
     csv += `Student Name,${user?.name || "Student"}\n`
     csv += `Roll Number,${user?.rollNo || "N/A"}\n`
@@ -45,23 +59,17 @@ export function ExportReportModal() {
       csv += `"${sub.code}","${sub.name}","${sub.type.toUpperCase()}",${total},${attended},${absent},${pct}%,${status}\n`
     })
 
-    csv += `\nOVERALL SUMMARY\n`
-    csv += `Theory Average,${stats.theory.attended}/${stats.theory.total},${stats.theory.percentage}%\n`
-    csv += `Lab Average,${stats.lab.attended}/${stats.lab.total},${stats.lab.percentage}%\n`
-    csv += `Overall Average,${stats.overall.attended}/${stats.overall.total},${stats.overall.percentage}%\n`
-
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.setAttribute("href", url)
-    link.setAttribute("download", `Attendance_Report_${user?.rollNo || "Student"}_${reportScope}.csv`)
+    link.setAttribute("download", `Attendance_Report_${user?.rollNo || "Student"}_${exportTarget}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   }
 
   const exportPDFPrint = () => {
-    const scopeTitle = reportScope === "monthly" ? getMonthLabel(currentMonth, currentYear) : "Term (July - Nov 2026)"
     const printWindow = window.open("", "_blank")
     if (!printWindow) return
 
@@ -104,10 +112,6 @@ export function ExportReportModal() {
             .meta-val { font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 2px; }
             table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
             th { background: #005691; color: white; text-align: left; padding: 10px; font-size: 12px; text-transform: uppercase; }
-            .summary-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
-            .card { padding: 15px; background: #f1f5f9; border-radius: 10px; text-align: center; border: 1px solid #cbd5e1; }
-            .card-title { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
-            .card-val { font-size: 22px; font-weight: 900; color: #005691; margin-top: 5px; }
             .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
           </style>
         </head>
@@ -148,24 +152,6 @@ export function ExportReportModal() {
             </tbody>
           </table>
 
-          <div class="summary-box">
-            <div class="card">
-              <div class="card-title">Theory Average</div>
-              <div class="card-val">${stats.theory.percentage}%</div>
-              <div style="font-size: 11px; color: #64748b;">${stats.theory.attended} / ${stats.theory.total} lectures</div>
-            </div>
-            <div class="card">
-              <div class="card-title">Lab Average</div>
-              <div class="card-val">${stats.lab.percentage}%</div>
-              <div style="font-size: 11px; color: #64748b;">${stats.lab.attended} / ${stats.lab.total} labs</div>
-            </div>
-            <div class="card" style="background: #e0f2fe; border-color: #38bdf8;">
-              <div class="card-title" style="color: #0369a1;">Overall Average</div>
-              <div class="card-val" style="color: #0284c7;">${stats.overall.percentage}%</div>
-              <div style="font-size: 11px; color: #0369a1;">${stats.overall.attended} / ${stats.overall.total} total sessions</div>
-            </div>
-          </div>
-
           <div class="footer">
             Generated via Attendy Portal • Developed by Vivek Tiwari
           </div>
@@ -196,38 +182,26 @@ export function ExportReportModal() {
             <DialogTitle className="text-xl font-extrabold tracking-tight">Export Attendance Report</DialogTitle>
           </div>
           <DialogDescription className="text-xs text-muted-foreground">
-            Download a formatted PDF statement or Excel/CSV data sheet for official submission.
+            Select any month or term below to export your subject attendance statement.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-primary uppercase">Select Report Period</label>
-            <Select value={reportScope} onValueChange={(val: any) => setReportScope(val)}>
+            <label className="text-xs font-bold text-primary uppercase">Select Report Period / Month</label>
+            <Select value={exportTarget} onValueChange={(val: string) => setExportTarget(val)}>
               <SelectTrigger className="h-11 border-[2px] border-border rounded-xl">
-                <SelectValue placeholder="Select Scope" />
+                <SelectValue placeholder="Select Month or Period" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="monthly">Monthly ({getMonthLabel(currentMonth, currentYear)})</SelectItem>
                 <SelectItem value="overall">Academic Term (July - Nov 2026)</SelectItem>
+                {SEMESTER_MONTHS.map((m) => (
+                  <SelectItem key={`${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
+                    {m.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Quick Preview Box */}
-          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold">
-              <span>Overall Average:</span>
-              <span className="text-base text-primary font-black">{stats.overall.percentage}%</span>
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Theory ({stats.theory.attended}/${stats.theory.total})</span>
-              <span>{stats.theory.percentage}%</span>
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Lab ({stats.lab.attended}/${stats.lab.total})</span>
-              <span>{stats.lab.percentage}%</span>
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 pt-2">
