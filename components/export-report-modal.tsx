@@ -1,0 +1,247 @@
+"use client"
+
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FileText, Download, Printer, FileSpreadsheet, Sparkles, CheckCircle2 } from "lucide-react"
+import { useAttendanceStore, getMonthLabel, subjects, theorySubjects, labSubjects, dsTheorySubjects, dsLabSubjects } from "@/lib/attendance-store"
+
+export function ExportReportModal() {
+  const { user, branch, selectedBatch, selectedElective, currentMonth, currentYear, getAttendanceStats, statsMode } = useAttendanceStore()
+  const [open, setOpen] = useState(false)
+  const [reportScope, setReportScope] = useState<"monthly" | "overall">(statsMode)
+
+  const stats = reportScope === "monthly"
+    ? getAttendanceStats({ month: currentMonth, year: currentYear })
+    : getAttendanceStats({ startMonth: 6, startYear: 2026, endMonth: 10, endYear: 2026 })
+
+  const visibleSubjects = (branch === "DataScience" ? [...dsTheorySubjects, ...dsLabSubjects] : [...theorySubjects, ...labSubjects]).filter((s) => {
+    if (branch === "DataScience") return true
+    if (s.id === "pec_nlp" || s.id === "pecl_nlp") return selectedElective === "NLP"
+    if (s.id === "pec_bda" || s.id === "pecl_bda") return selectedElective === "BDA"
+    return true
+  })
+
+  const exportCSV = () => {
+    const scopeTitle = reportScope === "monthly" ? getMonthLabel(currentMonth, currentYear) : "Term (July-Nov 2026)"
+    let csv = `ATTENDY OFFICIAL ATTENDANCE STATEMENT\n`
+    csv += `Student Name,${user?.name || "Student"}\n`
+    csv += `Roll Number,${user?.rollNo || "N/A"}\n`
+    csv += `Branch,${branch === "DataScience" ? "Data Science (CSE-DS)" : "Computer Engineering"}\n`
+    csv += `Batch,${selectedBatch}\n`
+    csv += `Report Period,${scopeTitle}\n\n`
+
+    csv += `Subject Code,Subject Name,Type,Total Scheduled,Attended,Absences,Percentage (%),Status\n`
+
+    visibleSubjects.forEach((sub) => {
+      const record = stats.bySubject.get(sub.id)
+      const total = record?.totalLectures || 0
+      const attended = record?.attendedLectures || 0
+      const absent = total - attended
+      const pct = total > 0 ? Math.round((attended / total) * 100) : 100
+      const status = pct >= 75 ? "SAFE" : pct >= 70 ? "WARNING" : "CRITICAL"
+
+      csv += `"${sub.code}","${sub.name}","${sub.type.toUpperCase()}",${total},${attended},${absent},${pct}%,${status}\n`
+    })
+
+    csv += `\nOVERALL SUMMARY\n`
+    csv += `Theory Average,${stats.theory.attended}/${stats.theory.total},${stats.theory.percentage}%\n`
+    csv += `Lab Average,${stats.lab.attended}/${stats.lab.total},${stats.lab.percentage}%\n`
+    csv += `Overall Average,${stats.overall.attended}/${stats.overall.total},${stats.overall.percentage}%\n`
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.setAttribute("href", url)
+    link.setAttribute("download", `Attendance_Report_${user?.rollNo || "Student"}_${reportScope}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const exportPDFPrint = () => {
+    const scopeTitle = reportScope === "monthly" ? getMonthLabel(currentMonth, currentYear) : "Term (July - Nov 2026)"
+    const printWindow = window.open("", "_blank")
+    if (!printWindow) return
+
+    const rowsHtml = visibleSubjects.map((sub) => {
+      const record = stats.bySubject.get(sub.id)
+      const total = record?.totalLectures || 0
+      const attended = record?.attendedLectures || 0
+      const absent = total - attended
+      const pct = total > 0 ? Math.round((attended / total) * 100) : 100
+      const statusColor = pct >= 75 ? "#10b981" : pct >= 70 ? "#f59e0b" : "#ef4444"
+      const statusText = pct >= 75 ? "Safe" : pct >= 70 ? "Warning" : "Critical"
+
+      return `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${sub.code}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${sub.name}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-transform: uppercase; font-size: 11px;">${sub.type}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">${total}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #10b981; font-weight: bold;">${attended}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #ef4444;">${absent}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: 800;">${pct}%</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; color: ${statusColor}; font-weight: bold;">${statusText}</td>
+        </tr>
+      `
+    }).join("")
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Attendance Statement - ${user?.name || "Student"}</title>
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; color: #0f172a; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #005691; padding-bottom: 15px; margin-bottom: 20px; }
+            .title { font-size: 24px; font-weight: 900; color: #005691; }
+            .subtitle { font-size: 13px; color: #64748b; margin-top: 4px; }
+            .meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
+            .meta-item { display: flex; flex-direction: column; }
+            .meta-label { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+            .meta-val { font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 2px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+            th { background: #005691; color: white; text-align: left; padding: 10px; font-size: 12px; text-transform: uppercase; }
+            .summary-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+            .card { padding: 15px; background: #f1f5f9; border-radius: 10px; text-align: center; border: 1px solid #cbd5e1; }
+            .card-title { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+            .card-val { font-size: 22px; font-weight: 900; color: #005691; margin-top: 5px; }
+            .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div class="title">ATTENDY</div>
+              <div class="subtitle">Official Student Attendance Statement</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 12px; font-weight: bold;">Date: ${new Date().toLocaleDateString()}</div>
+              <div style="font-size: 11px; color: #64748b;">Period: ${scopeTitle}</div>
+            </div>
+          </div>
+
+          <div class="meta-grid">
+            <div class="meta-item"><span class="meta-label">Student Name</span><span class="meta-val">${user?.name || "Student"}</span></div>
+            <div class="meta-item"><span class="meta-label">Roll Number</span><span class="meta-val">${user?.rollNo || "N/A"}</span></div>
+            <div class="meta-item"><span class="meta-label">Branch</span><span class="meta-val">${branch === "DataScience" ? "Data Science (CSE-DS)" : "Computer Engineering"}</span></div>
+            <div class="meta-item"><span class="meta-label">Batch</span><span class="meta-val">${selectedBatch}</span></div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Subject Name</th>
+                <th>Type</th>
+                <th style="text-align: center;">Total</th>
+                <th style="text-align: center;">Attended</th>
+                <th style="text-align: center;">Absent</th>
+                <th style="text-align: center;">Attendance %</th>
+                <th style="text-align: center;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="summary-box">
+            <div class="card">
+              <div class="card-title">Theory Average</div>
+              <div class="card-val">${stats.theory.percentage}%</div>
+              <div style="font-size: 11px; color: #64748b;">${stats.theory.attended} / ${stats.theory.total} lectures</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Lab Average</div>
+              <div class="card-val">${stats.lab.percentage}%</div>
+              <div style="font-size: 11px; color: #64748b;">${stats.lab.attended} / ${stats.lab.total} labs</div>
+            </div>
+            <div class="card" style="background: #e0f2fe; border-color: #38bdf8;">
+              <div class="card-title" style="color: #0369a1;">Overall Average</div>
+              <div class="card-val" style="color: #0284c7;">${stats.overall.percentage}%</div>
+              <div style="font-size: 11px; color: #0369a1;">${stats.overall.attended} / ${stats.overall.total} total sessions</div>
+            </div>
+          </div>
+
+          <div class="footer">
+            Generated via Attendy Portal • Developed by Vivek Tiwari
+          </div>
+
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2 h-10 px-3 rounded-xl border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-sm hover:border-primary transition-all">
+          <FileText className="w-4 h-4 text-primary" />
+          <span className="hidden sm:inline font-bold text-xs">Export Report</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md p-6 rounded-2xl border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-2xl bg-card text-card-foreground">
+        <DialogHeader className="space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-primary/10 text-primary">
+              <FileText className="h-5 w-5" />
+            </div>
+            <DialogTitle className="text-xl font-extrabold tracking-tight">Export Attendance Report</DialogTitle>
+          </div>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Download a formatted PDF statement or Excel/CSV data sheet for official submission.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-primary uppercase">Select Report Period</label>
+            <Select value={reportScope} onValueChange={(val: any) => setReportScope(val)}>
+              <SelectTrigger className="h-11 border-[2px] border-border rounded-xl">
+                <SelectValue placeholder="Select Scope" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="monthly">Monthly ({getMonthLabel(currentMonth, currentYear)})</SelectItem>
+                <SelectItem value="overall">Academic Term (July - Nov 2026)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Quick Preview Box */}
+          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span>Overall Average:</span>
+              <span className="text-base text-primary font-black">{stats.overall.percentage}%</span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Theory ({stats.theory.attended}/${stats.theory.total})</span>
+              <span>{stats.theory.percentage}%</span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Lab ({stats.lab.attended}/${stats.lab.total})</span>
+              <span>{stats.lab.percentage}%</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <Button onClick={exportPDFPrint} className="h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-white gap-2 shadow-md">
+              <Printer className="h-4 w-4" />
+              Print / Save PDF
+            </Button>
+            <Button onClick={exportCSV} variant="outline" className="h-12 rounded-xl font-bold border-2 border-primary/40 hover:bg-primary/10 gap-2">
+              <FileSpreadsheet className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              Download CSV
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}

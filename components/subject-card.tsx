@@ -52,6 +52,9 @@ export function SubjectCard({ subjectId, record }: SubjectCardProps) {
   const status = getStatusColor(percentage)
   const isLab = subject.type === "lab"
 
+  const safeBunks = Math.floor((record.attendedLectures - 0.75 * record.totalLectures) / 0.75)
+  const requiredLectures = Math.ceil((0.75 * record.totalLectures - record.attendedLectures) / 0.25)
+
   return (
     <Card className={cn(
       "group relative flex flex-col h-full overflow-hidden transition-all duration-300 border-[3px] hover:-translate-y-1 hover:border-primary",
@@ -93,6 +96,13 @@ export function SubjectCard({ subjectId, record }: SubjectCardProps) {
             <p className="text-xs text-muted-foreground mt-0.5">
               {record.attendedLectures}/{record.totalLectures} {isLab ? "labs" : "lectures"}
             </p>
+            {record.totalLectures > 0 && (
+              <p className={cn("text-[10px] font-extrabold uppercase mt-0.5", safeBunks >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-destructive")}>
+                {safeBunks >= 0 
+                  ? `Can miss ${safeBunks} ${isLab ? "lab" : "lecture"}${safeBunks === 1 ? "" : "s"}` 
+                  : `Need ${requiredLectures} more`}
+              </p>
+            )}
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">{subject.faculty}</p>
