@@ -38,7 +38,7 @@ export function ExportReportModal() {
     return true
   })
 
-  const exportCSV = () => {
+  const exportCSV = async () => {
     let csv = `ATTENDY OFFICIAL ATTENDANCE STATEMENT\n`
     csv += `Student Name,${user?.name || "Student"}\n`
     csv += `Roll Number,${user?.rollNo || "N/A"}\n`
@@ -63,20 +63,37 @@ export function ExportReportModal() {
     csv += `Theory Average,${stats.theory.attended}/${stats.theory.total},${stats.theory.percentage}%\n`
     csv += `Lab Average,${stats.lab.attended}/${stats.lab.total},${stats.lab.percentage}%\n`
 
+    const fileName = `Attendance_Report_${user?.rollNo || "Student"}_${exportTarget}.csv`
+    const file = new File([csv], fileName, { type: "text/csv" })
+
+    // On iOS Brave/Safari, use Native Web Share if available
+    if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "Attendance Report",
+          text: `Attendance report for ${user?.name || "Student"} (${scopeTitle})`
+        })
+        return
+      } catch (e) {
+        console.log("Share API cancelled or failed, trying download fallback", e)
+      }
+    }
+
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
-    link.setAttribute("href", url)
-    link.setAttribute("download", `Attendance_Report_${user?.rollNo || "Student"}_${exportTarget}.csv`)
+    link.href = url
+    link.download = fileName
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    setTimeout(() => {
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }, 1000)
   }
 
   const exportPDFPrint = () => {
-    const printWindow = window.open("", "_blank")
-    if (!printWindow) return
-
     const rowsHtml = visibleSubjects.map((sub) => {
       const record = stats.bySubject.get(sub.id)
       const total = record?.totalLectures || 0
@@ -100,7 +117,7 @@ export function ExportReportModal() {
       `
     }).join("")
 
-    printWindow.document.write(`
+    const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -176,14 +193,45 @@ export function ExportReportModal() {
           <div class="footer">
             Generated via Attendy Portal • Developed by Vivek Tiwari
           </div>
-
-          <script>
-            window.onload = function() { window.print(); }
-          </script>
         </body>
       </html>
-    `)
-    printWindow.document.close()
+    `
+
+    // Try popup window first
+    const printWindow = window.open("", "_blank")
+    if (printWindow) {
+      printWindow.document.write(htmlContent)
+      printWindow.document.close()
+      printWindow.focus()
+      setTimeout(() => {
+        printWindow.print()
+      }, 250)
+      return
+    }
+
+    // Hidden iframe fallback for iOS Brave / Mobile Safari popup blockers
+    const iframe = document.createElement("iframe")
+    iframe.style.position = "fixed"
+    iframe.style.right = "0"
+    iframe.style.bottom = "0"
+    iframe.style.width = "0"
+    iframe.style.height = "0"
+    iframe.style.border = "0"
+    document.body.appendChild(iframe)
+
+    const doc = iframe.contentWindow?.document || iframe.contentDocument
+    if (doc) {
+      doc.open()
+      doc.write(htmlContent)
+      doc.close()
+      setTimeout(() => {
+        iframe.contentWindow?.focus()
+        iframe.contentWindow?.print()
+        setTimeout(() => {
+          document.body.removeChild(iframe)
+        }, 1500)
+      }, 300)
+    }
   }
 
   return (
