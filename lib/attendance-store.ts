@@ -354,8 +354,13 @@ interface AttendanceStats {
   overall: { attended: number; total: number; percentage: number }
 }
 
-// Semester months (TE Sem V: July-Nov)
+// Semester months (Term 1: Jan-May, Term 2: July-Nov)
 export const SEMESTER_MONTHS = [
+  { month: 0, year: 2026, label: "January 2026" },
+  { month: 1, year: 2026, label: "February 2026" },
+  { month: 2, year: 2026, label: "March 2026" },
+  { month: 3, year: 2026, label: "April 2026" },
+  { month: 4, year: 2026, label: "May 2026" },
   { month: 6, year: 2026, label: "July 2026" },
   { month: 7, year: 2026, label: "August 2026" },
   { month: 8, year: 2026, label: "September 2026" },
@@ -757,7 +762,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v7",
+      name: "attendance-storage-monthly-v6",
     }
   )
 )
