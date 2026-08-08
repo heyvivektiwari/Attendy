@@ -87,7 +87,7 @@ export function AttendanceApp() {
 
     // Find if there is any legacy storage key in localStorage
     const legacyKeys = Object.keys(localStorage).filter(
-      key => key.startsWith("attendance-storage-monthly-v") && key !== "attendance-storage-monthly-v5"
+      key => key.startsWith("attendance-storage") && key !== "attendance-storage-monthly-v5"
     )
 
     if (legacyKeys.length > 0) {
