@@ -495,7 +495,7 @@ export function LoginForm() {
           <p className="text-xs text-muted-foreground font-medium flex items-center justify-center gap-1.5 transition-colors hover:text-primary">
             <span>Attendy</span>
             <span className="text-[10px] opacity-40">•</span>
-            <span>Developed by Thoners</span>
+            <span>Developed by Vivek Tiwari</span>
           </p>
         </div>
       </div>
