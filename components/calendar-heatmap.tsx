@@ -121,14 +121,14 @@ export function CalendarHeatmap() {
           </div>
 
           {/* Calendar Grid Container with Prominent Borders and Rounded Corners */}
-          <div className="border-[3px] border-[#1A132F]/20 dark:border-primary/40 rounded-3xl overflow-hidden bg-card p-2 sm:p-3 shadow-md space-y-2">
+          <div className="border-[3px] border-[#1A132F]/20 dark:border-primary/40 rounded-3xl overflow-hidden bg-card p-1.5 sm:p-3 shadow-md space-y-1.5 sm:space-y-2">
             {/* Days of Week Header Row */}
-            <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center pb-1 border-b-2 border-border/80">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center pb-1 border-b-2 border-border/80">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
                 <div 
                   key={day} 
                   className={cn(
-                    "py-1.5 text-xs font-black uppercase tracking-wider", 
+                    "py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider", 
                     idx === 0 || idx === 6 ? "text-muted-foreground/60" : "text-primary"
                   )}
                 >
@@ -138,10 +138,10 @@ export function CalendarHeatmap() {
             </div>
 
             {/* Calendar Days Table Grid */}
-            <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {/* Blank offset cells for start of month */}
               {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
-                <div key={`blank-${idx}`} className="h-12 sm:h-16 rounded-xl sm:rounded-2xl border-2 border-border/30 bg-muted/10" />
+                <div key={`blank-${idx}`} className="h-13 sm:h-16 rounded-xl sm:rounded-2xl border-2 border-border/30 bg-muted/10" />
               ))}
 
               {/* Days of month */}
@@ -155,7 +155,7 @@ export function CalendarHeatmap() {
                 const absentCount = dayLectures.filter(l => l.isAbsent).length
                 const attendedCount = dayLectures.length - absentCount
 
-                let cellStyle = "bg-secondary/30 border-2 border-border/70 text-muted-foreground opacity-60"
+                let cellStyle = "bg-secondary/30 border-2 border-border/70 text-muted-foreground opacity-50"
                 if (hasLectures) {
                   if (absentCount === 0) {
                     cellStyle = "bg-emerald-500/15 border-2 border-emerald-500/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 hover:border-emerald-500 cursor-pointer shadow-sm"
@@ -165,7 +165,7 @@ export function CalendarHeatmap() {
                     cellStyle = "bg-destructive/15 border-2 border-destructive/60 text-destructive hover:bg-destructive/25 hover:border-destructive cursor-pointer shadow-sm"
                   }
                 } else if (isWeekend) {
-                  cellStyle = "bg-muted/20 border-2 border-border/50 text-muted-foreground/60"
+                  cellStyle = "bg-muted/20 border-2 border-border/40 text-muted-foreground/50"
                 }
 
                 return (
@@ -174,20 +174,20 @@ export function CalendarHeatmap() {
                     disabled={!hasLectures}
                     onClick={() => handleDayClick(dayNumber)}
                     className={cn(
-                      "h-12 sm:h-16 rounded-xl sm:rounded-2xl p-1.5 flex flex-col justify-between items-start transition-all relative text-left group active:scale-95",
+                      "h-13 sm:h-16 rounded-xl sm:rounded-2xl p-1 flex flex-col justify-between items-center text-center transition-all relative group active:scale-95 overflow-hidden",
                       cellStyle
                     )}
                   >
-                    <span className="text-xs font-black leading-none">{dayNumber}</span>
+                    <span className="text-[11px] sm:text-xs font-black leading-none pt-0.5">{dayNumber}</span>
                     {hasLectures ? (
-                      <div className="w-full flex items-center justify-end">
+                      <div className="w-full flex items-center justify-center pb-0.5">
                         {absentCount === 0 ? (
-                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40">
+                          <span className="text-[9px] sm:text-[10px] font-black px-1 py-0.5 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 leading-none">
                             {attendedCount}/{dayLectures.length}
                           </span>
                         ) : (
                           <span className={cn(
-                            "text-[10px] font-black px-1.5 py-0.5 rounded-lg border",
+                            "text-[9px] sm:text-[10px] font-black px-1 py-0.5 rounded-md border leading-none",
                             absentCount === dayLectures.length 
                               ? "bg-destructive/20 text-destructive border-destructive/50" 
                               : "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/50"
@@ -196,11 +196,7 @@ export function CalendarHeatmap() {
                           </span>
                         )}
                       </div>
-                    ) : (
-                      <div className="w-full flex justify-end">
-                        <span className="text-[9px] font-bold text-muted-foreground/50">{isWeekend ? "W/E" : "Off"}</span>
-                      </div>
-                    )}
+                    ) : null}
                   </button>
                 )
               })}
