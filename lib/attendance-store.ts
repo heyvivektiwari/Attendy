@@ -421,8 +421,10 @@ interface AttendanceState {
 function getWeekdaysInMonth(month: number, year: number): Date[] {
   const dates: Date[] = []
   const daysInMonth = new Date(year, month + 1, 0).getDate()
+  // College session started July 6, 2026
+  const startDay = (month === 6 && year === 2026) ? 6 : 1
   
-  for (let day = 1; day <= daysInMonth; day++) {
+  for (let day = startDay; day <= daysInMonth; day++) {
     const date = new Date(year, month, day)
     const dayOfWeek = date.getDay() // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
