@@ -108,6 +108,9 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
   useEffect(() => {
     if (!open) return
 
+    setSaving(false)
+    setSavedSuccess(false)
+
     // Check if there are any custom recorded absences for July
     const hasExistingAbsences = julyLectures.some((l) => l.isAbsent)
 
