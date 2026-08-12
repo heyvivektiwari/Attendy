@@ -102,17 +102,12 @@ export function DashboardHeader() {
                         statsMode === "overall" && mainView === "dashboard" && "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50"
                       )} 
                       onClick={() => {
-                        if (statsMode === "overall") {
-                          setIsCustomRangeActive(!isCustomRangeActive);
-                        } else {
-                          setStatsMode("overall");
-                          setMainView("dashboard");
-                        }
+                        setStatsMode("overall");
+                        setMainView("dashboard");
                       }}
                     >
                       <BarChart2 className={cn("mr-3 h-5 w-5", statsMode === "overall" && mainView === "dashboard" && "text-primary")} />
                       Academic Term Average
-                      {statsMode === "overall" && <ChevronDown className={cn("ml-auto h-4 w-4 transition-transform", isCustomRangeActive && "rotate-180")} />}
                     </Button>
                   </div>
                 </div>
@@ -144,86 +139,66 @@ export function DashboardHeader() {
                 {statsMode === "overall" && (
                   <div className="space-y-4">
                     <h3 className="text-base font-black text-primary uppercase tracking-tighter pl-1">Academic Term</h3>
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        variant="ghost"
-                        className={cn(
-                          "justify-start text-xs h-auto min-h-[40px] py-2 px-3 rounded-xl border-[3px] border-transparent font-extrabold text-left leading-tight w-full",
-                          rangeStartMonth === 6 && rangeEndMonth === 10 ? "dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm" : "hover:bg-secondary/30"
-                        )}
-                        onClick={() => setRange(6, 2026, 10, 2026)}
-                      >
-                        Academic Semester (July - Nov 2026)
-                      </Button>
+                    
+                    {(() => {
+                      const now = new Date()
+                      const todayMonth = now.getMonth()
+                      const todayYear = now.getFullYear()
 
-                      {(() => {
-                        const now = new Date()
-                        const currentSemMonth = SEMESTER_MONTHS.find(m => m.month === now.getMonth() && m.year === now.getFullYear())
-                        const todayMonth = currentSemMonth ? currentSemMonth.month : 7
-                        const todayYear = currentSemMonth ? currentSemMonth.year : 2026
-                        const todayMonthLabel = currentSemMonth ? currentSemMonth.label.split(' ')[0] : "August"
+                      // Only show months that have actually arrived
+                      const availableMonths = SEMESTER_MONTHS.filter(m => {
+                        if (m.year < todayYear) return true
+                        if (m.year === todayYear && m.month <= todayMonth) return true
+                        return false
+                      })
 
-                        return (
-                          <Button
-                            variant="ghost"
-                            className={cn(
-                              "justify-start text-xs h-auto min-h-[40px] py-2 px-3 rounded-xl border-[3px] border-transparent font-extrabold text-left leading-tight w-full",
-                              rangeStartMonth === 6 && rangeEndMonth === todayMonth ? "dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm" : "hover:bg-secondary/30"
-                            )}
-                            onClick={() => setRange(6, 2026, todayMonth, todayYear)}
-                          >
-                            Semester to Date (July - {todayMonthLabel} {todayYear})
-                          </Button>
-                        )
-                      })()}
-                    </div>
-
-                    {isCustomRangeActive && (
-                      <div className="flex flex-col gap-3 p-3 bg-primary/5 rounded-xl border border-primary/20 animate-in fade-in slide-in-from-top-2">
-                        <div>
-                          <label className="text-[10px] font-bold text-primary uppercase mb-1 block">From:</label>
-                          <Select 
-                            value={`${rangeStartMonth}-${rangeStartYear}`} 
-                            onValueChange={(val) => {
-                              const [m, y] = val.split('-').map(Number)
-                              setRange(m, y, rangeEndMonth, rangeEndYear)
-                            }}
-                          >
-                            <SelectTrigger className="h-9 text-xs">
-                              <SelectValue placeholder="Start" />
-                            </SelectTrigger>
-                            <SelectContent>
-                               {SEMESTER_MONTHS.map((m) => (
-                                  <SelectItem key={`start-${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
-                                    {m.label}
-                                  </SelectItem>
-                                ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-primary uppercase mb-1 block">To:</label>
-                          <Select 
-                            value={`${rangeEndMonth}-${rangeEndYear}`} 
-                            onValueChange={(val) => {
-                              const [m, y] = val.split('-').map(Number)
-                              setRange(rangeStartMonth, rangeStartYear, m, y)
-                            }}
-                          >
-                            <SelectTrigger className="h-9 text-xs">
-                              <SelectValue placeholder="End" />
-                            </SelectTrigger>
-                             <SelectContent>
-                                {SEMESTER_MONTHS.map((m) => (
-                                    <SelectItem key={`end-${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
+                      return (
+                        <div className="flex flex-col gap-3 p-3 bg-primary/5 rounded-xl border border-primary/20">
+                          <div>
+                            <label className="text-[10px] font-bold text-primary uppercase mb-1 block">From:</label>
+                            <Select 
+                              value={`${rangeStartMonth}-${rangeStartYear}`} 
+                              onValueChange={(val) => {
+                                const [m, y] = val.split('-').map(Number)
+                                setRange(m, y, rangeEndMonth, rangeEndYear)
+                              }}
+                            >
+                              <SelectTrigger className="h-9 text-xs border-[2px] border-border bg-white dark:bg-transparent rounded-lg">
+                                <SelectValue placeholder="Start" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 {availableMonths.map((m) => (
+                                    <SelectItem key={`start-${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
                                       {m.label}
                                     </SelectItem>
                                   ))}
-                             </SelectContent>
-                          </Select>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-primary uppercase mb-1 block">To:</label>
+                            <Select 
+                              value={`${rangeEndMonth}-${rangeEndYear}`} 
+                              onValueChange={(val) => {
+                                const [m, y] = val.split('-').map(Number)
+                                setRange(rangeStartMonth, rangeStartYear, m, y)
+                              }}
+                            >
+                              <SelectTrigger className="h-9 text-xs border-[2px] border-border bg-white dark:bg-transparent rounded-lg">
+                                <SelectValue placeholder="End" />
+                              </SelectTrigger>
+                               <SelectContent>
+                                  {availableMonths.map((m) => (
+                                      <SelectItem key={`end-${m.month}-${m.year}`} value={`${m.month}-${m.year}`}>
+                                        {m.label}
+                                      </SelectItem>
+                                    ))}
+                               </SelectContent>
+                            </Select>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )
+                    })()}
                   </div>
                 )}
 
