@@ -183,7 +183,7 @@ export function Dashboard() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Theory Performance</h3>
-                    <p className="text-sm text-muted-foreground">{stats.theory.attended}/{stats.theory.total} lectures attended · <span className="font-extrabold text-primary">{getRangeLabel()}</span></p>
+                    <p className="text-sm text-muted-foreground">{stats.theory.attended}/{stats.theory.total} lectures attended <span className="whitespace-nowrap">· <span className="font-extrabold text-primary">{getRangeLabel()}</span></span></p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-3 mt-auto">
@@ -212,7 +212,7 @@ export function Dashboard() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Lab Performance</h3>
-                    <p className="text-sm text-muted-foreground">{stats.lab.attended}/{stats.lab.total} labs attended · <span className="font-extrabold text-primary">{getRangeLabel()}</span></p>
+                    <p className="text-sm text-muted-foreground">{stats.lab.attended}/{stats.lab.total} labs attended <span className="whitespace-nowrap">· <span className="font-extrabold text-primary">{getRangeLabel()}</span></span></p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-3 mt-auto">
