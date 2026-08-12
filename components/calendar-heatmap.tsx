@@ -98,22 +98,22 @@ export function CalendarHeatmap() {
 
         <CardContent className="p-4 sm:p-6 space-y-4">
           {/* Legend Strip */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold px-1 pb-1 border-b border-border/40">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-emerald-500 border border-emerald-600" />
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold px-1 pb-2 border-b border-border/40">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <span className="h-3 w-3 rounded-full bg-emerald-500 border border-emerald-600 shrink-0" />
                 <span className="text-muted-foreground text-[11px]">100% Present</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-amber-500 border border-amber-600" />
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <span className="h-3 w-3 rounded-full bg-amber-500 border border-amber-600 shrink-0" />
                 <span className="text-muted-foreground text-[11px]">Partial Absences</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-destructive border border-destructive/80" />
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <span className="h-3 w-3 rounded-full bg-destructive border border-destructive/80 shrink-0" />
                 <span className="text-muted-foreground text-[11px]">Full Day Missed</span>
               </div>
             </div>
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-extrabold">
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-extrabold mt-1 sm:mt-0">
               Click Date to View
             </span>
           </div>
@@ -121,12 +121,12 @@ export function CalendarHeatmap() {
           {/* Calendar Grid Container with Prominent Borders and Rounded Corners */}
           <div className="border-[3px] border-[#1A132F]/20 dark:border-primary/40 rounded-3xl overflow-hidden bg-card p-1.5 sm:p-3 shadow-md space-y-1.5 sm:space-y-2">
              {/* Days of Week Header Row */}
-            <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center items-center py-2 border-b-2 border-border/80">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center items-center py-2 px-1 bg-secondary/50 dark:bg-white/5 rounded-t-2xl border-b border-border/50">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
                 <div 
                   key={day} 
                   className={cn(
-                    "text-[10px] sm:text-xs font-black uppercase tracking-wider leading-none", 
+                    "text-[10px] sm:text-xs font-black uppercase tracking-wider leading-none py-1.5", 
                     idx === 0 || idx === 6 ? "text-muted-foreground/60" : "text-primary"
                   )}
                 >
