@@ -99,9 +99,14 @@ export function ExportReportModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 h-10 px-3 rounded-xl border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-sm hover:border-primary transition-all">
-          <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          <span className="hidden sm:inline font-bold text-xs">Export CSV</span>
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-xl w-12 h-12 border-[3px] border-[#1A132F]/20 dark:border-primary/40 shadow-[0_4px_15px_rgba(26,19,47,0.08)] bg-card hover:border-primary transition-all active:scale-90 shrink-0"
+          title="Export Attendance CSV"
+        >
+          <FileSpreadsheet className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span className="sr-only">Export CSV</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md p-6 rounded-2xl border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-2xl bg-card text-card-foreground">
