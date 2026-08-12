@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAttendanceStore, theorySubjects, labSubjects, dsTheorySubjects, dsLabSubjects } from "@/lib/attendance-store"
+import { useAttendanceStore, theorySubjects, labSubjects, dsTheorySubjects, dsLabSubjects, getMonthLabel } from "@/lib/attendance-store"
 import { DashboardHeader } from "./dashboard-header"
 import { SubjectCard } from "./subject-card"
 import { TimetableGrid } from "./timetable-grid"
@@ -31,6 +31,16 @@ export function Dashboard() {
     if (hour < 12) return "Good morning"
     if (hour < 17) return "Good afternoon"
     return "Good evening"
+  }
+
+  const getRangeLabel = () => {
+    if (statsMode === "monthly") {
+      return getMonthLabel(currentMonth, currentYear)
+    } else {
+      const startLabel = getMonthLabel(rangeStartMonth, rangeStartYear).split(' ')[0]
+      const endLabel = getMonthLabel(rangeEndMonth, rangeEndYear)
+      return `${startLabel} - ${endLabel}`
+    }
   }
 
   useEffect(() => {
@@ -173,7 +183,7 @@ export function Dashboard() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Theory Performance</h3>
-                    <p className="text-sm text-muted-foreground">{stats.theory.attended}/{stats.theory.total} lectures attended</p>
+                    <p className="text-sm text-muted-foreground">{stats.theory.attended}/{stats.theory.total} lectures attended · <span className="font-extrabold text-primary">{getRangeLabel()}</span></p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-3 mt-auto">
@@ -202,7 +212,7 @@ export function Dashboard() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Lab Performance</h3>
-                    <p className="text-sm text-muted-foreground">{stats.lab.attended}/{stats.lab.total} labs attended</p>
+                    <p className="text-sm text-muted-foreground">{stats.lab.attended}/{stats.lab.total} labs attended · <span className="font-extrabold text-primary">{getRangeLabel()}</span></p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-3 mt-auto">
