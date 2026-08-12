@@ -84,29 +84,33 @@ export function DashboardHeader() {
                     <Button 
                       variant="ghost" 
                       className={cn(
-                        "justify-start h-12 px-4 rounded-xl border-[3px] border-transparent transition-all", 
-                        statsMode === "monthly" && mainView === "dashboard" && "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50"
+                        "justify-start h-12 px-4 rounded-xl border-[3px] transition-all gap-3", 
+                        statsMode === "monthly" && mainView === "dashboard" 
+                          ? "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50" 
+                          : "border-transparent"
                       )} 
                       onClick={() => {
                         setStatsMode("monthly");
                         setMainView("dashboard");
                       }}
                     >
-                      <BarChart2 className={cn("mr-3 h-5 w-5", statsMode === "monthly" && mainView === "dashboard" && "text-primary")} />
+                      <BarChart2 className={cn("size-5 shrink-0", statsMode === "monthly" && mainView === "dashboard" && "text-primary")} />
                       Monthly Average
                     </Button>
                     <Button 
                       variant="ghost" 
                       className={cn(
-                        "justify-start h-12 px-4 rounded-xl border-[3px] border-transparent transition-all", 
-                        statsMode === "overall" && mainView === "dashboard" && "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50"
+                        "justify-start h-12 px-4 rounded-xl border-[3px] transition-all gap-3", 
+                        statsMode === "overall" && mainView === "dashboard" 
+                          ? "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50" 
+                          : "border-transparent"
                       )} 
                       onClick={() => {
                         setStatsMode("overall");
                         setMainView("dashboard");
                       }}
                     >
-                      <BarChart2 className={cn("mr-3 h-5 w-5", statsMode === "overall" && mainView === "dashboard" && "text-primary")} />
+                      <BarChart2 className={cn("size-5 shrink-0", statsMode === "overall" && mainView === "dashboard" && "text-primary")} />
                       Academic Term Average
                     </Button>
                   </div>
