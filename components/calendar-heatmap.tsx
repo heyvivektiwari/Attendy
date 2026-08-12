@@ -98,8 +98,8 @@ export function CalendarHeatmap() {
 
         <CardContent className="p-4 sm:p-6 space-y-4">
           {/* Legend Strip */}
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold px-1 pb-2 border-b border-border/40">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold px-1 pb-2.5 border-b border-border/40 w-full">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 w-full sm:w-auto">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <span className="h-3 w-3 rounded-full bg-emerald-500 border border-emerald-600 shrink-0" />
                 <span className="text-muted-foreground text-[11px]">100% Present</span>
@@ -113,7 +113,7 @@ export function CalendarHeatmap() {
                 <span className="text-muted-foreground text-[11px]">Full Day Missed</span>
               </div>
             </div>
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-extrabold mt-1 sm:mt-0">
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-extrabold w-full sm:w-auto text-center sm:text-right mt-1 sm:mt-0">
               Click Date to View
             </span>
           </div>
