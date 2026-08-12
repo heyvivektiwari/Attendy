@@ -246,50 +246,52 @@ export function Dashboard() {
         {mainView === "dashboard" ? (
           <div className="space-y-6">
             {/* Filter Buttons */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter("all")}
-                className={cn("h-10 px-4 border-[3px] transition-all rounded-xl", 
-                  filter === "all" 
-                    ? "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50" 
-                    : "border-transparent"
-                )}
-              >
-                All ({visibleTheorySubjects.length + visibleLabSubjects.length})
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter("warning")}
-                className={cn("h-10 px-4 border-[3px] transition-all rounded-xl", 
-                  filter === "warning" 
-                    ? "font-extrabold bg-warning/20 text-warning border-warning shadow-sm dark:text-white dark:border-warning/50" 
-                    : warningCount > 0 
-                      ? "border-warning/30 text-warning hover:bg-warning/10" 
+            <div className="flex items-center gap-2 w-full overflow-hidden">
+              <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 w-full">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setFilter("all")}
+                  className={cn("h-10 px-4 border-[3px] transition-all rounded-xl shrink-0", 
+                    filter === "all" 
+                      ? "font-extrabold bg-[#005691]/15 text-[#005691] border-[#005691]/50 shadow-sm dark:bg-primary/20 dark:text-white dark:border-primary/50" 
                       : "border-transparent"
-                )}
-              >
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                Warning ({warningCount})
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilter("critical")}
-                className={cn("h-10 px-4 border-[3px] transition-all rounded-xl", 
-                  filter === "critical" 
-                    ? "font-extrabold bg-critical/20 text-critical border-critical shadow-sm dark:text-white dark:border-critical/50" 
-                    : criticalCount > 0 
-                      ? "border-critical/30 text-critical hover:bg-critical/10" 
-                      : "border-transparent"
-                )}
-              >
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                Critical ({criticalCount})
-              </Button>
+                  )}
+                >
+                  All ({visibleTheorySubjects.length + visibleLabSubjects.length})
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setFilter("warning")}
+                  className={cn("h-10 px-4 border-[3px] transition-all rounded-xl shrink-0", 
+                    filter === "warning" 
+                      ? "font-extrabold bg-warning/20 text-warning border-warning shadow-sm dark:text-white dark:border-warning/50" 
+                      : warningCount > 0 
+                        ? "border-warning/30 text-warning hover:bg-warning/10" 
+                        : "border-transparent"
+                  )}
+                >
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Warning ({warningCount})
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setFilter("critical")}
+                  className={cn("h-10 px-4 border-[3px] transition-all rounded-xl shrink-0", 
+                    filter === "critical" 
+                      ? "font-extrabold bg-critical/20 text-critical border-critical shadow-sm dark:text-white dark:border-critical/50" 
+                      : criticalCount > 0 
+                        ? "border-critical/30 text-critical hover:bg-critical/10" 
+                        : "border-transparent"
+                  )}
+                >
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Critical ({criticalCount})
+                </Button>
+              </div>
             </div>
 
             {/* Subject Section based on generic toggle */}
