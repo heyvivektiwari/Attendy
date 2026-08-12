@@ -55,8 +55,10 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
     selectedElective, 
     initializeMonth,
     updateJulySubjectAttendance,
+    updateJulyAllSubjectsAttendance,
     setJulyLecturesAttendance,
-    resetJulyAttendance
+    resetJulyAttendance,
+    setCurrentMonth
   } = useAttendanceStore()
 
   // Make sure July (month 6, year 2026) is initialized when opening modal
@@ -134,7 +136,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
       initialToggles[l.id] = l.isAbsent
     })
     setLectureToggles(initialToggles)
-  }, [open, lectures])
+  }, [open])
 
   // Handle direct Percentage input change
   const handlePctChange = (subjectId: string, val: string, totalScheduled: number) => {
@@ -143,27 +145,23 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
       setAttendedInputs((prev) => ({ ...prev, [subjectId]: "" }))
       return
     }
-    const num = parseFloat(val)
-    if (isNaN(num)) return
-    const clampedPct = Math.max(0, Math.min(100, num))
+    const num = Math.min(100, Math.max(0, parseFloat(val) || 0))
     setPercentInputs((prev) => ({ ...prev, [subjectId]: val }))
-    const calculatedAttended = Math.round((clampedPct / 100) * totalScheduled)
-    setAttendedInputs((prev) => ({ ...prev, [subjectId]: String(calculatedAttended) }))
+    const att = Math.round((num / 100) * totalScheduled)
+    setAttendedInputs((prev) => ({ ...prev, [subjectId]: String(att) }))
   }
 
-  // Handle direct Attended count input change
+  // Handle direct Attended Count input change
   const handleAttendedChange = (subjectId: string, val: string, totalScheduled: number) => {
     if (val === "") {
       setAttendedInputs((prev) => ({ ...prev, [subjectId]: "" }))
       setPercentInputs((prev) => ({ ...prev, [subjectId]: "" }))
       return
     }
-    const num = parseInt(val)
-    if (isNaN(num)) return
-    const clamped = Math.max(0, Math.min(totalScheduled, num))
+    const num = Math.min(totalScheduled, Math.max(0, parseInt(val) || 0))
     setAttendedInputs((prev) => ({ ...prev, [subjectId]: val }))
-    const calcPct = totalScheduled > 0 ? Math.round((clamped / totalScheduled) * 100) : 0
-    setPercentInputs((prev) => ({ ...prev, [subjectId]: String(calcPct) }))
+    const pct = totalScheduled > 0 ? Math.round((num / totalScheduled) * 100) : 0
+    setPercentInputs((prev) => ({ ...prev, [subjectId]: String(pct) }))
   }
 
   // Step attended count up or down
@@ -201,21 +199,28 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
   const handleSaveBySubject = async () => {
     setSaving(true)
     try {
+      const attendanceMap: Record<string, number> = {}
+
       for (const sub of visibleSubjects) {
         const subLectures = julyLectures.filter((l) => l.subjectId === sub.id)
         const totalScheduled = subLectures.length
-        let attended = 0
+        let attended = totalScheduled
 
         if (attendedInputs[sub.id] !== undefined && attendedInputs[sub.id] !== "") {
           attended = parseInt(attendedInputs[sub.id]) || 0
         } else if (percentInputs[sub.id] !== undefined && percentInputs[sub.id] !== "") {
           const pct = parseFloat(percentInputs[sub.id]) || 0
           attended = Math.round((pct / 100) * totalScheduled)
+        } else {
+          attended = totalScheduled
         }
 
         const clamped = Math.max(0, Math.min(totalScheduled, attended))
-        await updateJulySubjectAttendance(sub.id, clamped)
+        attendanceMap[sub.id] = clamped
       }
+
+      await updateJulyAllSubjectsAttendance(attendanceMap)
+      setCurrentMonth(6, 2026)
       setSavedSuccess(true)
       setTimeout(() => {
         setSavedSuccess(false)
@@ -233,6 +238,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
     setSaving(true)
     try {
       await setJulyLecturesAttendance(lectureToggles)
+      setCurrentMonth(6, 2026)
       setSavedSuccess(true)
       setTimeout(() => {
         setSavedSuccess(false)
@@ -303,6 +309,44 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
 
           {/* TAB 1: BY SUBJECT summary entry */}
           <TabsContent value="subject" className="flex-1 flex flex-col min-h-0 overflow-hidden space-y-3 mt-0">
+            {/* Quick Bulk Fill Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-primary/10 border-2 border-primary/30 rounded-xl">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary shrink-0" />
+                <span className="text-xs font-extrabold text-foreground">Quick Fill All Subjects:</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  placeholder="e.g. 75"
+                  className="h-8 w-24 text-xs font-bold text-center bg-background border-2 border-primary/40 focus-visible:ring-primary"
+                  onChange={(e) => {
+                    const val = e.target.value
+                    const newPct: Record<string, string> = {}
+                    const newAttended: Record<string, string> = {}
+                    visibleSubjects.forEach((sub) => {
+                      if (!val) {
+                        newPct[sub.id] = ""
+                        newAttended[sub.id] = ""
+                      } else {
+                        const subLectures = julyLectures.filter((l) => l.subjectId === sub.id)
+                        const totalScheduled = subLectures.length
+                        newPct[sub.id] = val
+                        const pctNum = parseFloat(val) || 0
+                        const att = Math.round((pctNum / 100) * totalScheduled)
+                        newAttended[sub.id] = String(att)
+                      }
+                    })
+                    setPercentInputs(newPct)
+                    setAttendedInputs(newAttended)
+                  }}
+                />
+                <span className="text-xs font-extrabold text-primary">%</span>
+              </div>
+            </div>
+
             <div className="flex-1 overflow-y-auto pr-1.5 space-y-3 min-h-0">
               {visibleSubjects.map((sub) => {
                 const subLectures = julyLectures.filter((l) => l.subjectId === sub.id)
@@ -404,36 +448,59 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
               })}
             </div>
 
-            <div className="flex-none pt-3 border-t flex items-center justify-end gap-3 mt-auto">
+            <div className="flex-none pt-3 border-t flex items-center justify-between gap-3 mt-auto">
               <Button
                 variant="outline"
-                onClick={() => setOpen(false)}
-                className="h-10 px-5 rounded-xl font-bold border-2"
+                type="button"
+                onClick={async () => {
+                  if (typeof window !== "undefined" && window.confirm("Are you sure you want to reset all July attendance data? This will clear any saved July absences.")) {
+                    await resetJulyAttendance()
+                    const emptyState: Record<string, string> = {}
+                    visibleSubjects.forEach((sub) => { emptyState[sub.id] = "" })
+                    setAttendedInputs(emptyState)
+                    setPercentInputs(emptyState)
+                    const emptyToggles: Record<string, boolean> = {}
+                    julyLectures.forEach((l) => { emptyToggles[l.id] = false })
+                    setLectureToggles(emptyToggles)
+                  }
+                }}
+                className="h-10 px-3 sm:px-4 rounded-xl font-bold border-2 border-destructive/30 text-destructive hover:bg-destructive/10 gap-2 text-xs"
               >
-                Cancel
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset July Data
               </Button>
-              <Button
-                onClick={handleSaveBySubject}
-                disabled={saving}
-                className={cn(
-                  "h-10 px-6 rounded-xl font-extrabold gap-2 transition-all shadow-md",
-                  savedSuccess 
-                    ? "bg-emerald-600 text-white" 
-                    : "bg-primary text-primary-foreground hover:bg-primary/90"
-                )}
-              >
-                {savedSuccess ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Saved to July!
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    {saving ? "Saving..." : "Save July Attendance"}
-                  </>
-                )}
-              </Button>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  className="h-10 px-5 rounded-xl font-bold border-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveBySubject}
+                  disabled={saving}
+                  className={cn(
+                    "h-10 px-6 rounded-xl font-extrabold gap-2 transition-all shadow-md",
+                    savedSuccess 
+                      ? "bg-emerald-600 text-white" 
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  )}
+                >
+                  {savedSuccess ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Saved!
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      {saving ? "Saving..." : "Save July Attendance"}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 

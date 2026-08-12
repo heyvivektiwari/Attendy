@@ -147,7 +147,7 @@ export function DashboardHeader() {
                     <div className="flex flex-col gap-2">
                       <Button
                         variant="ghost"
-                        className="justify-start text-xs h-10 px-4 rounded-xl border-[3px] border-transparent font-extrabold dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm"
+                        className="justify-start text-xs h-auto min-h-[40px] py-2 px-3 rounded-xl border-[3px] border-transparent font-extrabold dark:bg-primary/20 dark:text-white dark:border-primary/50 bg-primary/10 border-primary/40 shadow-sm whitespace-normal text-left leading-tight w-full"
                         onClick={() => setRange(6, 2026, 10, 2026)}
                       >
                         Academic Semester (July - Nov 2026)

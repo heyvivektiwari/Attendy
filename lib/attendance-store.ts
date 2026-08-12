@@ -412,6 +412,7 @@ interface AttendanceState {
 
   // July manual entry actions
   updateJulySubjectAttendance: (subjectId: string, attendedCount: number) => Promise<void>
+  updateJulyAllSubjectsAttendance: (subjectAttendanceMap: Record<string, number>) => Promise<void>
   setJulyLecturesAttendance: (lectureStatusMap: Record<string, boolean>) => Promise<void>
   resetJulyAttendance: () => Promise<void>
 }
@@ -571,20 +572,35 @@ export const useAttendanceStore = create<AttendanceState>()(
         const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
         set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
 
-        if (user) {
-          try {
-            await fetch("/api/attendance", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                studentId: user.id,
-                rollNo: user.rollNo,
-                absentLectureIds: newAbsences
-              })
-            })
-          } catch (e) {
-            console.error("Failed to sync absences to database", e)
+        let studentId = user?.id
+        let rollNo = user?.rollNo
+        if (typeof window !== "undefined" && !rollNo) {
+          rollNo = localStorage.getItem("attendy_roll_no") || localStorage.getItem("attendy_rollNo") || undefined
+        }
+        if (!studentId && typeof window !== "undefined") {
+          const storedUser = localStorage.getItem("attendy_user")
+          if (storedUser) {
+            try {
+              const parsed = JSON.parse(storedUser)
+              studentId = parsed.id
+              rollNo = rollNo || parsed.rollNo
+            } catch (e) {}
           }
+        }
+        if (!studentId) studentId = 2 // Default student ID
+
+        try {
+          await fetch("/api/attendance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              studentId,
+              rollNo,
+              absentLectureIds: newAbsences
+            })
+          })
+        } catch (e) {
+          console.error("Failed to sync absences to database", e)
         }
       },
       discardChanges: () => {
@@ -596,17 +612,30 @@ export const useAttendanceStore = create<AttendanceState>()(
         if (state.lectures.filter(l => l.month === 6 && l.year === 2026).length === 0) {
           state.initializeMonth(6, 2026)
         }
-        const updatedLectures = get().lectures
-        const julySubjectLectures = updatedLectures.filter(
-          (l) => l.month === 6 && l.year === 2026 && l.subjectId === subjectId
-        )
+        const { selectedBatch, selectedElective, branch, lectures: updatedLectures } = get()
+        const julySubjectLectures = updatedLectures.filter((l) => {
+          if (l.month !== 6 || l.year !== 2026) return false
+          if (l.subjectId !== subjectId) return false
+          if (l.batch && l.batch !== selectedBatch) return false
+          if (l.elective && l.elective !== selectedElective) return false
+          if (l.branch && l.branch !== branch) return false
+          return true
+        })
         const total = julySubjectLectures.length
         const clampedAttended = Math.max(0, Math.min(attendedCount, total))
         const absentCountNeeded = total - clampedAttended
 
         let absentCountSet = 0
         const newLectures = updatedLectures.map((l) => {
-          if (l.month === 6 && l.year === 2026 && l.subjectId === subjectId) {
+          const isTarget = 
+            l.month === 6 && 
+            l.year === 2026 && 
+            l.subjectId === subjectId &&
+            (!l.batch || l.batch === selectedBatch) &&
+            (!l.elective || l.elective === selectedElective) &&
+            (!l.branch || l.branch === branch)
+            
+          if (isTarget) {
             if (absentCountSet < absentCountNeeded) {
               absentCountSet++
               return { ...l, isAbsent: true }
@@ -616,6 +645,55 @@ export const useAttendanceStore = create<AttendanceState>()(
           }
           return l
         })
+        const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
+        set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
+        await get().saveChanges()
+      },
+
+      updateJulyAllSubjectsAttendance: async (subjectAttendanceMap: Record<string, number>) => {
+        const state = get()
+        if (state.lectures.filter(l => l.month === 6 && l.year === 2026).length === 0) {
+          state.initializeMonth(6, 2026)
+        }
+        const { selectedBatch, selectedElective, branch, lectures: updatedLectures } = get()
+        
+        let newLectures = [...updatedLectures]
+
+        for (const [subjectId, attendedCount] of Object.entries(subjectAttendanceMap)) {
+          const julySubjectLectures = newLectures.filter((l) => {
+            if (l.month !== 6 || l.year !== 2026) return false
+            if (l.subjectId !== subjectId) return false
+            if (l.batch && l.batch !== selectedBatch) return false
+            if (l.elective && l.elective !== selectedElective) return false
+            if (branch === "DataScience" ? l.branch !== "DataScience" : (l.branch && l.branch !== "Computer")) return false
+            return true
+          })
+          const total = julySubjectLectures.length
+          const clampedAttended = Math.max(0, Math.min(attendedCount, total))
+          const absentCountNeeded = total - clampedAttended
+
+          let absentCountSet = 0
+          newLectures = newLectures.map((l) => {
+            const isTarget = 
+              l.month === 6 && 
+              l.year === 2026 && 
+              l.subjectId === subjectId &&
+              (!l.batch || l.batch === selectedBatch) &&
+              (!l.elective || l.elective === selectedElective) &&
+              (branch === "DataScience" ? l.branch === "DataScience" : (!l.branch || l.branch === "Computer"))
+              
+            if (isTarget) {
+              if (absentCountSet < absentCountNeeded) {
+                absentCountSet++
+                return { ...l, isAbsent: true }
+              } else {
+                return { ...l, isAbsent: false }
+              }
+            }
+            return l
+          })
+        }
+
         const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
         set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
         await get().saveChanges()
@@ -635,9 +713,16 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
 
       resetJulyAttendance: async () => {
-        const { lectures } = get()
+        const { selectedBatch, selectedElective, branch, lectures } = get()
         const newLectures = lectures.map((l) => {
-          if (l.month === 6 && l.year === 2026) {
+          const isTarget = 
+            l.month === 6 && 
+            l.year === 2026 && 
+            (!l.batch || l.batch === selectedBatch) &&
+            (!l.elective || l.elective === selectedElective) &&
+            (!l.branch || l.branch === branch)
+            
+          if (isTarget) {
             return { ...l, isAbsent: false }
           }
           return l
@@ -827,7 +912,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
     }),
     {
-      name: "attendance-storage-monthly-v11",
+      name: "attendance-storage-monthly-v12",
     }
   )
 )
