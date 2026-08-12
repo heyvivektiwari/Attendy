@@ -115,7 +115,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
     const initialPercent: Record<string, string> = {}
 
     visibleSubjects.forEach((sub) => {
-      const savedInput = julySubjectInputs[sub.id]
+      const savedInput = julySubjectInputs ? julySubjectInputs[sub.id] : undefined
       if (savedInput && (savedInput.percent !== "" || savedInput.attended !== "")) {
         initialPercent[sub.id] = savedInput.percent
         initialAttended[sub.id] = savedInput.attended
@@ -489,10 +489,14 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleSaveBySubject}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleSaveBySubject()
+                  }}
                   disabled={saving}
                   className={cn(
-                    "h-10 px-6 rounded-xl font-extrabold gap-2 transition-all shadow-md",
+                    "h-10 px-6 rounded-xl font-extrabold gap-2 transition-all shadow-md cursor-pointer",
                     savedSuccess 
                       ? "bg-emerald-600 text-white" 
                       : "bg-primary text-primary-foreground hover:bg-primary/90"
