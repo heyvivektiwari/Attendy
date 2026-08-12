@@ -887,7 +887,35 @@ export const useAttendanceStore = create<AttendanceState>()(
           }
         })
 
-        // Calculate overall
+        // Calculate average of individual subject percentages (College Defaulter List Method)
+        let theoryPctSum = 0
+        let theorySubCount = 0
+        let labPctSum = 0
+        let labSubCount = 0
+
+        bySubject.forEach((record, subId) => {
+          if (record.totalLectures > 0) {
+            const subject = subjects.find(s => s.id === subId)
+            const isLab = subject?.type === "lab"
+            const pct = Math.round((record.attendedLectures / record.totalLectures) * 100)
+            if (isLab) {
+              labPctSum += pct
+              labSubCount++
+            } else {
+              theoryPctSum += pct
+              theorySubCount++
+            }
+          }
+        })
+
+        const theoryAvgPct = theorySubCount > 0 
+          ? Math.round(theoryPctSum / theorySubCount) 
+          : (theoryTotal > 0 ? Math.round((theoryAttended / theoryTotal) * 100) : 100)
+        
+        const labAvgPct = labSubCount > 0 
+          ? Math.round(labPctSum / labSubCount) 
+          : (labTotal > 0 ? Math.round((labAttended / labTotal) * 100) : 100)
+
         const totalAttended = theoryAttended + labAttended
         const totalLectures = theoryTotal + labTotal
 
@@ -896,12 +924,12 @@ export const useAttendanceStore = create<AttendanceState>()(
           theory: {
             attended: theoryAttended,
             total: theoryTotal,
-            percentage: theoryTotal > 0 ? Math.round((theoryAttended / theoryTotal) * 100) : 100,
+            percentage: theoryAvgPct,
           },
           lab: {
             attended: labAttended,
             total: labTotal,
-            percentage: labTotal > 0 ? Math.round((labAttended / labTotal) * 100) : 100,
+            percentage: labAvgPct,
           },
           overall: {
             attended: totalAttended,
