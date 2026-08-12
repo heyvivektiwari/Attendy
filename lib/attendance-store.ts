@@ -406,7 +406,7 @@ interface AttendanceState {
   setRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) => void
   pendingChanges: Record<string, boolean> // id -> isAbsent
   setPendingChange: (lectureId: string, isAbsent: boolean) => void
-  saveChanges: () => void
+  saveChanges: () => Promise<void>
   hasPendingChanges: () => boolean
   discardChanges: () => void
 
@@ -656,7 +656,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         await get().saveChanges()
       },
 
-      updateJulyAllSubjectsAttendance: async (subjectAttendanceMap: Record<string, number>) => {
+      updateJulyAllSubjectsAttendance: async (subjectAttendanceMap: Record<string, number>, inputMap?: Record<string, { percent: string; attended: string }>) => {
         const state = get()
         if (state.lectures.filter(l => l.month === 6 && l.year === 2026).length === 0) {
           state.initializeMonth(6, 2026)
@@ -705,7 +705,7 @@ export const useAttendanceStore = create<AttendanceState>()(
           set({ julySubjectInputs: inputMap })
         }
         set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
-        await get().saveChanges()
+        get().saveChanges().catch((err: any) => console.error("Cloud save error:", err))
       },
 
       setJulyLecturesAttendance: async (lectureStatusMap: Record<string, boolean>) => {

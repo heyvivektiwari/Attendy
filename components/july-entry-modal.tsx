@@ -237,11 +237,11 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
       setSavedSuccess(true)
       setTimeout(() => {
         setSavedSuccess(false)
+        setSaving(false)
         setOpen(false)
-      }, 900)
-    } catch (e) {
+      }, 500)
+    } catch (e: any) {
       console.error("Failed to save July attendance by subject", e)
-    } finally {
       setSaving(false)
     }
   }
@@ -257,7 +257,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
         setSavedSuccess(false)
         setOpen(false)
       }, 900)
-    } catch (e) {
+    } catch (e: any) {
       console.error("Failed to save July individual lectures", e)
     } finally {
       setSaving(false)
