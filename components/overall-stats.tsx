@@ -110,56 +110,21 @@ function StatCard({
   )
 }
 
-export function OverallStats({ theory, lab, overall }: OverallStatsProps) {
-  const overallStatus = getStatus(overall.percentage)
-  const StatusIcon = overallStatus.icon
-
+export function OverallStats({ theory, lab }: OverallStatsProps) {
   return (
-    <div className="space-y-4">
-      {/* Main Overall Card */}
-      <Card className={cn("overflow-hidden border-[3px] shadow-[0_10px_40px_rgba(26,19,47,0.12)] bg-white dark:bg-card border-[#1A132F]/15 dark:border-primary/40 transition-all duration-300")}>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="flex items-center gap-6">
-              <div className={cn("p-4 rounded-2xl", overallStatus.bg)}>
-                <StatusIcon className={cn("h-8 w-8", overallStatus.color)} />
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className={cn("text-5xl font-bold tabular-nums tracking-tight", overallStatus.color)}>
-                    {overall.percentage}%
-                  </span>
-                  {overall.percentage >= 75 ? (
-                    <TrendingUp className="h-5 w-5 text-safe" />
-                  ) : (
-                    <TrendingDown className="h-5 w-5 text-critical" />
-                  )}
-                </div>
-                <p className="text-lg font-medium text-foreground mt-1">Overall Attendance</p>
-                <p className="text-sm text-muted-foreground">
-                  {overall.attended} of {overall.total} attended (Theory + Lab)
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Theory and Lab Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <StatCard
-          title="Theory Attendance"
-          icon={BookOpen}
-          data={theory}
-          type="theory"
-        />
-        <StatCard
-          title="Lab Attendance"
-          icon={FlaskConical}
-          data={lab}
-          type="lab"
-        />
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <StatCard
+        title="Theory Attendance"
+        icon={BookOpen}
+        data={theory}
+        type="theory"
+      />
+      <StatCard
+        title="Lab Attendance"
+        icon={FlaskConical}
+        data={lab}
+        type="lab"
+      />
     </div>
   )
 }

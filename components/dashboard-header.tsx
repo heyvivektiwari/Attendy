@@ -111,7 +111,7 @@ export function DashboardHeader() {
                       }}
                     >
                       <BarChart2 className={cn("mr-3 h-5 w-5", statsMode === "overall" && mainView === "dashboard" && "text-primary")} />
-                      Term Attendance
+                      Academic Term Average
                       {statsMode === "overall" && <ChevronDown className={cn("ml-auto h-4 w-4 transition-transform", isCustomRangeActive && "rotate-180")} />}
                     </Button>
                   </div>
