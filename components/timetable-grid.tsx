@@ -411,25 +411,27 @@ export function TimetableGrid({ lectures, currentMonth, currentYear, onMonthChan
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-primary/10 border-[3px] border-primary/30 rounded-2xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary/20 text-primary shrink-0 border border-primary/30">
-            <Sparkles className="h-5 w-5" />
+      {currentMonth === 6 && currentYear === 2026 && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-primary/10 border-[3px] border-primary/30 rounded-2xl shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-primary/20 text-primary shrink-0 border border-primary/30">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-sm text-foreground">July Attendance Defaulter Entry</h4>
+              <p className="text-xs text-muted-foreground">App launched in August. Click to edit, re-enter, or reset your July labs & lectures.</p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-extrabold text-sm text-foreground">July Attendance Defaulter Entry</h4>
-            <p className="text-xs text-muted-foreground">App launched in August. Click to edit, re-enter, or reset your July labs & lectures.</p>
-          </div>
+          <JulyEntryModal
+            trigger={
+              <Button size="sm" className="font-extrabold gap-2 rounded-xl bg-primary text-primary-foreground shadow-md hover:bg-primary/90 shrink-0 h-10 px-4">
+                <Sparkles className="h-4 w-4" />
+                Edit July Attendance
+              </Button>
+            }
+          />
         </div>
-        <JulyEntryModal
-          trigger={
-            <Button size="sm" className="font-extrabold gap-2 rounded-xl bg-primary text-primary-foreground shadow-md hover:bg-primary/90 shrink-0 h-10 px-4">
-              <Sparkles className="h-4 w-4" />
-              Edit July Attendance
-            </Button>
-          }
-        />
-      </div>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 px-1 text-amber-500 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/5 py-2 px-3 rounded-lg border border-amber-500/20 w-fit">

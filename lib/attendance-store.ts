@@ -908,21 +908,72 @@ export const useAttendanceStore = create<AttendanceState>()(
             const subject = subjects.find(s => s.id === subId)
             const isLab = subject?.type === "lab"
 
-            let attendedVal = record.attendedLectures
+            // Count July lectures in this filtered period
+            const subjectJulyLectures = lectures.filter((l) => {
+              if (l.subjectId !== subId) return false
+              if (l.month !== 6 || l.year !== 2026) return false
+              if (l.batch && l.batch !== selectedBatch) return false
+              if (l.elective && l.elective !== selectedElective) return false
+              if (l.branch && l.branch !== branch) return false
+              if (filter) {
+                if (filter.month !== undefined && filter.year !== undefined) {
+                  if (l.month !== filter.month || l.year !== filter.year) return false
+                } else if (filter.startMonth !== undefined && filter.startYear !== undefined && filter.endMonth !== undefined && filter.endYear !== undefined) {
+                  const lDate = new Date(l.year, l.month)
+                  const sDate = new Date(filter.startYear, filter.startMonth)
+                  const eDate = new Date(filter.endYear, filter.endMonth)
+                  if (lDate < sDate || lDate > eDate) return false
+                }
+              }
+              return true
+            })
+
+            // Count other lectures in this filtered period
+            const subjectOtherLectures = lectures.filter((l) => {
+              if (l.subjectId !== subId) return false
+              if (l.month === 6 && l.year === 2026) return false
+              if (l.batch && l.batch !== selectedBatch) return false
+              if (l.elective && l.elective !== selectedElective) return false
+              if (l.branch && l.branch !== branch) return false
+              if (filter) {
+                if (filter.month !== undefined && filter.year !== undefined) {
+                  if (l.month !== filter.month || l.year !== filter.year) return false
+                } else if (filter.startMonth !== undefined && filter.startYear !== undefined && filter.endMonth !== undefined && filter.endYear !== undefined) {
+                  const lDate = new Date(l.year, l.month)
+                  const sDate = new Date(filter.startYear, filter.startMonth)
+                  const eDate = new Date(filter.endYear, filter.endMonth)
+                  if (lDate < sDate || lDate > eDate) return false
+                }
+              }
+              return true
+            })
+
+            const julyTotal = subjectJulyLectures.length
+            const otherTotal = subjectOtherLectures.length
+            const otherAttended = subjectOtherLectures.filter(l => !l.isAbsent).length
+
+            let julyAttended = subjectJulyLectures.filter(l => !l.isAbsent).length
             const savedInput = julyInputs[subId]
             if (savedInput && savedInput.percent !== undefined && savedInput.percent !== "") {
               const enteredPct = parseFloat(savedInput.percent) || 0
-              attendedVal = (enteredPct / 100) * record.totalLectures
+              julyAttended = (enteredPct / 100) * julyTotal
             } else if (savedInput && savedInput.attended !== undefined && savedInput.attended !== "") {
-              attendedVal = parseFloat(savedInput.attended) || 0
+              julyAttended = parseFloat(savedInput.attended) || 0
             }
+
+            const totalVal = julyTotal + otherTotal
+            const attendedVal = julyAttended + otherAttended
+
+            // Update record in bySubject with the overridden values
+            record.totalLectures = totalVal
+            record.attendedLectures = attendedVal
 
             if (isLab) {
               labFractionalAttended += attendedVal
-              labTotalLectures += record.totalLectures
+              labTotalLectures += totalVal
             } else {
               theoryFractionalAttended += attendedVal
-              theoryTotalLectures += record.totalLectures
+              theoryTotalLectures += totalVal
             }
           }
         })
