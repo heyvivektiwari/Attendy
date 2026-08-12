@@ -2,7 +2,7 @@
 
 import { useAttendanceStore } from "@/lib/attendance-store"
 import { Button } from "@/components/ui/button"
-import { LogOut, Menu, Calendar, LayoutGrid, BarChart2, MessageSquare, ChevronDown, Check, X } from "lucide-react"
+import { LogOut, Menu, Calendar, LayoutGrid, BarChart2, MessageSquare, ChevronDown, Check, X, RotateCw } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -317,6 +317,16 @@ export function DashboardHeader() {
             </div>
           )}
 
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => window.location.reload()}
+            className="rounded-xl w-12 h-12 border-[3px] border-[#1A132F]/20 dark:border-primary/40 shadow-[0_4px_15px_rgba(26,19,47,0.08)] bg-card hover:border-primary transition-all active:scale-90 shrink-0"
+            title="Refresh App Data"
+          >
+            <RotateCw className="size-5 shrink-0 text-primary" />
+            <span className="sr-only">Refresh</span>
+          </Button>
           <ExportReportModal />
           <ModeToggle />
         </div>
