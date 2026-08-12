@@ -141,7 +141,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
       initialToggles[l.id] = l.isAbsent
     })
     setLectureToggles(initialToggles)
-  }, [open, julySubjectInputs])
+  }, [open])
 
   // Handle direct Percentage input change
   const handlePctChange = (subjectId: string, val: string, totalScheduled: number) => {

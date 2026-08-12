@@ -901,16 +901,27 @@ export const useAttendanceStore = create<AttendanceState>()(
         let theoryTotalLectures = 0
         let labFractionalAttended = 0
         let labTotalLectures = 0
+        const julyInputs = state.julySubjectInputs || {}
 
         bySubject.forEach((record, subId) => {
           if (record.totalLectures > 0) {
             const subject = subjects.find(s => s.id === subId)
             const isLab = subject?.type === "lab"
+
+            let attendedVal = record.attendedLectures
+            const savedInput = julyInputs[subId]
+            if (savedInput && savedInput.percent !== undefined && savedInput.percent !== "") {
+              const enteredPct = parseFloat(savedInput.percent) || 0
+              attendedVal = (enteredPct / 100) * record.totalLectures
+            } else if (savedInput && savedInput.attended !== undefined && savedInput.attended !== "") {
+              attendedVal = parseFloat(savedInput.attended) || 0
+            }
+
             if (isLab) {
-              labFractionalAttended += record.attendedLectures
+              labFractionalAttended += attendedVal
               labTotalLectures += record.totalLectures
             } else {
-              theoryFractionalAttended += record.attendedLectures
+              theoryFractionalAttended += attendedVal
               theoryTotalLectures += record.totalLectures
             }
           }
