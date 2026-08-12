@@ -887,7 +887,34 @@ export const useAttendanceStore = create<AttendanceState>()(
           }
         })
 
-        // Calculate overall
+        // Calculate Fractional Ratio Attendance
+        let theoryFractionalAttended = 0
+        let theoryTotalLectures = 0
+        let labFractionalAttended = 0
+        let labTotalLectures = 0
+
+        bySubject.forEach((record, subId) => {
+          if (record.totalLectures > 0) {
+            const subject = subjects.find(s => s.id === subId)
+            const isLab = subject?.type === "lab"
+            if (isLab) {
+              labFractionalAttended += record.attendedLectures
+              labTotalLectures += record.totalLectures
+            } else {
+              theoryFractionalAttended += record.attendedLectures
+              theoryTotalLectures += record.totalLectures
+            }
+          }
+        })
+
+        const theoryAvgPct = theoryTotalLectures > 0 
+          ? Math.round((theoryFractionalAttended / theoryTotalLectures) * 100) 
+          : 100
+        
+        const labAvgPct = labTotalLectures > 0 
+          ? Math.round((labFractionalAttended / labTotalLectures) * 100) 
+          : 100
+
         const totalAttended = theoryAttended + labAttended
         const totalLectures = theoryTotal + labTotal
 
@@ -896,12 +923,12 @@ export const useAttendanceStore = create<AttendanceState>()(
           theory: {
             attended: theoryAttended,
             total: theoryTotal,
-            percentage: theoryTotal > 0 ? Math.round((theoryAttended / theoryTotal) * 100) : 100,
+            percentage: theoryAvgPct,
           },
           lab: {
             attended: labAttended,
             total: labTotal,
-            percentage: labTotal > 0 ? Math.round((labAttended / labTotal) * 100) : 100,
+            percentage: labAvgPct,
           },
           overall: {
             attended: totalAttended,
