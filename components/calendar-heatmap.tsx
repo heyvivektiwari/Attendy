@@ -61,60 +61,60 @@ export function CalendarHeatmap() {
   return (
     <>
       <Card className="border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-[0_10px_40px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-card text-card-foreground">
-         <CardHeader className="p-3 sm:p-5 pb-2 border-b border-border/50 bg-secondary/10">
+         <CardHeader className="p-3.5 sm:p-5 pb-2.5 border-b border-border/50 bg-secondary/10">
           <div className="flex items-center justify-between gap-2 w-full">
-            <div className="flex items-center gap-1.5 sm:gap-2.5">
-              <div className="p-1 sm:p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                <CalendarIcon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
               </div>
-              <CardTitle className="text-xs sm:text-base font-extrabold tracking-tight">Attendance Calendar</CardTitle>
+              <CardTitle className="text-sm sm:text-lg font-extrabold tracking-tight">Attendance Calendar</CardTitle>
             </div>
 
-            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               <Button
                 variant="outline"
                 size="icon"
-                className="h-7 w-7 sm:h-8 sm:w-8 rounded-md sm:rounded-lg border-2 shrink-0"
+                className="h-8 w-8 rounded-lg border-2 shrink-0"
                 onClick={handlePrevMonth}
                 disabled={currentMonthIndex <= 0}
               >
-                <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-              <span className="text-[10px] sm:text-xs font-black px-1 sm:px-2 min-w-[75px] sm:min-w-[100px] text-center whitespace-nowrap">
+              <span className="text-xs font-black px-1.5 min-w-[85px] sm:min-w-[100px] text-center whitespace-nowrap">
                 {getMonthLabel(currentMonth, currentYear)}
               </span>
               <Button
                 variant="outline"
                 size="icon"
-                className="h-7 w-7 sm:h-8 sm:w-8 rounded-md sm:rounded-lg border-2 shrink-0"
+                className="h-8 w-8 rounded-lg border-2 shrink-0"
                 onClick={handleNextMonth}
                 disabled={currentMonthIndex >= SEMESTER_MONTHS.length - 1}
               >
-                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+        <CardContent className="p-3.5 sm:p-6 space-y-3 sm:space-y-4">
           {/* Legend Strip */}
-          <div className="flex items-center justify-between gap-2 text-[10px] sm:text-xs font-bold px-1 pb-1.5 border-b border-border/30 w-full shrink-0">
+          <div className="flex items-center justify-between gap-2 text-xs font-bold px-1 pb-2 border-b border-border/30 w-full shrink-0">
             <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 border border-emerald-600 shrink-0" />
-                <span className="text-muted-foreground text-[10px] sm:text-[11px]">Present</span>
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <span className="h-3 w-3 rounded-full bg-emerald-500 border border-emerald-600 shrink-0" />
+                <span className="text-muted-foreground text-[11px] sm:text-[12px] font-bold">Present</span>
               </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500 border border-amber-600 shrink-0" />
-                <span className="text-muted-foreground text-[10px] sm:text-[11px]">Partial</span>
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <span className="h-3 w-3 rounded-full bg-amber-500 border border-amber-600 shrink-0" />
+                <span className="text-muted-foreground text-[11px] sm:text-[12px] font-bold">Partial</span>
               </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                <span className="h-2.5 w-2.5 rounded-full bg-destructive border border-destructive/80 shrink-0" />
-                <span className="text-muted-foreground text-[10px] sm:text-[11px]">Absent</span>
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <span className="h-3 w-3 rounded-full bg-destructive border border-destructive/80 shrink-0" />
+                <span className="text-muted-foreground text-[11px] sm:text-[12px] font-bold">Absent</span>
               </div>
             </div>
-            <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/80 font-black whitespace-nowrap">
-              Click Date
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-black whitespace-nowrap">
+              Click Date to View
             </span>
           </div>
 
