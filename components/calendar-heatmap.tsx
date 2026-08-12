@@ -61,34 +61,32 @@ export function CalendarHeatmap() {
   return (
     <>
       <Card className="border-[3px] border-[#1A132F]/15 dark:border-border/60 shadow-[0_10px_40px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-card text-card-foreground">
-        <CardHeader className="pb-3 border-b border-border/50 bg-secondary/10">
-          <div className="flex items-center justify-between">
+         <CardHeader className="pb-3 border-b border-border/50 bg-secondary/10">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+              <div className="p-2 rounded-xl bg-primary/10 text-primary shrink-0">
                 <CalendarIcon className="h-5 w-5" />
               </div>
-              <div>
-                <CardTitle className="text-base font-extrabold tracking-tight">Attendance Calendar</CardTitle>
-              </div>
+              <CardTitle className="text-base font-extrabold tracking-tight">Attendance Calendar</CardTitle>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 justify-between sm:justify-end w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-lg border-2"
+                className="h-8 w-8 rounded-lg border-2 shrink-0"
                 onClick={handlePrevMonth}
                 disabled={currentMonthIndex <= 0}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <span className="text-xs font-black px-2 min-w-[100px] text-center">
+              <span className="text-xs font-black px-2 min-w-[100px] text-center whitespace-nowrap">
                 {getMonthLabel(currentMonth, currentYear)}
               </span>
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-lg border-2"
+                className="h-8 w-8 rounded-lg border-2 shrink-0"
                 onClick={handleNextMonth}
                 disabled={currentMonthIndex >= SEMESTER_MONTHS.length - 1}
               >
@@ -122,13 +120,13 @@ export function CalendarHeatmap() {
 
           {/* Calendar Grid Container with Prominent Borders and Rounded Corners */}
           <div className="border-[3px] border-[#1A132F]/20 dark:border-primary/40 rounded-3xl overflow-hidden bg-card p-1.5 sm:p-3 shadow-md space-y-1.5 sm:space-y-2">
-            {/* Days of Week Header Row */}
-            <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center pb-1 border-b-2 border-border/80">
+             {/* Days of Week Header Row */}
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center items-center py-2 border-b-2 border-border/80">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
                 <div 
                   key={day} 
                   className={cn(
-                    "py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider", 
+                    "text-[10px] sm:text-xs font-black uppercase tracking-wider leading-none", 
                     idx === 0 || idx === 6 ? "text-muted-foreground/60" : "text-primary"
                   )}
                 >
