@@ -58,7 +58,8 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
     updateJulyAllSubjectsAttendance,
     setJulyLecturesAttendance,
     resetJulyAttendance,
-    setCurrentMonth
+    setCurrentMonth,
+    julySubjectInputs
   } = useAttendanceStore()
 
   // Make sure July (month 6, year 2026) is initialized when opening modal
@@ -103,7 +104,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
   const [saving, setSaving] = useState(false)
   const [savedSuccess, setSavedSuccess] = useState(false)
 
-  // Synchronize local modal state when opening: don't pre-fit 100% numbers
+  // Synchronize local modal state when opening: load stored last entered inputs
   useEffect(() => {
     if (!open) return
 
@@ -114,9 +115,13 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
     const initialPercent: Record<string, string> = {}
 
     visibleSubjects.forEach((sub) => {
-      const subLectures = julyLectures.filter((l) => l.subjectId === sub.id)
-      const totalScheduled = subLectures.length
-      if (hasExistingAbsences) {
+      const savedInput = julySubjectInputs[sub.id]
+      if (savedInput && (savedInput.percent !== "" || savedInput.attended !== "")) {
+        initialPercent[sub.id] = savedInput.percent
+        initialAttended[sub.id] = savedInput.attended
+      } else if (hasExistingAbsences) {
+        const subLectures = julyLectures.filter((l) => l.subjectId === sub.id)
+        const totalScheduled = subLectures.length
         const attended = subLectures.filter((l) => !l.isAbsent).length
         initialAttended[sub.id] = String(attended)
         const pct = totalScheduled > 0 ? Math.round((attended / totalScheduled) * 100) : 0
@@ -136,7 +141,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
       initialToggles[l.id] = l.isAbsent
     })
     setLectureToggles(initialToggles)
-  }, [open])
+  }, [open, julySubjectInputs])
 
   // Handle direct Percentage input change
   const handlePctChange = (subjectId: string, val: string, totalScheduled: number) => {
@@ -200,6 +205,7 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
     setSaving(true)
     try {
       const attendanceMap: Record<string, number> = {}
+      const inputMap: Record<string, { percent: string; attended: string }> = {}
 
       for (const sub of visibleSubjects) {
         const subLectures = julyLectures.filter((l) => l.subjectId === sub.id)
@@ -217,9 +223,13 @@ export function JulyEntryModal({ trigger, isOpen: externalOpen, onOpenChange: se
 
         const clamped = Math.max(0, Math.min(totalScheduled, attended))
         attendanceMap[sub.id] = clamped
+        inputMap[sub.id] = {
+          percent: percentInputs[sub.id] || "",
+          attended: attendedInputs[sub.id] || "",
+        }
       }
 
-      await updateJulyAllSubjectsAttendance(attendanceMap)
+      await updateJulyAllSubjectsAttendance(attendanceMap, inputMap)
       setCurrentMonth(6, 2026)
       setSavedSuccess(true)
       setTimeout(() => {

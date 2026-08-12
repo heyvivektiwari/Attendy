@@ -411,8 +411,10 @@ interface AttendanceState {
   discardChanges: () => void
 
   // July manual entry actions
+  julySubjectInputs: Record<string, { percent: string; attended: string }>
+  setJulySubjectInputs: (inputs: Record<string, { percent: string; attended: string }>) => void
   updateJulySubjectAttendance: (subjectId: string, attendedCount: number) => Promise<void>
-  updateJulyAllSubjectsAttendance: (subjectAttendanceMap: Record<string, number>) => Promise<void>
+  updateJulyAllSubjectsAttendance: (subjectAttendanceMap: Record<string, number>, inputMap?: Record<string, { percent: string; attended: string }>) => Promise<void>
   setJulyLecturesAttendance: (lectureStatusMap: Record<string, boolean>) => Promise<void>
   resetJulyAttendance: () => Promise<void>
 }
@@ -527,6 +529,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       selectedElective: "BDA",
       branch: "Computer" as Branch,
       absences: [],
+      julySubjectInputs: {},
       statsMode: "monthly",
       mainView: "dashboard",
       rangeStartMonth: SEMESTER_MONTHS[0].month,
@@ -534,6 +537,7 @@ export const useAttendanceStore = create<AttendanceState>()(
       rangeEndMonth: getCurrentMonth().month,
       rangeEndYear: getCurrentMonth().year,
 
+      setJulySubjectInputs: (inputs) => set({ julySubjectInputs: inputs }),
       setStatsMode: (mode) => set({ statsMode: mode }),
       setMainView: (view) => set({ mainView: view }),
       setRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) => {
@@ -697,6 +701,9 @@ export const useAttendanceStore = create<AttendanceState>()(
         }
 
         const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
+        if (inputMap) {
+          set({ julySubjectInputs: inputMap })
+        }
         set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
         await get().saveChanges()
       },
