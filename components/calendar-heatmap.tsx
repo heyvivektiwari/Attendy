@@ -98,8 +98,8 @@ export function CalendarHeatmap() {
 
         <CardContent className="p-3.5 sm:p-6 space-y-3 sm:space-y-4">
           {/* Legend Strip */}
-          <div className="flex items-center justify-between gap-2 text-xs font-bold px-1 pb-2 border-b border-border/30 w-full shrink-0">
-            <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex flex-col items-center justify-center gap-3 px-1 pb-3 border-b border-border/30 w-full shrink-0">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 w-full">
               <div className="flex items-center gap-1.5 whitespace-nowrap">
                 <span className="h-3 w-3 rounded-full bg-emerald-500 border border-emerald-600 shrink-0" />
                 <span className="text-muted-foreground text-[11px] sm:text-[12px] font-bold">Present</span>
@@ -113,7 +113,7 @@ export function CalendarHeatmap() {
                 <span className="text-muted-foreground text-[11px] sm:text-[12px] font-bold">Absent</span>
               </div>
             </div>
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-black whitespace-nowrap">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-black whitespace-nowrap text-center">
               Click Date to View
             </span>
           </div>
