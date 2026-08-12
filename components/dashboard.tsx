@@ -200,7 +200,7 @@ export function Dashboard() {
                       : `Need ${Math.ceil((0.75 * stats.theory.total - stats.theory.attended) / 0.25)} more`}
                   </div>
                 </div>
-                <div className="bg-[#E8F1F5] dark:bg-[#070411] rounded-full h-4 overflow-hidden border border-[#004A7C]/50 dark:border-[#2ec7ff] shadow-[0_4px_10px_rgba(0,74,124,0.3)] dark:shadow-[0_0_12px_rgba(7,176,35,0.5)]">
+                <div className="bg-slate-200/60 dark:bg-white/10 rounded-full h-4 overflow-hidden border border-black/10 dark:border-white/20 shadow-[0_4px_10px_rgba(0,74,124,0.15)] dark:shadow-[0_0_12px_rgba(46,199,255,0.2)]">
                   <div 
                     className={cn("h-full rounded-full transition-all duration-500", stats.theory.percentage >= 75 ? "bg-safe" : stats.theory.percentage >= 70 ? "bg-warning" : "bg-destructive")}
                     style={{ width: `${Math.min(stats.theory.percentage, 100)}%` }}
@@ -232,7 +232,7 @@ export function Dashboard() {
                       : `Need ${Math.ceil((0.75 * stats.lab.total - stats.lab.attended) / 0.25)} more`}
                   </div>
                 </div>
-                <div className="bg-[#E8F1F5] dark:bg-[#070411] rounded-full h-4 overflow-hidden border border-[#004A7C]/50 dark:border-[#2ec7ff] shadow-[0_4px_10px_rgba(0,74,124,0.3)] dark:shadow-[0_0_12px_rgba(7,176,35,0.5)]">
+                <div className="bg-slate-200/60 dark:bg-white/10 rounded-full h-4 overflow-hidden border border-black/10 dark:border-white/20 shadow-[0_4px_10px_rgba(0,74,124,0.15)] dark:shadow-[0_0_12px_rgba(46,199,255,0.2)]">
                   <div 
                     className={cn("h-full rounded-full transition-all duration-500", stats.lab.percentage >= 75 ? "bg-safe" : stats.lab.percentage >= 70 ? "bg-warning" : "bg-destructive")}
                     style={{ width: `${Math.min(stats.lab.percentage, 100)}%` }}

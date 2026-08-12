@@ -108,7 +108,7 @@ export function SubjectCard({ subjectId, record }: SubjectCardProps) {
             <p className="text-xs text-muted-foreground">{subject.faculty}</p>
           </div>
         </div>
-        <div className="h-2.5 bg-secondary/80 rounded-full overflow-hidden border border-border/50 shadow-inner">
+        <div className="h-2.5 bg-slate-200/60 dark:bg-white/10 rounded-full overflow-hidden border border-black/10 dark:border-white/20 shadow-inner">
           <div
             className={cn("h-full rounded-full transition-all duration-500 ease-out shadow-sm", status.progress)}
             style={{ width: `${percentage}%` }}
