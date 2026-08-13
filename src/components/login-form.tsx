@@ -86,8 +86,8 @@ export function LoginForm() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || !password) {
-       setError("Please enter your credentials")
-       return
+      setError("Please enter your credentials")
+      return
     }
     setError("")
     setIsLoading(true)

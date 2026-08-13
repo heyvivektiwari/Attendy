@@ -1,0 +1,11 @@
+Dockerfile
+.dockerignore
+node_modules
+.next
+.git
+.github
+.env*.local
+*.log
+database/*.db*
+mobile/android/build
+mobile/ios/DerivedData
