@@ -13,9 +13,7 @@ export async function GET(request: NextRequest) {
     const db = getDb()
     
     let studentId: number | null = null
-    if (studentIdStr && studentIdStr !== "undefined") {
-      studentId = parseInt(studentIdStr)
-    } else if (rollNo) {
+    if (rollNo && typeof rollNo === "string" && rollNo.trim()) {
       const studentRes = await db.query(
         "SELECT id FROM students WHERE LOWER(roll_no) = LOWER($1)",
         [rollNo.trim()]
@@ -23,6 +21,10 @@ export async function GET(request: NextRequest) {
       if (studentRes.rows[0]) {
         studentId = studentRes.rows[0].id
       }
+    }
+    
+    if (!studentId && studentIdStr && studentIdStr !== "undefined") {
+      studentId = parseInt(studentIdStr)
     }
     
     if (!studentId) {
@@ -56,9 +58,7 @@ export async function POST(request: NextRequest) {
     const db = getDb()
     
     let targetStudentId: number | null = null
-    if (studentId) {
-      targetStudentId = parseInt(studentId)
-    } else if (rollNo) {
+    if (rollNo && typeof rollNo === "string" && rollNo.trim()) {
       const studentRes = await db.query(
         "SELECT id FROM students WHERE LOWER(roll_no) = LOWER($1)",
         [rollNo.trim()]
@@ -66,6 +66,10 @@ export async function POST(request: NextRequest) {
       if (studentRes.rows[0]) {
         targetStudentId = studentRes.rows[0].id
       }
+    }
+    
+    if (!targetStudentId && studentId && studentId !== "undefined") {
+      targetStudentId = parseInt(studentId)
     }
     
     if (!targetStudentId) {

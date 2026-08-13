@@ -77,9 +77,20 @@ export function AttendanceApp() {
   // Normal web mount
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {
+      try {
+        const stored = localStorage.getItem("attendy-user") || localStorage.getItem("attendy_user")
+        if (stored) {
+          const user = JSON.parse(stored)
+          if (user && user.rollNo) {
+            login(user.id, user.name, user.rollNo, user.division, user.branch || "Computer")
+          }
+        }
+      } catch (e) {
+        console.error("Error reading stored web user", e)
+      }
       setMounted(true)
     }
-  }, [])
+  }, [login])
 
 
 

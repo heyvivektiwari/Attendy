@@ -267,6 +267,12 @@ export function DashboardHeader() {
                   className="w-full justify-start h-10 rounded-lg"
                   onClick={async () => {
                     if (window.confirm("Are you sure you want to log out of Attendy?")) {
+                      if (typeof window !== "undefined") {
+                        localStorage.removeItem("attendy-user")
+                        localStorage.removeItem("attendy_user")
+                        localStorage.removeItem("attendy_roll_no")
+                        localStorage.removeItem("attendy_rollNo")
+                      }
                       if (Capacitor.isNativePlatform()) {
                         await Preferences.remove({ key: 'attendy-user' })
                       }

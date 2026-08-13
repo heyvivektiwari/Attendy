@@ -584,7 +584,7 @@ export const useAttendanceStore = create<AttendanceState>()(
           rollNo = localStorage.getItem("attendy_roll_no") || localStorage.getItem("attendy_rollNo") || undefined
         }
         if (!studentId && typeof window !== "undefined") {
-          const storedUser = localStorage.getItem("attendy_user")
+          const storedUser = localStorage.getItem("attendy-user") || localStorage.getItem("attendy_user")
           if (storedUser) {
             try {
               const parsed = JSON.parse(storedUser)
@@ -593,7 +593,10 @@ export const useAttendanceStore = create<AttendanceState>()(
             } catch (e) {}
           }
         }
-        if (!studentId) studentId = 2 // Default student ID
+        if (!studentId && !rollNo) {
+          console.error("No student identifier found to save attendance.")
+          return
+        }
 
         try {
           await fetch("/api/attendance", {
@@ -745,6 +748,7 @@ export const useAttendanceStore = create<AttendanceState>()(
         const current = getCurrentMonth()
         let savedBatch: "A1" | "A2" | "A3" | null = null
         if (typeof window !== "undefined") {
+          localStorage.setItem("attendy-user", JSON.stringify({ id, name, rollNo, division, branch }))
           const b = localStorage.getItem(`attendy_batch_${rollNo}`) || localStorage.getItem("attendy_saved_batch")
           if (b === "A1" || b === "A2" || b === "A3") {
             savedBatch = b
@@ -759,6 +763,8 @@ export const useAttendanceStore = create<AttendanceState>()(
           currentYear: current.year,
           lectures: [],
           absences: [],
+          julySubjectInputs: {},
+          pendingChanges: {},
         }))
         const state = get()
         SEMESTER_MONTHS.forEach(m => state.initializeMonth(m.month, m.year))
@@ -766,7 +772,20 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
 
       logout: () => {
-        set({ user: null, isAuthenticated: false, absences: [], lectures: [] })
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("attendy-user")
+          localStorage.removeItem("attendy_user")
+          localStorage.removeItem("attendy_roll_no")
+          localStorage.removeItem("attendy_rollNo")
+        }
+        set({ 
+          user: null, 
+          isAuthenticated: false, 
+          absences: [], 
+          lectures: [],
+          julySubjectInputs: {},
+          pendingChanges: {} 
+        })
       },
 
       toggleAbsent: (lectureId) => {
