@@ -705,7 +705,11 @@ export const useAttendanceStore = create<AttendanceState>()(
 
         const newAbsences = newLectures.filter(l => l.isAbsent).map(l => l.id)
         if (inputMap) {
+          const { user } = get()
           set({ julySubjectInputs: inputMap })
+          if (typeof window !== "undefined" && user?.rollNo) {
+            localStorage.setItem(`attendy_july_inputs_${user.rollNo}`, JSON.stringify(inputMap))
+          }
         }
         set({ lectures: newLectures, absences: newAbsences, pendingChanges: {} })
         get().saveChanges().catch((err: any) => console.error("Cloud save error:", err))
@@ -747,11 +751,16 @@ export const useAttendanceStore = create<AttendanceState>()(
       login: (id, name, rollNo, division, branch = "Computer") => {
         const current = getCurrentMonth()
         let savedBatch: "A1" | "A2" | "A3" | null = null
+        let savedJulyInputs: Record<string, { percent: string; attended: string }> = {}
         if (typeof window !== "undefined") {
           localStorage.setItem("attendy-user", JSON.stringify({ id, name, rollNo, division, branch }))
           const b = localStorage.getItem(`attendy_batch_${rollNo}`) || localStorage.getItem("attendy_saved_batch")
           if (b === "A1" || b === "A2" || b === "A3") {
             savedBatch = b
+          }
+          const storedInputs = localStorage.getItem(`attendy_july_inputs_${rollNo}`)
+          if (storedInputs) {
+            try { savedJulyInputs = JSON.parse(storedInputs) } catch (e) {}
           }
         }
         set((state) => ({ 
@@ -763,7 +772,7 @@ export const useAttendanceStore = create<AttendanceState>()(
           currentYear: current.year,
           lectures: [],
           absences: [],
-          julySubjectInputs: {},
+          julySubjectInputs: savedJulyInputs,
           pendingChanges: {},
         }))
         const state = get()
@@ -1005,25 +1014,28 @@ export const useAttendanceStore = create<AttendanceState>()(
           ? Math.round((labFractionalAttended / labTotalLectures) * 100) 
           : 100
 
-        const totalAttended = theoryAttended + labAttended
-        const totalLectures = theoryTotal + labTotal
+        const overallAttended = theoryFractionalAttended + labFractionalAttended
+        const overallTotal = theoryTotalLectures + labTotalLectures
+        const overallAvgPct = overallTotal > 0 
+          ? Math.round((overallAttended / overallTotal) * 100) 
+          : 100
 
         return {
           bySubject,
           theory: {
-            attended: theoryAttended,
-            total: theoryTotal,
+            attended: Math.round(theoryFractionalAttended),
+            total: theoryTotalLectures,
             percentage: theoryAvgPct,
           },
           lab: {
-            attended: labAttended,
-            total: labTotal,
+            attended: Math.round(labFractionalAttended),
+            total: labTotalLectures,
             percentage: labAvgPct,
           },
           overall: {
-            attended: totalAttended,
-            total: totalLectures,
-            percentage: totalLectures > 0 ? Math.round((totalAttended / totalLectures) * 100) : 100,
+            attended: Math.round(overallAttended),
+            total: overallTotal,
+            percentage: overallAvgPct,
           },
         }
       },
