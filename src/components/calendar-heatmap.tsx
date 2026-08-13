@@ -10,7 +10,7 @@ import { useAttendanceStore, getMonthLabel, SEMESTER_MONTHS, subjects, type Lect
 import { cn } from "@/lib/utils"
 
 export function CalendarHeatmap() {
-  const { currentMonth, currentYear, setCurrentMonth, lectures, toggleAbsent, selectedBatch, selectedElective, branch } = useAttendanceStore()
+  const { currentMonth, currentYear, setCurrentMonth, lectures, selectedBatch, selectedElective, branch } = useAttendanceStore()
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -220,7 +220,7 @@ export function CalendarHeatmap() {
                   {selectedDate?.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground">
-                  Scheduled sessions for this day. Click to toggle Present/Absent.
+                  Scheduled sessions for this day. (Attendance marking disabled here; use Attendance Marker tab)
                 </DialogDescription>
               </div>
             </div>
@@ -262,11 +262,13 @@ export function CalendarHeatmap() {
                     </div>
                   </div>
 
-                  <Button
-                    size="sm"
-                    variant={isAbsent ? "destructive" : "default"}
-                    onClick={() => toggleAbsent(lecture.id)}
-                    className="gap-1.5 h-9 rounded-xl font-bold shrink-0"
+                  <div
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs shrink-0 border select-none",
+                      isAbsent 
+                        ? "bg-destructive/20 text-destructive border-destructive/50" 
+                        : "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/50"
+                    )}
                   >
                     {isAbsent ? (
                       <>
@@ -279,7 +281,7 @@ export function CalendarHeatmap() {
                         Present
                       </>
                     )}
-                  </Button>
+                  </div>
                 </div>
               )
             })}
