@@ -749,7 +749,11 @@ export const useAttendanceStore = create<AttendanceState>()(
       },
 
       login: (id, name, rollNo, division, branch = "Computer") => {
+        const state = get()
         const current = getCurrentMonth()
+        const monthToUse = state.currentMonth !== undefined ? state.currentMonth : current.month
+        const yearToUse = state.currentYear !== undefined ? state.currentYear : current.year
+
         let savedBatch: "A1" | "A2" | "A3" | null = null
         let savedJulyInputs: Record<string, { percent: string; attended: string }> = {}
         if (typeof window !== "undefined") {
@@ -768,16 +772,16 @@ export const useAttendanceStore = create<AttendanceState>()(
           branch,
           selectedBatch: savedBatch || state.selectedBatch || "A3",
           isAuthenticated: true,
-          currentMonth: current.month,
-          currentYear: current.year,
-          lectures: [],
-          absences: [],
+          currentMonth: monthToUse,
+          currentYear: yearToUse,
+          lectures: state.lectures && state.lectures.length > 0 ? state.lectures : [],
+          absences: state.absences || [],
           julySubjectInputs: savedJulyInputs,
           pendingChanges: {},
         }))
-        const state = get()
-        SEMESTER_MONTHS.forEach(m => state.initializeMonth(m.month, m.year))
-        state.syncAbsences()
+        const newState = get()
+        SEMESTER_MONTHS.forEach(m => newState.initializeMonth(m.month, m.year))
+        newState.syncAbsences()
       },
 
       logout: () => {
